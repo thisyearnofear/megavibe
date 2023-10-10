@@ -1,0 +1,435 @@
+body {
+    background-image: url('/images/background-main.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    height: 100vh;
+    margin: 0;
+}
+
+.button-class {
+    animation: pulsate 1s infinite, gradientShift 3s infinite;
+    border-radius: 50%;
+    width:300px; 
+    height: 300px; 
+    position: relative; /* Needed to position the ripple correctly */
+    border: none;
+    background: linear-gradient(45deg, #f06, #9f6);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s;
+    box-shadow: 0px 5px 0px #ccc;
+    transform: skewX(-5deg);
+}
+
+.button-class:active {
+    animation: shake 0.5s;
+    box-shadow: 0px 2px 0px #aaa;
+    transform: skewX(-5deg) scale(0.98);
+}
+
+.button-class:hover {
+    background-color: blue;
+    transform: skewX(-5deg) scale(1.05);
+}
+
+.button-class::before, .button-class::after {
+    content: '';
+    position: absolute;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    animation: pulsate 1.5s infinite;
+}
+
+.button-class::before {
+    top: -10px;
+    right: -10px;
+    bottom: -10px;
+    left: -10px;
+}
+
+.button-class::after {
+    content: '';
+    position: absolute;
+    top: 50% !important;
+    left: 50% !important;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.6); /* Semi-transparent white */
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0) !important;
+    opacity: 0;
+    pointer-events: none; /* So it doesn't interfere with button interactions */
+    transition: opacity 0.6s, width 0.6s, height 0.6s, transform 0.6s;
+}
+
+.button-class:active::after {
+    width: 600px; /* Slightly larger than the button */
+    height: 600px;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+@keyframes pulsate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.artist-profile {
+    z-index: 10;
+    position: relative; /* Ensure arrows are positioned relative to this div */
+    opacity: 0;
+    transition: opacity 0.5s; /* Add a transition for opacity */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.artist-profile.visible {
+    opacity: 1; /* When the .visible class is added, set opacity to 1 */
+}
+
+.artist-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 5px;
+}
+
+.artist-name {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.integrations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px; /* add this to adjust spacing */
+}
+
+.integrations-list a {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.integrations-list a:hover {
+    background-color: #555;
+}
+
+.done-button {
+    margin-top: 20px;
+}
+
+@keyframes shake {
+    10%, 90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+    
+    20%, 80% {
+      transform: translate3d(2px, 0, 0);
+    }
+  
+    30%, 50%, 70% {
+      transform: translate3d(-4px, 0, 0);
+    }
+  
+    40%, 60% {
+      transform: translate3d(4px, 0, 0);
+    }
+  }
+  
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ccc;
+  }
+  
+  .dot.active {
+    background-color: #333;
+  }
+  
+  .arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 10; /* Ensure it's above other content */
+    width: 100px; /* Set a width to ensure they don't get squeezed */
+    text-align: center; /* Center the arrow characters */
+}
+
+.arrow.left {
+    left: 5%;
+}
+
+.arrow.right {
+    right: 5%; 
+}
+  
+  .song a {
+    display: block;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    margin-bottom: 10px; /* Add some space between the song links */
+}
+
+.song a:hover {
+    background-color: #555;
+}
+
+.emojis {
+    position: relative; /* Add this line */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Space between emojis */
+    margin: 20px 0; /* Vertical space above and below the emojis */
+}
+
+.emojis button {
+    position: relative; /* This allows us to position children elements (like the counter) relative to the button */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+
+.emojis button:hover {
+    transform: scale(1.1); /* Slightly enlarges the emoji button on hover */
+}
+
+.song-dropdown {
+    margin-top: 10px;
+    width: auto;
+}
+
+.bounty-input {
+    display: block;
+    margin: 10px auto;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.set-bounty-button {
+    display: block;
+    margin: 1px auto;
+    background-color: #0c2ed7;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.tipping-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.tipping-options {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.tip-option {
+    background-color: #fff;
+    border-radius: 50%;
+    width: 75px;
+    height: 75px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.tip-option span {
+    margin-top: 5px;
+    font-size: 100%;
+}
+
+/* Send A Tip button */
+.send-tip-button {
+    display: block;
+    margin: 0.5px auto;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.tip-option:hover {
+    background-color: #f5f5f5;
+}
+
+.confirm-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50; /* Green color */
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    margin: 20px 0;
+}
+
+.emojis button:active {
+    transform: scale(1.5);
+}
+
+.emoji-clicked {
+    transform: scale(1.5);
+    transition: transform 0.2s;
+}
+  
+  /* Counter styling */
+  .emoji-counter {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    font-size: 12px;
+  }
+  
+  /* Feedback message styling */
+  .emoji-feedback {
+    position: absolute;
+    bottom: 5%;
+    left: 5%;
+    font-size: 12px;
+    opacity: 0;
+    animation: feedbackAnimation 1s forwards; /* Use the feedbackAnimation */
+}
+  
+  /* Animation for feedback message */
+  @keyframes feedbackAnimation {
+    0% { transform: translateY(0); opacity: 0; }
+    50% { transform: translateY(-10px); opacity: 1; }
+    100% { transform: translateY(0); opacity: 0; }
+  }
+  
+ /* Adjustments for very narrow viewports */
+@media (max-width: 320px) {
+    .arrow {
+        font-size: 1.2rem; /* Reduce the font size further */
+        width: 25px; /* Reduce the width further */
+    }
+    .arrow.left {
+        left: 10%; /* Move more towards the center */
+    }
+
+    .arrow.right {
+        right: 10%; /* Move more towards the center */
+    }
+}
+
+.tally-box {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+  
+  .total-amount-box {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 18px;
+    margin-right: 10px; /* Add spacing between the total amount box and the clear button */
+  }
+  
+  .clear-button {
+    background-color: #f06;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .clear-button:hover {
+    background-color: #ff3333;
+  }
+  
+  .payment-dialog {
+    z-index: 1000;    
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  /* Add styles for the payment dialog overlay */
+.payment-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure the overlay appears on top */
+  }
+  
+  /* Styles for the confirmation box within the overlay */
+  .confirmation-box {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+  }
+  
+  /* Add more styles as needed for your confirmation box elements */
+  .custom-confirm-button {
+    background-color: #007bff; /* Example button background color */
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
