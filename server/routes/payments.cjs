@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 console.log('payments.cjs is executing'); // Add this line
 
-const { createPayment, getPaymentById } = require('./controllers/paymentController.cjs');
+const { createPayment, getPaymentById } = require('../controllers/paymentController.cjs');
 console.log('PaymentController imported successfully'); // Add this line
 
 const { validateBody } = require('../middleware/validationMiddleware.cjs');
