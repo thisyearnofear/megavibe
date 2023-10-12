@@ -3,10 +3,17 @@ const app = express(); // create app instance
 
 const cors = require('cors');
 
+app.use(express.json());
+
 function configureMiddleware(app) {
   app.use(cors());
-  app.use(express.json());
+
 }
+
+// Route handler
+app.get('/', (req, res) => {
+  res.send('Hello World!'); 
+});
 
 function createExpressApp() {
   const app = express();

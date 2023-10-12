@@ -1,4 +1,12 @@
-const { validationResult } = require('express-validator');
+// middleware/validationMiddleware.cjs
+const { validationResult, body } = require('express-validator');
+
+// Custom validation middleware for the payment request body
+const validatePayment = [
+  body('amount').notEmpty().withMessage('Amount is required'),
+  body('type').notEmpty().withMessage('Type is required'),
+  // Include other required fields here if needed
+];
 
 // Middleware function to handle validation errors
 const validationMiddleware = (req, res, next) => {
@@ -14,4 +22,7 @@ const validationMiddleware = (req, res, next) => {
   next();
 };
 
-module.exports = validationMiddleware;
+module.exports = {
+  validatePayment,
+  validationMiddleware,
+};

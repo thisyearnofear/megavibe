@@ -3,7 +3,7 @@ const helmet = require('helmet');
 const cspConfig = {
   directives: {
     defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", 'http://localhost:3000'],
+    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'http://localhost:3000'],
     styleSrc: ["'self'"],
     imgSrc: ["'self'"],
     connectSrc: ["'self'"],

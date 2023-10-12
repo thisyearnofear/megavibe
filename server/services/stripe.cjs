@@ -4,7 +4,7 @@
 const Stripe = require('stripe');
 
 // Initialize Stripe with secret key
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = Stripe(process.env.VITE_STRIPE_SECRET_KEY);
 
 // Function to create payment intent
 async function createIntent(amount, currency) {

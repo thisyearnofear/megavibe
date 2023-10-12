@@ -14,4 +14,16 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Get Reactions (GET request)
+router.get('/', async (req, res) => {
+  try {
+    // Fetch and send the list of reactions
+    const reactions = await Reaction.find();
+    res.status(200).json(reactions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 module.exports = router;

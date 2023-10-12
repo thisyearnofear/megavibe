@@ -2,7 +2,7 @@ const cors = require('cors');
 
 const corsOptions = {
   origin: '*', // Allow requests from any origin during development
-  methods: 'GET, POST', // Adjust allowed HTTP methods as needed
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 };
 
 const corsMiddleware = cors(corsOptions);

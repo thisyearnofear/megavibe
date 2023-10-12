@@ -1,18 +1,18 @@
 const express = require('express');
 const router = express.Router();
-console.log('payments.cjs is executing'); // Add this line
+console.log('payments.cjs is executing');
 
 const { createPayment, getPaymentById } = require('../controllers/paymentController.cjs');
-console.log('PaymentController imported successfully'); // Add this line
+console.log('PaymentController imported successfully');
 
-const { validateBody } = require('../middleware/validationMiddleware.cjs');
+const { validatePayment, validationMiddleware } = require('../middleware/validationMiddleware.cjs'); // Change to validatePayment
 
 // Use the createPayment function from the controller as the callback for POST '/'
-router.post('/', validateBody, createPayment);
+router.post('/', validatePayment, validationMiddleware, createPayment);
 
 router.get('/:id', async (req, res) => {
   try {
-    const payment = await getPaymentById(req.params.id); // Corrected function call
+    const payment = await getPaymentById(req.params.id);
     res.json(payment);
   } catch (error) {
     console.error(error);
