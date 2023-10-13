@@ -1,4 +1,4 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = require('../../services/stripe.cjs'); // Import the Stripe client
 const { createPayment } = require('../../controllers/paymentController.cjs'); // Update the import path
 
 const handlePayment = async (req, res) => {

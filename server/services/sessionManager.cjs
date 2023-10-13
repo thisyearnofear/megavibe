@@ -1,24 +1,35 @@
-// sessionManager.cjs
+//services/sessionManager.cjs
+
 const { v4: uuidv4 } = require('uuid');
 
-const activeSessions = {};
+// Define session manager object
+const sessionManager = {
 
-function generateSessionId() {
-  return uuidv4();
-}
+  // Store active sessions
+  activeSessions: {},
 
-function createSession() {
-  const sessionId = generateSessionId();
-  activeSessions[sessionId] = {}; // Add session data if needed
-  return sessionId;
-}
+  // Generate a new session ID
+  generateSessionId() {
+    return uuidv4(); 
+  },
 
-function getSession(sessionId) {
-  return activeSessions[sessionId];
-}
+  // Create a new session
+  createSession() {
+    const sessionId = this.generateSessionId();
+    this.activeSessions[sessionId] = {};
+    return sessionId;
+  },
 
-function endSession(sessionId) {
-  delete activeSessions[sessionId];
-}
+  // Get an existing session
+  getSession(sessionId) {
+    return this.activeSessions[sessionId];
+  },
 
-module.exports = { createSession, getSession, endSession };
+  // Delete a session
+  endSession(sessionId) {
+    delete this.activeSessions[sessionId];
+  }
+};
+
+// Export session manager object
+module.exports = sessionManager;
