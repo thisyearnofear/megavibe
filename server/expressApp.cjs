@@ -1,8 +1,6 @@
 const express = require('express');
 const app = express(); // create app instance
 
-const cors = require('cors');
-
 app.use(express.json());
 
 function configureMiddleware(app) {

@@ -8,6 +8,8 @@ const validationMiddleware = require('./middleware/validationMiddleware.cjs');
 const cspMiddleware = require('./middleware/cspMiddleware.cjs');
 const corsMiddleware = require('./middleware/corsMiddleware.cjs');
 const fs = require('fs');
+require('dotenv').config();
+
 const { v4: uuidv4 } = require('uuid');
 const userStore = require('./data/userstore.cjs');
 const sessionManager = require('./services/sessionManager.cjs');
@@ -18,14 +20,11 @@ const session = require('express-session');
 const Stripe = require('stripe');
 const stripe = require('./services/stripe.cjs');
 const express = require('express');
-require('dotenv').config();
 
 // Generate a dynamic user ID
 const dynamicUserId = uuidv4();
 
-// Connect to MongoDB
-const connectDB = require('./services/db.cjs');
-connectDB();
+const client = require('./services/mongoDbconnection.cjs'); 
 
 const verifySession = require('./middleware/verifySession.cjs');
 const protectedRoute = require('./routes/protectedRoute.cjs');
