@@ -1,27 +1,20 @@
-// middleware/verifySession.cjs
+const sessionManager = require('../services/sessionManager.cjs');
 
-const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/;
-
-function verifySession(req, res, next) {
-  const sessionId = req.headers.sessionid; // Change to lowercase for consistency
-
-  if (!uuidRegex.test(sessionId)) {
-    return res.status(401).send('Invalid session ID');
-  }
-
-  store.get(sessionId, (error, session) => {
-    if (error) {
-      console.error('Error retrieving session from MongoDB:', error);
-      return res.status(500).send('Internal Server Error');
-    }
+async function verifySession(req, res, next) {
+  try {
+    const session = await sessionManager.getSession(req.session.id);
 
     if (!session) {
-      return res.status(401).send('Invalid session');
+      // Continue the request if there is no session
+      return next();
     }
 
     req.session = session;
     next();
-  });
+  } catch (error) {
+    console.error('Error retrieving session from MongoDB:', error);
+    return res.status(500).send('Internal Server Error');
+  }
 }
 
 module.exports = verifySession;

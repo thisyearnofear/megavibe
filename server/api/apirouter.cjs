@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const paymentsRouter = require('../routes/payments.cjs');
+const tipRouter = require('./api/tipRouter.cjs');
 
-router.use('/payments', paymentsRouter);
+router.use('/tips', tipRouter);
 
 module.exports = router;

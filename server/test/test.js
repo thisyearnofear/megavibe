@@ -4,12 +4,12 @@ const assert = require('assert');
 const sessionManager = require('../services/sessionManager.cjs');
 
 describe ('Session Manager', () => {
-  it('should create a session', () => {
+  it('should create a session', async () => { // Add async here
     // Create a sample user data to store in the session
     const userData = {}; // No "name" or "email" properties
   
     // Create a session and get the session ID
-    const sessionId = sessionManager.createSession(userData);
+    const sessionId = await sessionManager.createSession(userData); // Add await here
   
     // Verify that the session ID is a valid UUID
     // We can use a regular expression to check if it's in the UUID format
@@ -17,13 +17,13 @@ describe ('Session Manager', () => {
     assert(uuidPattern.test(sessionId), 'Invalid session ID format');
   
     // Retrieve the session data
-    const retrievedUserData = sessionManager.getSession(sessionId);
+    const retrievedUserData = await sessionManager.getSession(sessionId); // Add await here
   
     // Verify that the retrieved user data is an empty object
     assert.deepStrictEqual(retrievedUserData, userData);
   
     // Clean up: Remove the session
-    sessionManager.endSession(sessionId);
+    await sessionManager.endSession(sessionId); // Add await here
   });
 
 })

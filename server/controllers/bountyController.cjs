@@ -1,13 +1,23 @@
+// server/controllers/bountyController.cjs
 const Bounty = require('../models/bounty.cjs');
+const { createIntent } = require('../services/stripe.cjs');
+const { validatePayment, validationMiddleware } = require('../middleware/validationMiddleware.cjs');
 
-async function createBounty(req, res) {
+async function createBounty(req, res, next) {
   try {
     const { userId, songId, bountyAmount } = req.body;
     const bounty = await Bounty.create({ userId, songId, bountyAmount });
-    res.status(201).json({ message: 'Bounty created', bounty });
+
+    // Create a payment intent with Stripe
+    const paymentIntent = await createIntent(bountyAmount * 100, 'usd');
+
+    // Add the Stripe payment intent ID to the bounty
+    bounty.stripePaymentIntent = paymentIntent.id;
+    await bounty.save();
+
+    res.status(201).json({ssage: 'B meundefinedunty created', bounty });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    next(error); // Pass the error to the next middleware
   }
 }
 
@@ -22,6 +32,6 @@ async function getBounties(req, res) {
 }
 
 module.exports = {
-  createBounty,
+  createBounty: [validatePayment, validationMiddleware, createBounty],
   getBounties,
 };

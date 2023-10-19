@@ -1,22 +1,15 @@
 const express = require('express');
-const app = express(); // create app instance
-
-app.use(express.json());
+const cors = require('cors'); // Import the cors middleware
 
 function configureMiddleware(app) {
   app.use(cors());
-
 }
-
-// Route handler
-app.get('/', (req, res) => {
-  res.send('Hello World!'); 
-});
 
 function createExpressApp() {
   const app = express();
+  app.use(express.json());
   configureMiddleware(app);
-  return app;
+  return app; // return the app object
 }
 
-module.exports = app;
+module.exports = createExpressApp();

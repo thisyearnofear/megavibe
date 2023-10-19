@@ -1,29 +1,26 @@
+// server/controllers/paymentController.cjs
 const Payment = require('../models/payment.cjs');
 const { createIntent } = require('../services/stripe.cjs');
 
-async function createPayment(req, res) {
+async function createPayment(req, res, next) {
   try {
-    console.log('createPayment function is executing'); // Add this line
-
-    const { amount, user, song, type } = req.body;
+    const { amount, song, type } = req.body;
     const payment = await Payment.create({
       amount,
-      user,
       song,
       type,
       status: 'pending',
     });
 
-    const intent = await createIntent(amount);
+    const intent = await createIntent(amount, 'usd');
     payment.stripePaymentIntent = intent.id;
     await payment.save();
 
-    console.log('Payment created successfully:', payment); // Add this line
+    console.log('Payment created successfully:', payment);
 
     res.status(201).json(payment);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    next(error); // Pass the error to the next middleware (error handler)
   }
 }
 

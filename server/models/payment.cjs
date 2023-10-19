@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+const sessionManager = require('../services/sessionManager.cjs');
 
 const paymentSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
   song: { type: String },
   type: { type: String, enum: ['tip', 'bounty'], required: true }, // Make type required
   status: { type: String, enum: ['pending', 'paid', 'failed'], required: true }, // Make status required

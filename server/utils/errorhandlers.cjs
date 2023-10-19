@@ -1,4 +1,3 @@
-// utils/errorHandlers.js
 const { createLogger, transports, format } = require('winston'); // You might need to install the 'winston' package
 
 // Initialize a logger
@@ -14,25 +13,34 @@ const logger = createLogger({
   ]
 });
 
-// Function to handle validation errors
-function handleValidationErrors(err, res) {
-  res.status(400).json({ error: 'Validation failed', details: err.message });
+/**
+ * Log and handle errors.
+ * @param {Object} res - The Express response object.
+ * @param {Object} error - The error object with statusCode and message properties.
+ */
+function handleError(res, error) {
+  // Log the error with additional context
+  logger.error('Error:', error, { statusCode: error.statusCode, message: error.message });
+
+  // Respond with the error
+  res.status(error.statusCode).json({ error: error.message });
 }
 
-// Function to handle custom application errors
-function handleApplicationErrors(err, res) {
-  // You can customize this function to handle specific application errors
-  res.status(500).json({ error: 'Internal server error' });
-}
-
-// Function to handle uncaught exceptions
-function handleUncaughtExceptions(err, res) {
-  logger.error('Uncaught Exception:', err); // Log uncaught exceptions
-  res.status(500).json({ error: 'Internal server error' });
-}
-
+// Export the error handling functions
 module.exports = {
-  handleValidationErrors,
-  handleApplicationErrors,
-  handleUncaughtExceptions,
+  handleError,
 };
+
+// Usage examples:
+
+// Handling validation errors:
+// const validationError = { statusCode: 400, message: 'Validation failed' };
+// handleError(res, validationError);
+
+// Handling custom application errors:
+// const customError = { statusCode: 500, message: 'Custom error message' };
+// handleError(res, customError);
+
+// Handling a missing user ID:
+// const missingUserIdError = { statusCode: 400, message: 'User ID is missing' };
+// handleError(res, missingUserIdError);
