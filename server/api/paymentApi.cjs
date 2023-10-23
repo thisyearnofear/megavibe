@@ -1,3 +1,7 @@
+const express = require('express');
+const router = express.Router();
+const tipRouter = require('./api/tipRouter.cjs');
+
 const stripe = require('../../services/stripe.cjs'); // Import the Stripe client
 const { createPayment } = require('../../controllers/paymentController.cjs'); // Update the import path
 
@@ -16,3 +20,8 @@ const handlePayment = async (req, res) => {
 module.exports = {
   handlePayment,
 };
+
+
+router.use('/tips', tipRouter);
+
+module.exports = router;

@@ -9,16 +9,16 @@ const { sessionConfig } = require('./config/sessionconfig.cjs');
 const { securityConfig } = require('./config/securityconfig.cjs');
 
 // Routes
-const healthRoute = require('./routes/health.cjs');
 const usersRoute = require('./routes/users.cjs');
 const paymentsRoute = require('./routes/paymentsRoutes.cjs');
 const reactionRoute = require('./routes/reactionRoutes.cjs');
+const sessionRoute = require('./routes/sessionRoutes.cjs');
 
 // Controllers
 const { getUserProfile } = require('./controllers/usersController.cjs');
 
 // Middleware
-const { requestLogger } = require('./middleware/loggerMiddleware.cjs');
+const { loggerMiddleware } = require('./middleware/loggerMiddleware.cjs');
 const { validateUser } = require('./middleware/validationMiddleware.cjs');
 
 // Static assets
@@ -45,14 +45,10 @@ app.use((err, req, res, next) => {
 });
 
 // Define routes
-app.get('/', healthRoute);
 app.get('/users/:id', validateUser, getUserProfile);
 app.use('/users', usersRoute);
 app.use('/payments', paymentsRoute);
 app.use('/reactions', reactionRoute);
+app.use('/api', sessionRoute); // 
 
-// Start server
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+module.exports = app;

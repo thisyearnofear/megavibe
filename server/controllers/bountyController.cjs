@@ -1,5 +1,5 @@
 // server/controllers/bountyController.cjs
-const Bounty = require('../models/bounty.cjs');
+const Bounty = require('../models/bountyModel.cjs');
 const { createIntent } = require('../services/stripe.cjs');
 const { validatePayment, validationMiddleware } = require('../middleware/validationMiddleware.cjs');
 

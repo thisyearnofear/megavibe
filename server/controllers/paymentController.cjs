@@ -1,5 +1,5 @@
 // server/controllers/paymentController.cjs
-const Payment = require('../models/payment.cjs');
+const Payment = require('../models/paymentModel.cjs');
 const { createIntent } = require('../services/stripe.cjs');
 
 async function createPayment(req, res, next) {

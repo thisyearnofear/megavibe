@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { createPayment, getPaymentById } = require('../controllers/paymentController.cjs');
 const { validatePayment } = require('../middleware/validationMiddleware.cjs');
-const sessionManager = require('../services/sessionManager.cjs');
 
 async function verifySession(req, res, next) {
   const userSession = await sessionManager.getSession(req.sessionid);

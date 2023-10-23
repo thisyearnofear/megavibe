@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Bounty = require('../models/bounty.cjs');
+const Bounty = require('../models/bountyModel.cjs');
 
 router.post('/', async (req, res) => {
   try {

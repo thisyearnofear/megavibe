@@ -2,8 +2,8 @@
 // MongoDB Playground
 // Use Ctrl+Space inside a snippet or a string literal to trigger completions.
 
-const database = megavibesessiondb;
-const collection = megavibesessions;
+const database = 'megavibesessiondb';
+const collection = 'megavibesessions';
 
 // Create a new database.
 use(database);

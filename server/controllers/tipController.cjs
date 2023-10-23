@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Tip = require('../models/tip.cjs');
+const Tip = require('../models/tipModel.cjs');
 const { createIntent } = require('../services/stripe.cjs');
 const { validatePayment } = require('../middleware/validationMiddleware.cjs');
 

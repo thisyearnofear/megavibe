@@ -1,27 +1,45 @@
 // jest.setup.cjs
 
-// Import dotenv
 const dotenv = require('dotenv');
+const app = require('./server/test-server.cjs');
 
 // Load the .env.test file
 dotenv.config({ path: '.env.test' });
 
-const mongoose = require('mongoose');
-const app = require('./server/server.cjs');
+let server;
 
-const uri = process.env.SESSION_MONGO_URI;
+beforeAll((done) => {
+  server = app.listen(0, () => {
+    console.log(`Global setup: Server is running on port ${server.address().port}`);
+    done();
+  });
+});
 
-async function connectDB() {
-    try {
-      if (mongoose.connection.readyState === 0) {
-        await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-        console.log('MongoDB connection established');
-      }
-    } catch (error) {
-      console.error('Error connecting to MongoDB:', error);
-    }
-}
+afterAll((done) => {
+  server.close(() => {
+    console.log('Global teardown: Server is closed');
+    done();
+  });
+});
 
-module.exports = async () => {
-    await connectDB();
-};
+beforeEach(async () => {
+  // Create a new session before each test
+  const createRes = await request(app)
+    .post('/api/create-session')
+    .send({ userId: '123' });
+
+  if (createRes.status === 200 || createRes.status === 201) {
+    // Session creation was successful
+    // Extract the session ID from the response cookie
+    const sessionCookie = createRes.headers['set-cookie'][0];
+    const sessionId = /sessionId=([^;]+)/.exec(sessionCookie)[1];
+
+    // Store the session ID for later use
+    global.session = { sessionId, cookie: sessionCookie };
+  } else {
+    console.error('Session creation failed. Check your session creation logic.');
+  }
+});
+
+
+module.exports = server;

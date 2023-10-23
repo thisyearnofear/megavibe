@@ -1,10 +1,12 @@
+require('dotenv').config();
+
 // server/middleware/sessionMiddleware.cjs
 const session = require('express-session');
-const MongoDBStore = require('connect-mongodb-session')(session);
+const MemoryStore = require('memorystore')(session);
 
 // Create a MongoDB session store
 const store = new MongoDBStore({
-  uri: process.env.MONGO_URI, // Use the same environment variable
+  uri: process.env.MONGO_URI,
   collection: 'megavibesessions',
 });
 
@@ -12,19 +14,23 @@ store.on('error', function (error) {
   console.error('MongoDB session store error:', error);
 });
 
+// Determine the secure option based on the environment
+const isProduction = process.env.NODE_ENV === 'production';
+const secureOption = !!isProduction;
+
 // Use express-session middleware
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
+  resave: false,          // Update this line
+  saveUninitialized: false, // Update this line
   store: store,
   cookie: {
-    secure: false, // Set to false when running over HTTP
-    // secure: true, // Uncomment this line when running over HTTPS
+    secure: secureOption,
+    maxAge: 1000 * 60 * 60,
   },
 });
 
 module.exports = {
-  store, // Export the store variable
+  store,
   sessionMiddleware,
 };

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const sessionManager = require('../services/sessionManager.cjs');
 
 const paymentSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
