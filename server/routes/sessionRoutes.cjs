@@ -1,5 +1,14 @@
 const dotenv = require('dotenv');
 
+if (process.env.NODE_ENV === 'test') {
+  // Use the test database connection
+  const mongoose = require('mongoose');
+  mongoose.connect('mongodb://localhost:27017/testdb', {
+    useNewUrlParser: true, // This option is required in recent versions of Mongoose.
+    useUnifiedTopology: true, // Use the new topology engine
+  });
+}
+
 const express = require('express');
 const router = express.Router();
 const session = require('express-session');
@@ -30,23 +39,25 @@ router.use(
 
 // Create a new session
 router.post('/api/create-session', (req, res) => {
-    try {
+  try {
       // If 'userId' is provided in the request body, associate it with the session
       if (req.body.userId) {
-        req.session.userId = req.body.userId;
-        console.log('Session created with userId:', req.body.userId);
+          req.session.userId = req.body.userId;
+          console.log('Session created with userId:', req.body.userId);
       }
-  
+
       // Create a sessionId property in the response
-      const sessionId = req.sessionID; 
+      const sessionId = req.sessionID;
       console.log('Session ID:', sessionId);
-  
-      res.status(201).json({ sessionId, message: 'Session created' });
-    } catch (error) {
-        console.error('Error creating session:', error);
+
+      res.status(200).json({ sessionId, message: 'Session created' });
+  } catch (error) {
+      console.error('Error creating session:', error);
+
+      // Handle the error and send a response to the client
       handleError(res, { statusCode: 400, message: 'Bad Request' });
-    }
-  });
+  }
+});
   
 // Retrieve a specific session
 router.get('/api/retrieve-session', (req, res) => {

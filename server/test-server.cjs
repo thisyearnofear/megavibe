@@ -1,4 +1,4 @@
-require('dotenv').config();
+// server/test-server.cjs
 
 const express = require('express');
 const session = require('express-session');
@@ -9,7 +9,7 @@ const { sessionConfig } = require('./config/sessionconfig.cjs');
 const { securityConfig } = require('./config/securityconfig.cjs');
 
 // Routes
-const usersRoute = require('./routes/users.cjs');
+const usersRoute = require('./routes/usersRoutes.cjs');
 const paymentsRoute = require('./routes/paymentsRoutes.cjs');
 const reactionRoute = require('./routes/reactionRoutes.cjs');
 const sessionRoute = require('./routes/sessionRoutes.cjs');

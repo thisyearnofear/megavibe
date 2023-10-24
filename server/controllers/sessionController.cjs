@@ -1,5 +1,15 @@
+// controllers/sessionController.cjs
+
 const { handleError } = require('../utils/errorHandler.cjs');
 
+if (process.env.NODE_ENV === 'test') {
+  // Use the test database connection
+  const mongoose = require('mongoose');
+  mongoose.connect('mongodb://localhost:27017/testdb', {
+    useNewUrlParser: true, // This option is required in recent versions of Mongoose.
+    useUnifiedTopology: true, // Use the new topology engine
+  });
+}
 // Function to create a new session
 function createSession(req, res) {
   try {
@@ -10,6 +20,7 @@ function createSession(req, res) {
 
     res.status(201).json({ message: 'Session created' }); // Use status 201 for resource creation
   } catch (error) {
+    console.log('Error in createSession:', error); // Add logging here
     handleError(res, { statusCode: 400, message: 'Bad Request' }); // Use a 400 status code for invalid input
   }
 }

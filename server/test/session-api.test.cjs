@@ -1,10 +1,11 @@
-require('dotenv').config({ path: './.env.test' });
+//test/session-api.test.cjs
+
+require('../../loadEnvVars.cjs');
 
 const request = require('supertest');
-const server = require('../server/jest.setup.cjs');
+const server = require('../../jest.setup.cjs');
 
 const session = require('express-session');
-const MemoryStore = require('memorystore')(session);
 
 const {
     createNewSession,
@@ -202,7 +203,6 @@ it('should renew an active session', async () => {
     const newData = await retrieveSessionData(server, sessionId);
     expect(newData.userId).toBe('456');
   });
-  
 
   function getSessionDetails(response) {
     const cookies = response.headers['set-cookie'];

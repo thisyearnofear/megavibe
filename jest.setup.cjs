@@ -1,25 +1,47 @@
 // jest.setup.cjs
 
 const dotenv = require('dotenv');
-const app = require('./server/test-server.cjs');
+process.env.NODE_ENV = 'test';
 
-// Load the .env.test file
-dotenv.config({ path: '.env.test' });
+const request = require('supertest');
+const { setupEnvironmentVariablesForTesting } = require('./server/test/setEnvVars.cjs');
+const mongoose = require('mongoose');
+const mongoSetup = require('./testSetup');
 
-let server;
+const express = require('express');
+const session = require('express-session');
+const MemoryStore = require('memorystore')(session);
 
-beforeAll((done) => {
-  server = app.listen(0, () => {
-    console.log(`Global setup: Server is running on port ${server.address().port}`);
-    done();
-  });
+const app = express();
+
+app.use(session({
+  store: new MemoryStore({
+    checkPeriod: 86400000 // prune expired entries every 24h
+  }),
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true
+}));
+
+let mongoServer;
+
+beforeAll(async () => {
+  // Setup the environment variables for testing
+  setupEnvironmentVariablesForTesting(); // Call the function here
+
+  // Start an in-memory MongoDB server
+  mongoServer = await mongoSetup.startMongoServer(); 
+  const mongoUri = await mongoServer.getUri();
+
+  // Connect to the in-memory database
+  await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
 });
 
-afterAll((done) => {
-  server.close(() => {
-    console.log('Global teardown: Server is closed');
-    done();
-  });
+afterAll(async () => {
+  // Close the database connection and stop the in-memory MongoDB server
+  await mongoSetup.stopMongoServer(mongoServer);
+
+  await mongoose.disconnect();
 });
 
 beforeEach(async () => {
@@ -41,5 +63,4 @@ beforeEach(async () => {
   }
 });
 
-
-module.exports = server;
+module.exports = app;

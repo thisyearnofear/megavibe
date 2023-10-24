@@ -1,3 +1,5 @@
+// test/utils/session-utils.cjs
+
 const request = require('supertest');
 
 // Utility function to create a new session
@@ -5,7 +7,7 @@ async function createNewSession(app, data) {
   const createRes = await request(app)
     .post('/api/create-session')
     .send(data)
-    .expect(201);
+    .expect(200);
 
   // Extract and return the session ID
   const sessionCookie = createRes.headers['set-cookie'][0];
