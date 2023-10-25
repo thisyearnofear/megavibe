@@ -1,4 +1,4 @@
-// sessionConfig.cjs
+// config/sessionConfig.cjs
 
 require('dotenv').config();
 
@@ -8,7 +8,7 @@ const MemoryStore = require('memorystore')(session);
 const sessionConfig = {
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   store: new MemoryStore({
     checkPeriod: 86400000, // 24 hours (in milliseconds)
   }),

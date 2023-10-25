@@ -1,4 +1,4 @@
-// server/cookieConfig.cjs
+// server/config/cookieConfig.cjs
 
 const defaultCookieOptions = {
     secure: true, // Set to true when running over HTTPS

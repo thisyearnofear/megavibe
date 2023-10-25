@@ -1,7 +1,5 @@
 // testSetup.cjs
 
-const dotenv = require('dotenv');
-
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 module.exports = {

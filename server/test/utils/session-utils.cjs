@@ -7,7 +7,7 @@ async function createNewSession(app, data) {
   const createRes = await request(app)
     .post('/api/create-session')
     .send(data)
-    .expect(200);
+    .expect(201); // Expect a 201 status code for successful creation
 
   // Extract and return the session ID
   const sessionCookie = createRes.headers['set-cookie'][0];
@@ -19,7 +19,7 @@ async function renewSession(app, sessionId) {
   return await request(app)
     .post('/api/renew-session')
     .set('Cookie', `sessionId=${sessionId}`)
-    .expect(200);
+    .expect(200); // Expect a 200 status code for successful renewal
 }
 
 // Utility function to end a session
@@ -27,7 +27,7 @@ async function endSession(app, sessionId) {
   return await request(app)
     .post('/api/end-session')
     .set('Cookie', `sessionId=${sessionId}`)
-    .expect(200);
+    .expect(204); // Expect a 204 status code for successful deletion
 }
 
 // Utility function to retrieve session data
@@ -60,7 +60,7 @@ async function simulateInvalidSession(app, sessionId) {
   return await request(app)
     .get('/api/simulate-invalid-session')
     .set('Cookie', `sessionId=${sessionId}`)
-    .expect(200);
+    .expect(400);
 }
 
 // Utility function to extract the session ID from a cookie

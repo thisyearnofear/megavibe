@@ -2,26 +2,41 @@
 
 const { handleError } = require('../utils/errorHandler.cjs');
 
-if (process.env.NODE_ENV === 'test') {
-  // Use the test database connection
-  const mongoose = require('mongoose');
-  mongoose.connect('mongodb://localhost:27017/testdb', {
-    useNewUrlParser: true, // This option is required in recent versions of Mongoose.
-    useUnifiedTopology: true, // Use the new topology engine
+function saveSession(req, res) {
+  return new Promise((resolve, reject) => {
+    req.session.save(error => {
+      if (error) {
+        console.error('Error saving session:', error);
+        reject(new Error('Session save error'));
+      } else {
+        console.log('Session saved successfully');
+        resolve();
+      }
+    });
   });
 }
-// Function to create a new session
-function createSession(req, res) {
+
+async function createSession(req, res) {
   try {
-    // If 'userId' is provided in the request body, associate it with the session
-    if (req.body.userId) {
+    if (req.body && req.body.userId) {
       req.session.userId = req.body.userId;
+      console.log('User id set in session');
     }
 
-    res.status(201).json({ message: 'Session created' }); // Use status 201 for resource creation
+    await saveSession(req, res);
+    console.log('Session saved successfully');
+    // Set the cookie in the response headers
+    res.setHeader('Set-Cookie', `sessionId=${req.session.id}; HttpOnly`);
+    res.status(201).json({ message: 'Session created' });
   } catch (error) {
-    console.log('Error in createSession:', error); // Add logging here
-    handleError(res, { statusCode: 400, message: 'Bad Request' }); // Use a 400 status code for invalid input
+    console.log('Error caught in createSession:', error);
+    if (error.message === 'Session save error') {
+      handleError(res, error, { statusCode: 422, message: error.message });
+
+    } else {
+      handleError(res, error, { statusCode: 500, message: 'Unexpected error' });
+
+    }
   }
 }
 
@@ -61,5 +76,5 @@ function endSession(req, res) {
 }
 
 module.exports = {
-  retrieveSession, endSession, createSession,
+  retrieveSession, endSession, createSession, saveSession
 };

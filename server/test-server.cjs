@@ -29,7 +29,7 @@ app.use(session(sessionConfig));
 
 // Logging
 if (process.env.NODE_ENV === 'development') {
-  app.use(requestLogger);
+  app.use(loggerMiddleware); // Use the logger middleware
 }
 
 // Security
@@ -37,11 +37,15 @@ if (process.env.NODE_ENV === 'production') {
   app.use(securityConfig);
 }
 
+// Validation
+app.use(validateUser); // Use the validation middleware
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   // Handle errors here
   console.error(err);
   res.status(500).json({ error: 'Internal server error' });
+  next();
 });
 
 // Define routes
