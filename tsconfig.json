@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
+    "composite": true,
     "target": "ESNext",
-    "types": ["@stripe/stripe-js"],
+    "types": ["@stripe/stripe-js", "node"],
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
@@ -14,9 +15,15 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
     "jsx": "react-jsx"
   },
-  "include": ["src", "src/components"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+
+  "files": [],
+  "include": ["./frontend/src", "vite.config.ts", "./backend/**/*"
+],
+  "references": [
+    
+    { "path": "./frontend/tsconfig.frontend.json" },
+  ]
 }

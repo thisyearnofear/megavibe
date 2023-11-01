@@ -1,6 +1,6 @@
 // api.ts
 
-import axios from 'axios';
+import axios from "axios"
 
 // API client for making requests to backend
 export const api = axios.create({

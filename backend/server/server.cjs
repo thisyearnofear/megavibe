@@ -13,6 +13,8 @@ const healthRoute = require('./routes/health.cjs');
 const usersRoute = require('./routes/users.cjs');
 const paymentsRoute = require('./routes/paymentsRoutes.cjs');
 const reactionRoute = require('./routes/reactionRoutes.cjs');
+const Waitlist = require('./models/Waitlist');
+
 
 // Controllers
 const { getUserProfile } = require('./controllers/usersController.cjs');
@@ -50,6 +52,20 @@ app.get('/users/:id', validateUser, getUserProfile);
 app.use('/users', usersRoute);
 app.use('/payments', paymentsRoute);
 app.use('/reactions', reactionRoute);
+
+app.post('/submit', async function (req, res) {
+  const { name, email, link } = req.body;
+
+  try {
+    const newEntry = new Waitlist({ name, email, link });
+    await newEntry.save();
+
+    res.send('Form submitted!');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal server error');
+  }
+});
 
 // Start server
 const port = process.env.PORT || 3000;

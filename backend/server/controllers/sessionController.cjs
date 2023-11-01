@@ -3,6 +3,7 @@
 const { handleError } = require('../utils/errorHandler.cjs');
 
 function saveSession(req, res) {
+
   return new Promise((resolve, reject) => {
     req.session.save(error => {
       if (error) {

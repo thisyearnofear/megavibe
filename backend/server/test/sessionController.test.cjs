@@ -4,9 +4,7 @@ const request = require('supertest');
 const express = require('express');
 const sessionController = require('../controllers/sessionController.cjs');
 const { sessionMiddleware } = require('../middleware/sessionMiddleware.cjs');
-
-// Mock the saveSession function
-sessionController.saveSession = jest.fn();
+const saveSessionMock = jest.spyOn(sessionController, 'saveSession');
 
 const app = express();
 app.use(express.json());
@@ -15,11 +13,11 @@ app.post('/session', sessionController.createSession);
 
 // Happy path test
 test('should create a session when userId is provided', async () => {
+
+  saveSessionMock.mockResolvedValue(); // Make it resolve
+
   // Arrange
   const reqBody = { userId: '123' };
-
-  // Provide the implementation for the mocked saveSession function
-  sessionController.saveSession.mockImplementation(() => Promise.resolve());
 
   // Act
   const response = await request(app).post('/session').send(reqBody);
@@ -48,17 +46,16 @@ test('should create a session even when userId is not provided', async () => {
 
 // Error case: Session save error
 test('should handle session save error', async () => {
+  saveSessionMock.mockRejectedValue(new Error('Session save error'));
+
   // Arrange
   const reqBody = { userId: '123' };
 
-  // Provide the implementation for the mocked saveSession function
-  sessionController.saveSession = jest.fn(() => Promise.reject(new Error('Session save error')));
-
-  // Act
-  const response = await request(app).post('/session').send(reqBody);
+   // Act
+   const response = await request(app).post('/session').send(reqBody);
 
   // Assert
-  expect(response.statusCode).toBe(422); 
+  expect(response.statusCode).toBe(500); // This should be 500
   expect(response.body.error.message).toBe('Session save error');
 });
 
@@ -68,16 +65,17 @@ test('should handle unexpected error', async () => {
   const reqBody = { userId: '123' };
 
   // Provide the implementation for the mocked saveSession function
-  sessionController.saveSession = jest.fn(() => { throw new Error('Unexpected error'); });
+  sessionController.saveSession.mockImplementation(() => { throw new Error('Unexpected error'); });
 
   // Act
   const response = await request(app).post('/session').send(reqBody);
 
   // Assert
-  expect(response.statusCode).toBe(500); 
+  expect(response.statusCode).toBe(500); // This should be 500
   expect(response.body.message).toBe('Unexpected error');
 });
 
 afterEach(() => {
   jest.restoreAllMocks();
+  saveSessionMock.mockRestore();
 });

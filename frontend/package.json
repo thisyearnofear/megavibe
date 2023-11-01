@@ -1,0 +1,23 @@
+{
+  "name": "mega-vibe-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "vite preview",
+    "test": "testingtesting",
+    "postbuild": "react-snap"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^3.1.0",
+    "axios": "^1.6.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-swipeable-views": "^0.14.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10"
+  }
+}
