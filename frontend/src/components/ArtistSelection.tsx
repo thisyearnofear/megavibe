@@ -1,23 +1,52 @@
 // ArtistSelection.tsx
-import React from "react";
-import SwipeableViews from "react-swipeable-views";
+import React, { useState } from "react";
 
 type ArtistSelectionProps = {
-  onSelect: (selectedArtist: string) => void;
+  onArtistSelect: (selectedArtist: string) => void; // Add this line
+  onBack: () => void;
   artists: string[];
 };
 
-function ArtistSelection({ onSelect, artists }: ArtistSelectionProps) {
+function ArtistSelection({
+  onArtistSelect,
+  onBack,
+  artists,
+}: ArtistSelectionProps) {
+  const [selectedArtist, setSelectedArtist] = useState<string>("");
+
+  const handleArtistSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedArtist(event.target.value);
+  };
+
+  const handleConfirmClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+
+    // Validate selected artist
+    if (!selectedArtist) {
+      console.error("No artist selected");
+      return;
+    }
+
+    // Pass valid artist to parent
+    onArtistSelect(selectedArtist);
+  };
+
   return (
-    <div>
-      <h2>Choose an artist:</h2>
-      <SwipeableViews>
+    <div className="ArtistSelection">
+      <h4>Select Artist</h4>
+      <select value={selectedArtist} onChange={handleArtistSelect}>
+        <option value="">🎤 🎵 🎶</option>
         {artists.map((artist) => (
-          <div key={artist}>
-            <button onClick={() => onSelect(artist)}>{artist}</button>
-          </div>
+          <option key={artist} value={artist}>
+            {artist}
+          </option>
         ))}
-      </SwipeableViews>
+      </select>
+
+      <div className="button-container">
+        <button onClick={handleConfirmClick}>Confirm</button>
+        <button onClick={onBack}>Back</button>
+      </div>
     </div>
   );
 }

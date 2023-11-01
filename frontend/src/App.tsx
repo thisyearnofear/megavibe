@@ -5,6 +5,7 @@ import HostSelection from "./components/HostSelection";
 import ArtistSelection from "./components/ArtistSelection";
 import ArtistProfiles from "./components/ArtistProfiles";
 import UserInfoForm from "./components/UserInfoForm";
+import ParentComponent from "./components/ParentComponent";
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +18,10 @@ function App() {
   const [showHostSelection, setShowHostSelection] = useState(false);
   const [location, setLocation] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showArtistProfile, setShowArtistProfile] = useState(false);
+  const [selectedArtistProfile, setSelectedArtistProfile] = useState<
+    string | null
+  >(null);
 
   const handleButtonClick = () => {
     console.log("handleButtonClick called");
@@ -50,9 +55,6 @@ function App() {
     console.log("handleRoleSelect called with role:", selectedRole);
     setRole((prevRole) => {
       if (prevRole !== selectedRole) {
-        if (selectedRole === "Fan") {
-          setLocation("London");
-        }
         return selectedRole;
       }
 
@@ -90,7 +92,10 @@ function App() {
   const handleArtistSelect = (selectedArtist: string) => {
     console.log("handleArtistSelect called with artist:", selectedArtist);
     setArtist(selectedArtist);
-    handleButtonClick();
+    setHost(null);
+    setShowHostSelection(false);
+    setShowArtistProfile(true);
+    setSelectedArtistProfile(selectedArtist);
   };
 
   return (
@@ -118,34 +123,26 @@ function App() {
             roles={["Fan", "Artist", "Host"]}
           />
         )}
-        {showHostSelection && (
+        {showHostSelection && !artist && (
           <HostSelection
             onSelect={handleHostSelect}
             onBack={handleBackClick}
             hosts={[]}
           />
         )}
-
+        {host && !artist && (
+          <ParentComponent
+            onSelect={handleArtistSelect}
+            onBack={handleBackClick}
+            artists={["Papa", "Anatu", "Andrew"]}
+          />
+        )}
         {showForm && (
           <UserInfoForm onSubmit={handleFormSubmit} onBack={handleBackClick} />
         )}
       </button>
-
-      {!isLoading && !showRoleSelection && !showForm && (
-        <>
-          {host && !artist && (
-            <ArtistSelection
-              onSelect={handleArtistSelect}
-              artists={["Papa", "Anatu", "Andrew"]}
-            />
-          )}
-          {showForm && (
-            <UserInfoForm
-              onSubmit={handleFormSubmit}
-              onBack={handleBackClick}
-            />
-          )}
-        </>
+      {showArtistProfile && selectedArtistProfile && (
+        <ArtistProfiles artist={selectedArtistProfile} />
       )}
     </div>
   );

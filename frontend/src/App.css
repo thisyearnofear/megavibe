@@ -30,6 +30,24 @@ body {
   margin-bottom: 0;
 }
 
+.ArtistSelection {
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.HostSelection {
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .button-container {
   display: flex;
   justify-content: center;
@@ -41,6 +59,7 @@ body {
   margin: auto;
   transition: transform 0.3s;
   animation: pulsate 1s infinite;
+  pointer-events: auto;
 }
 
 .big-button.clicked {

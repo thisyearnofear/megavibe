@@ -10,6 +10,7 @@ function HostSelection({ onSelect, onBack, hosts }: HostSelectionProps) {
   const [selectedHost, setSelectedHost] = useState<string>("");
 
   const handleHostSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    event.stopPropagation();
     setSelectedHost(event.target.value);
   };
 
@@ -33,10 +34,10 @@ function HostSelection({ onSelect, onBack, hosts }: HostSelectionProps) {
         <option value="">🌎 ✌️ ☮️</option>
         <option value="London">London</option>
         <option value="Medellin" disabled>
-          Medellin (Soon)
+          Medellin
         </option>
         <option value="Nairobi" disabled>
-          Nairobi (Soon)
+          Nairobi
         </option>
         {hosts.map((host) => (
           <option key={host} value={host}>
