@@ -15,7 +15,9 @@ function ArtistSelection({
   const [selectedArtist, setSelectedArtist] = useState<string>("");
 
   const handleArtistSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedArtist(event.target.value);
+    const selectedArtist = event.target.value;
+    setSelectedArtist(selectedArtist);
+    onArtistSelect(selectedArtist);
   };
 
   const handleConfirmClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -26,9 +28,6 @@ function ArtistSelection({
       console.error("No artist selected");
       return;
     }
-
-    // Pass valid artist to parent
-    onArtistSelect(selectedArtist);
   };
 
   return (
@@ -37,7 +36,11 @@ function ArtistSelection({
       <select value={selectedArtist} onChange={handleArtistSelect}>
         <option value="">🎤 🎵 🎶</option>
         {artists.map((artist) => (
-          <option key={artist} value={artist}>
+          <option
+            key={artist}
+            value={artist}
+            disabled={artist === "Anatu" || artist === "Andrew"}
+          >
             {artist}
           </option>
         ))}

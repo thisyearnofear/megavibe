@@ -20,10 +20,12 @@
   },
 
   "files": [],
-  "include": ["./frontend/src", "vite.config.ts", "./backend/**/*"
-],
-  "references": [
-    
-    { "path": "./frontend/tsconfig.frontend.json" },
-  ]
+  "include": [
+    "./frontend/src",
+    "vite.config.ts",
+    "./backend/**/*",
+    "*.cjs",
+    "./frontend/src/types"
+  ],
+  "references": [{ "path": "./frontend/tsconfig.frontend.json" }]
 }

@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import { TwitterShareButton, TwitterIcon } from "react-share";
 import "./styles.css";
 import SwipeableViews from "react-swipeable-views";
-import PaymentDialog from "./PaymentDialog";
 
 type ArtistProfilesProps = {
   artist: string;
@@ -24,27 +24,12 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [slideIndex, setSlideIndex] = React.useState(0);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
-  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [selectedSong, setSelectedSong] = useState<string>("");
   const [selectedAction, setSelectedAction] = useState<string>("");
 
-  const handleOpenPaymentDialog = (
-    songName: string | null,
-    actionType: string | null
-  ) => {
-    console.log("Opening payment dialog"); // Add this line for debugging
-    console.log("isPaymentDialogOpen:", isPaymentDialogOpen); // Add this line for debugging
-
-    setSelectedSong(songName || "");
-    setSelectedAction(actionType || "");
-    setIsPaymentDialogOpen(true);
-  };
-
-  const handleClosePaymentDialog = () => {
-    console.log("Closing payment dialog"); // Add this line for debugging
-    console.log("isPaymentDialogOpen:", isPaymentDialogOpen); // Add this line for debugging
-
-    setIsPaymentDialogOpen(false);
+  const handleOpenGleam = () => {
+    // Open the Gleam page in a new tab
+    window.open("https://gleam.io/kNvwc/bounty", "_blank");
   };
 
   const [emojiCounts, setEmojiCounts] = React.useState<EmojiCounts>({
@@ -68,16 +53,11 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
   };
 
   const handleButtonClick = () => {
-    console.log("Button clicked"); // Add this line for debugging
+    console.log("Button clicked");
     setIsSpinning(true);
     setTimeout(() => {
       setIsMorphed(true);
     }, 500); // Wait for 500ms (the duration of the fade-out animation) before showing the profile
-
-    // Add this line to open the payment dialog when the button is clicked
-    if (slideIndex === 2 && isSpinning) {
-      setIsPaymentDialogOpen(true);
-    }
   };
 
   const handleDoneClick = () => {
@@ -85,6 +65,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
     setTimeout(() => {
       setIsSpinning(false);
     }, 500); // Wait for 500ms (the duration of the fade-out animation) before showing the button
+    window.location.reload();
   };
 
   const handleEmojiClick = (emoji: EmojiKey) => {
@@ -108,6 +89,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
         emojiCounts.emoji1 * 3 +
         emojiCounts.emoji2 * 5 +
         emojiCounts.emoji3 * 10;
+
       setTotalBountyAmount(totalAmount);
 
       // Show feedback message only when count is increasing
@@ -123,8 +105,11 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
           "Chee!",
           "Yes!",
         ];
+
         const randomMessage =
           messages[Math.floor(Math.random() * messages.length)];
+        console.log("New count:", newCount);
+        console.log("Selected feedback message:", randomMessage);
         setFeedbackMessage(randomMessage);
         setTimeout(() => setFeedbackMessage(null), 3000);
       }
@@ -149,6 +134,52 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
     // Add the tip amount to the total amount
     setTotalAmount((prevTotal) => prevTotal + amount);
   };
+
+  const handleCheckout = () => {
+    window.open("https://buy.stripe.com/test_3cs5oe0J20fo7h6aEE", "_blank");
+  };
+
+  const [leaderboardData, setLeaderboardData] = useState<
+    Array<{ song: string; emojiCounts: EmojiCounts }>
+  >([]);
+
+  const handleSongSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSong(event.target.value);
+  };
+
+  const handleSubmit = () => {
+    if (selectedSong) {
+      // Check if the song has already been submitted
+      const alreadySubmitted = leaderboardData.some(
+        (data) => data.song === selectedSong
+      );
+
+      if (!alreadySubmitted) {
+        setLeaderboardData((prevData) => [
+          ...prevData,
+          {
+            song: selectedSong,
+            emojiCounts,
+          },
+        ]);
+        // Clear the selected song after submission
+        setSelectedSong("");
+      } else {
+        alert("You've already submitted a rating for this song.");
+      }
+    }
+  };
+
+  const handleRemoveSubmission = (index: number) => {
+    setLeaderboardData((prevData) => prevData.filter((_, i) => i !== index));
+  };
+
+  const leaderboardString = leaderboardData
+    .map(
+      (data) =>
+        `${data.song}: 🤘🏿 ${data.emojiCounts.emoji1} 🥹 ${data.emojiCounts.emoji2} 🔥 ${data.emojiCounts.emoji3}`
+    )
+    .join("\n ");
 
   return (
     <div className="content">
@@ -180,47 +211,34 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
               <h2 className="artist-name">Papa</h2>
               <div className="integrations-list">
                 <a
-                  href="https://bit.ly/papaspotify"
+                  href="https://spoti.fi/3FEOjci"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Spotify
                 </a>
                 <a
-                  href="https://soundcloud.com/papajams"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Soundcloud
-                </a>
-                <a
-                  href="https://instagram.com/papajams"
+                  href="https://bit.ly/3FLPDKk"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Instagram
                 </a>
                 <a
-                  href="https://music.apple.com/gb/artist/papa/1474551580"
+                  href="https://bit.ly/3FHRTT5"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Apple
-                </a>
-                <a
-                  href="https://youtube.com/c/papajams"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Youtube
+                  Twitter/X
                 </a>
               </div>
 
               <button onClick={handleDoneClick} className="done-button">
-                Done
+                Leave
               </button>
             </div>
-            {/* VibeCheck Page */}
+
+            {/* Emoji VibeCheck Page */}
             <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
               <div className="arrow left" onClick={handlePrevSlide}>
                 ←
@@ -234,14 +252,21 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
                 className="artist-image"
               />
               <h2 className="artist-name">Papa</h2>
-              <div className="song">
-                <a
-                  href="http://ffm.to/chpa"
-                  target="_blank"
-                  rel="noopener noreferrer"
+
+              <div className="song-emoji-row">
+                <select
+                  className="song-dropdown"
+                  onChange={handleSongSelect}
+                  value={selectedSong}
                 >
-                  Chupacabra
-                </a>
+                  <option value="" disabled style={{ fontStyle: "italic" }}>
+                    Pick A Song
+                  </option>
+                  <option value="Chupacabra">Chupacabra</option>
+                  <option value="OnMyWay">On My Way</option>
+                  <option value="Hubba">Hubba</option>
+                </select>
+
                 <div className="emojis">
                   <button onClick={() => handleEmojiClick("emoji1")}>
                     🤘🏿 {emojiCounts.emoji1}
@@ -253,35 +278,48 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
                     🔥 {emojiCounts.emoji3}
                   </button>
                 </div>
-                <div className="emoji-feedback">{feedbackMessage}</div>{" "}
-                {/* Moved feedback message here */}
               </div>
-              <div className="song">
-                <a
-                  href="http://ffm.to/blckmn"
-                  target="_blank"
-                  rel="noopener noreferrer"
+
+              <button
+                onClick={handleSubmit}
+                disabled={!selectedSong || selectedSong === "Pick A Song"}
+              >
+                Submit A Rating
+              </button>
+
+              <div className="emoji-feedback">{feedbackMessage}</div>
+
+              <div className="leaderboard">
+                <h3>Emoji Vibe</h3>
+                {leaderboardData.slice(0, 3).map((data, index) => (
+                  <div key={index}>
+                    <div>{data.song}</div>
+                    <div>
+                      🤘🏿 {data.emojiCounts.emoji1} 🥹 {data.emojiCounts.emoji2}{" "}
+                      🔥 {data.emojiCounts.emoji3}
+                    </div>
+                    <button onClick={() => handleRemoveSubmission(index)}>
+                      Remove
+                    </button>
+                  </div>
+                ))}
+
+                <TwitterShareButton
+                  url={window.location.href}
+                  title={`${artist} performing live!\nHere's my @megavibeapp rating\n${leaderboardString}\n@papajimjams\nhttps://bit.ly/papaspotify\n`}
+                  hashtags={["livemusic"]}
+                  className="custom-twitter-share-button"
+                  disabled={leaderboardData.length === 0}
                 >
-                  Black Man
-                </a>
-                <div className="emojis">
-                  <button onClick={() => handleEmojiClick("emoji1")}>
-                    🤘🏿 {emojiCounts.emoji1}
-                  </button>
-                  <button onClick={() => handleEmojiClick("emoji2")}>
-                    🥹 {emojiCounts.emoji2}
-                  </button>
-                  <button onClick={() => handleEmojiClick("emoji3")}>
-                    🔥 {emojiCounts.emoji3}
-                  </button>
-                </div>
-                <div className="emoji-feedback">{feedbackMessage}</div>{" "}
-                {/* Moved feedback message here */}
+                  <TwitterIcon size={32} round />
+                </TwitterShareButton>
               </div>
+
               <button onClick={handleDoneClick} className="done-button">
-                Done
+                Leave
               </button>
             </div>
+
             {/* Bounty Page */}
             <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
               <div className="arrow left" onClick={handlePrevSlide}>
@@ -297,28 +335,34 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
               />
               <h2 className="artist-name">Papa</h2>
 
-              {/* Dropdown for songs */}
-              <select className="song-dropdown" defaultValue="">
-                <option value="" disabled style={{ fontStyle: "italic" }}>
-                  Pick A Song
-                </option>
-                <option value="song1">On My Way</option>
-                <option value="song2">Happy Birthday</option>
-                <option value="song3">Under The Sea</option>
-              </select>
+              <div className="bounty-options">
+                {/* Dropdown for songs */}
+                <select className="song-dropdown" defaultValue="">
+                  <option value="" disabled style={{ fontStyle: "italic" }}>
+                    Bounty Song
+                  </option>
+                  <option value="Isn't She Lovely">Isn't She Lovely</option>
+                  <option value="Happy Birthday">Happy Birthday</option>
+                  <option value="Under The Sea">Under The Sea</option>
+                </select>
+
+                <button className="set-bounty-button" onClick={handleOpenGleam}>
+                  Set Bounty
+                </button>
+              </div>
 
               <div className="tipping-options">
                 <button
                   className="tip-option"
                   onClick={() => handleTipClick(1)}
                 >
-                  ☕<span>£1</span>
+                  🍬<span>£1</span>
                 </button>
                 <button
                   className="tip-option"
                   onClick={() => handleTipClick(2)}
                 >
-                  🍸<span>£2</span>
+                  ☕<span>£2</span>
                 </button>
                 <button
                   className="tip-option"
@@ -336,30 +380,14 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
                 <button className="clear-button" onClick={handleClearTotal}>
                   Clear
                 </button>
+
+                <button className="send-tip-button" onClick={handleCheckout}>
+                  Send As A Tip
+                </button>
               </div>
 
-              {/* Set A Bounty button */}
-              <button
-                className="set-bounty-button"
-                onClick={() =>
-                  handleOpenPaymentDialog(selectedSong, "Set A Bounty")
-                }
-              >
-                Set As Bounty To Play It
-              </button>
-
-              {/* Send A Tip button */}
-              <button
-                className="send-tip-button"
-                onClick={() =>
-                  handleOpenPaymentDialog(selectedSong, "Send As A Thank You")
-                }
-              >
-                Send As A Thank You
-              </button>
-
               <button onClick={handleDoneClick} className="done-button">
-                Done
+                Leave
               </button>
             </div>
 
@@ -379,19 +407,9 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             }`}
             onClick={handleButtonClick}
           >
-            MEGA VIBE
+            VIBE
           </button>
         </div>
-      )}
-
-      {isPaymentDialogOpen && (
-        <PaymentDialog
-          selectedAction={selectedAction}
-          totalAmount={totalAmount}
-          artistName={artist}
-          selectedSong={selectedSong}
-          onClose={handleClosePaymentDialog}
-        />
       )}
     </div>
   );

@@ -33,7 +33,7 @@ function App() {
       console.log("Role is null");
       setRole("selecting");
       setShowRoleSelection(true);
-    } else if (role === "Fan") {
+    } else if (role === "Fan" && !artist) {
       console.log("Role is Fan");
       setShowHostSelection(true);
     } else if (!showForm) {
@@ -98,6 +98,7 @@ function App() {
     setSelectedArtistProfile(selectedArtist);
   };
 
+  // App.tsx
   return (
     <div className="App">
       {error && (
@@ -106,41 +107,42 @@ function App() {
           <a href="https://forms.gle/dvUemCEZ3TEJ8x1b7">Use This.</a>
         </div>
       )}
-      <button
-        className={`big-button button-class custom-mega-vibe-button${
-          isLoading ? " spinning" : ""
-        }${showRoleSelection ? " disable-click" : ""}`}
-        onClick={handleButtonClick}
-      >
-        {role === null
-          ? "MEGA VIBE"
-          : role === "selecting"
-          ? "Select Role"
-          : ""}
-        {showRoleSelection && role === "selecting" && (
-          <RoleSelection
-            onSelect={handleRoleSelect}
-            roles={["Fan", "Artist", "Host"]}
-          />
-        )}
-        {showHostSelection && !artist && (
-          <HostSelection
-            onSelect={handleHostSelect}
-            onBack={handleBackClick}
-            hosts={[]}
-          />
-        )}
-        {host && !artist && (
-          <ParentComponent
-            onSelect={handleArtistSelect}
-            onBack={handleBackClick}
-            artists={["Papa", "Anatu", "Andrew"]}
-          />
-        )}
-        {showForm && (
-          <UserInfoForm onSubmit={handleFormSubmit} onBack={handleBackClick} />
-        )}
-      </button>
+      {!showArtistProfile && (
+        <button
+          className={`big-button button-class custom-mega-vibe-button${
+            isLoading ? " spinning" : ""
+          }${showRoleSelection ? " disable-click" : ""}`}
+          onClick={handleButtonClick}
+        >
+          {role === null ? "MEGA" : role === "selecting" ? "Select Role" : ""}
+          {showRoleSelection && role === "selecting" && (
+            <RoleSelection
+              onSelect={handleRoleSelect}
+              roles={["Fan", "Artist", "Host"]}
+            />
+          )}
+          {showHostSelection && !artist && (
+            <HostSelection
+              onSelect={handleHostSelect}
+              onBack={handleBackClick}
+              hosts={[]}
+            />
+          )}
+          {host && !artist && (
+            <ParentComponent
+              onSelect={handleArtistSelect}
+              onBack={handleBackClick}
+              artists={["Papa", "Anatu", "Andrew"]}
+            />
+          )}
+          {showForm && (
+            <UserInfoForm
+              onSubmit={handleFormSubmit}
+              onBack={handleBackClick}
+            />
+          )}
+        </button>
+      )}
       {showArtistProfile && selectedArtistProfile && (
         <ArtistProfiles artist={selectedArtistProfile} />
       )}
