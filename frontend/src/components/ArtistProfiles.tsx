@@ -25,7 +25,9 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
   const [slideIndex, setSlideIndex] = React.useState(0);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
   const [selectedSong, setSelectedSong] = useState<string>("");
-  const [selectedAction, setSelectedAction] = useState<string>("");
+  const [showExplainer1, setShowExplainer1] = useState<boolean>(true);
+  const [showExplainer2, setShowExplainer2] = useState<boolean>(true);
+  const [showExplainer3, setShowExplainer3] = useState<boolean>(true);
 
   const handleOpenGleam = () => {
     // Open the Gleam page in a new tab
@@ -196,6 +198,14 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
               className={`artist-profile ${isMorphed ? "visible" : ""}`}
               ref={profileRef}
             >
+              {showExplainer1 && slideIndex === 0 && (
+                <div className="explainer">
+                  Subscribe or follow {artist} on your preferred platform ‣
+                  <button onClick={() => setShowExplainer1(false)}>
+                    Got it
+                  </button>
+                </div>
+              )}
               {/* Arrows */}
               <div className="arrow left" onClick={handlePrevSlide}>
                 ←
@@ -240,6 +250,14 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
 
             {/* Emoji VibeCheck Page */}
             <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
+              {showExplainer2 && slideIndex === 1 && (
+                <div className="explainer">
+                  Add your rating, tweet it out, see everyone else's ‣
+                  <button onClick={() => setShowExplainer2(false)}>
+                    Got it
+                  </button>
+                </div>
+              )}
               <div className="arrow left" onClick={handlePrevSlide}>
                 ←
               </div>
@@ -306,8 +324,8 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
 
                 <TwitterShareButton
                   url={window.location.href}
-                  title={`${artist} performing live!\nHere's my @megavibeapp rating\n${leaderboardString}\n@papajimjams\nhttps://bit.ly/papaspotify\n`}
-                  hashtags={["livemusic"]}
+                  title={`${artist} - live!\nMy @megavibeapp song ratings\n${leaderboardString}\n@papajimjams\nhttps://bit.ly/papaspotify\n`}
+                  hashtags={["livemusic", "megavibelondon"]}
                   className="custom-twitter-share-button"
                   disabled={leaderboardData.length === 0}
                 >
@@ -322,6 +340,14 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
 
             {/* Bounty Page */}
             <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
+              {showExplainer3 && slideIndex === 2 && (
+                <div className="explainer">
+                  Set song bounties using supportive actions, or simply tip! ‣
+                  <button onClick={() => setShowExplainer3(false)}>
+                    Got it
+                  </button>
+                </div>
+              )}
               <div className="arrow left" onClick={handlePrevSlide}>
                 ←
               </div>
