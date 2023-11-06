@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const connectDB = require("./services/db.cjs");
 const app = require("./expressApp.cjs");
 const port = process.env.PORT || 3000;
+const { handleError } = require("./utils/errorHandler.cjs");
 
 // Modularize configuration
 const { securityConfig } = require("./config/securityconfig.cjs");
@@ -37,8 +38,7 @@ connectDB();
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ error: "Internal server error" });
+  handleError(res, err, { statusCode: 500 });
 });
 
 // Start server
