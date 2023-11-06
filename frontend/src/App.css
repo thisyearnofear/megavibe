@@ -48,6 +48,12 @@ body {
   align-items: center;
 }
 
+button:active,
+button:focus {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .button-container {
   display: flex;
   justify-content: center;

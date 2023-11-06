@@ -259,7 +259,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
               {showExplainer2 && slideIndex === 1 && (
                 <div className="explainer">
-                  Rate what you are hearing. Tweet it out ‣
+                  Rate what you are hearing LIVE. Tweet it out ‣
                   <button onClick={() => setShowExplainer2(false)}>
                     Got it
                   </button>
