@@ -447,11 +447,10 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
               />
               <h2 className="artist-name">Papa</h2>
               <div className="information-box">
-                <h3>Beta Phase I </h3>
-                <p>Megavibe.</p>
-                <p>Live performance experience app.</p>
-                <p>Interactive touchpoints for deep connection.</p>
-                <p>Phase I: Fan. Phase II: Artist. Phase III: Host. </p>
+                <h3>Megavibe</h3>
+                <p>Live Performance Experience App</p>
+                <p>Interactive Touchpoints. Deep Connection</p>
+                <p>Phase I: Fans Phase II: Artists Phase III: Hosts </p>
                 <p>
                   <a
                     href="https://forms.gle/dvUemCEZ3TEJ8x1b7"
@@ -460,7 +459,6 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
                   >
                     Mail + Feedback
                   </a>
-                  .
                 </p>
                 <p>
                   <a
@@ -470,8 +468,8 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
                   >
                     Blog
                   </a>
-                  .
                 </p>
+                <p>Phase I Beta</p>
               </div>
 
               <button onClick={handleDoneClick} className="done-button">

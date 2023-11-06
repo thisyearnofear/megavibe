@@ -1,13 +1,17 @@
-require("dotenv").config({ path: "../.env" });
-
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const connectDB = require("./services/db.cjs");
-const app = require("./expressApp.cjs");
+const createExpressApp = require("./expressApp.cjs");
 const port = process.env.PORT || 3000;
 const helmet = require("helmet");
 const { handleError } = require("./utils/errorHandler.cjs");
+
+// Create Express application instance
+const app = express();
+
+// Configure Express application
+createExpressApp(app);
 
 // Middleware
 const { requestLogger } = require("./middleware/loggerMiddleware.cjs");

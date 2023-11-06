@@ -7,8 +7,7 @@ function configureMiddleware(app) {
   app.use(cors());
 }
 
-function createExpressApp() {
-  const app = express();
+function createExpressApp(app) {
   app.use(express.json());
   configureMiddleware(app);
 
@@ -24,8 +23,6 @@ function createExpressApp() {
       .then(() => res.json("Waitlist entry added!"))
       .catch((err) => res.status(400).json("Error: " + err));
   });
-
-  return app;
 }
 
-module.exports = createExpressApp();
+module.exports = createExpressApp;
