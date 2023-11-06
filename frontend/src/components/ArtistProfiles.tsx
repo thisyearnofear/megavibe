@@ -200,7 +200,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             >
               {showExplainer1 && slideIndex === 0 && (
                 <div className="explainer">
-                  Connect on your preferred platform ‣
+                  Connect on preferred platforms ‣
                   <button onClick={() => setShowExplainer1(false)}>
                     Got it
                   </button>
@@ -257,7 +257,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
               {showExplainer2 && slideIndex === 1 && (
                 <div className="explainer">
-                  Rate performance. Share. Awaken Emojiboard ‣
+                  Rate songs live. Awaken Emojiboard. Share ‣
                   <button onClick={() => setShowExplainer2(false)}>
                     Got it
                   </button>
@@ -313,7 +313,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
               <div className="emoji-feedback">{feedbackMessage}</div>
 
               <div className="leaderboard">
-                <h3>Emoji Vibe</h3>
+                <h3>Emojiboard</h3>
                 {leaderboardData.slice(0, 3).map((data, index) => (
                   <div key={index}>
                     <div>{data.song}</div>
@@ -447,10 +447,10 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
               />
               <h2 className="artist-name">Papa</h2>
               <div className="information-box">
-                <h3>Megavibe: Live Performance Experience App</h3>
-                <p>Interactive Touchpoints. Deep Connection</p>
-                <p>Current Phase I: Fans </p>
-                <p>Phase II: Artists III: Hosts </p>
+                <p>Megavibe </p>
+                <p>Live Experience App</p>
+                <p>Phase I: Fans </p>
+                <p>II: Artists III: Hosts </p>
                 <p>
                   <a
                     href="https://forms.gle/dvUemCEZ3TEJ8x1b7"
