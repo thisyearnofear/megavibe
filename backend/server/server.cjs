@@ -1,74 +1,47 @@
-require('dotenv').config();
+require("dotenv").config({ path: "../.env" });
 
-const express = require('express');
-const session = require('express-session');
-const app = express();
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const connectDB = require("./services/db.cjs");
+const app = require("./expressApp.cjs");
+const port = process.env.PORT || 3000;
 
 // Modularize configuration
-const { sessionConfig } = require('./config/sessionconfig.cjs');
-const { securityConfig } = require('./config/securityconfig.cjs');
-
-// Routes
-const healthRoute = require('./routes/health.cjs');
-const usersRoute = require('./routes/users.cjs');
-const paymentsRoute = require('./routes/paymentsRoutes.cjs');
-const reactionRoute = require('./routes/reactionRoutes.cjs');
-const Waitlist = require('./models/Waitlist');
-
-
-// Controllers
-const { getUserProfile } = require('./controllers/usersController.cjs');
+const { securityConfig } = require("./config/securityconfig.cjs");
 
 // Middleware
-const { requestLogger } = require('./middleware/loggerMiddleware.cjs');
-const { validateUser } = require('./middleware/validationMiddleware.cjs');
+const { requestLogger } = require("./middleware/loggerMiddleware.cjs");
 
 // Static assets
-app.use(express.static('public'));
+app.use(express.static("public"));
 
-// Session middleware
-app.use(session(sessionConfig));
+// CORS
+app.use(cors());
+
+// Body Parser
+app.use(bodyParser.json());
 
 // Logging
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === "development") {
   app.use(requestLogger);
 }
 
 // Security
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   app.use(securityConfig);
 }
 
+// Connect to MongoDB
+connectDB();
+
 // Error handling middleware
 app.use((err, req, res, next) => {
-  // Handle errors here
   console.error(err);
-  res.status(500).json({ error: 'Internal server error' });
-});
-
-// Define routes
-app.get('/', healthRoute);
-app.get('/users/:id', validateUser, getUserProfile);
-app.use('/users', usersRoute);
-app.use('/payments', paymentsRoute);
-app.use('/reactions', reactionRoute);
-
-app.post('/submit', async function (req, res) {
-  const { name, email, link } = req.body;
-
-  try {
-    const newEntry = new Waitlist({ name, email, link });
-    await newEntry.save();
-
-    res.send('Form submitted!');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Internal server error');
-  }
+  res.status(500).json({ error: "Internal server error" });
 });
 
 // Start server
-const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });

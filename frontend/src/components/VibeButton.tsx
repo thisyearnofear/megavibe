@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import "./styles.css";
 import SwipeableViews from "react-swipeable-views";
-import PaymentDialog from "./PaymentDialog"; // Import the PaymentDialog component
+// import PaymentDialog from "./PaymentDialog"; // Import the PaymentDialog component
 
 type EmojiKey = "emoji1" | "emoji2" | "emoji3";
 
@@ -377,18 +377,18 @@ const VibeButton: React.FC = () => {
           </button>
         </div>
       )}
-
-      {isPaymentDialogOpen && (
-        <PaymentDialog
-          selectedAction={selectedAction}
-          totalAmount={totalAmount}
-          artistName="Papa" // Replace with the actual artist name
-          selectedSong={selectedSong}
-          onClose={handleClosePaymentDialog}
-        />
-      )}
     </div>
   );
 };
 
 export default VibeButton;
+
+/* {isPaymentDialogOpen && (
+  <PaymentDialog
+    selectedAction={selectedAction}
+    totalAmount={totalAmount}
+    artistName="Papa" // Replace with the actual artist name
+    selectedSong={selectedSong}
+    onClose={handleClosePaymentDialog}
+  />
+)}  */

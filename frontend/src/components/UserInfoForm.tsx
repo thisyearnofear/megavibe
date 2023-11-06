@@ -10,9 +10,11 @@ type SubmitHandler = (data: {
 function UserInfoForm({
   onSubmit,
   onBack,
+  setError,
 }: {
   onSubmit: SubmitHandler;
   onBack: () => void;
+  setError: (error: string) => void;
 }) {
   const [name, setName] = useState(() => localStorage.getItem("name") || "");
   const [email, setEmail] = useState(() => localStorage.getItem("email") || "");
@@ -54,14 +56,19 @@ function UserInfoForm({
     setIsSubmitting(true);
 
     // Send a POST request to the server
-    fetch("http://localhost:3000/submit", {
+    fetch("http://localhost:3000/waitlist", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ name, email, link }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
       .then((data) => {
         console.log("Success:", data);
 
@@ -71,13 +78,14 @@ function UserInfoForm({
         setLink("");
         setIsSubmitting(false);
         setIsSubmitted(true);
+
+        setTimeout(() => setIsSubmitted(false), 5000);
       })
       .catch((error) => {
         console.error("Error:", error);
         setIsSubmitting(false);
+        setError("Failed to submit form"); // Update the error state
       });
-
-    onSubmit({ name, email, link });
   };
 
   const resetForm = () => {

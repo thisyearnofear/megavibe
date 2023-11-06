@@ -200,7 +200,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             >
               {showExplainer1 && slideIndex === 0 && (
                 <div className="explainer">
-                  Subscribe or follow {artist} on your preferred platform ‣
+                  Connect with {artist} on your preferred platform ‣
                   <button onClick={() => setShowExplainer1(false)}>
                     Got it
                   </button>
@@ -241,6 +241,13 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
                 >
                   Twitter/X
                 </a>
+                <a
+                  href="https://youtube.com/c/papajams"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Youtube
+                </a>
               </div>
 
               <button onClick={handleDoneClick} className="done-button">
@@ -252,7 +259,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
               {showExplainer2 && slideIndex === 1 && (
                 <div className="explainer">
-                  Add your rating, tweet it out, see everyone else's ‣
+                  Rate what you are hearing. Tweet it out ‣
                   <button onClick={() => setShowExplainer2(false)}>
                     Got it
                   </button>

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node server/server.cjs",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "jest --env=jsdom",
@@ -58,7 +58,7 @@
     "vite": "^4.1.0"
   },
   "description": "Backend server for Megavibe",
-  "main": "server.js",
+  "main": "server.cjs",
   "author": "Papa",
   "license": "ISC"
 }

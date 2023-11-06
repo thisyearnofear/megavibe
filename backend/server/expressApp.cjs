@@ -1,6 +1,7 @@
-const express = require('express');
-const cors = require('cors');
-const sessionRoutes = require('./routes/sessionRoutes.cjs'); // Require your session routes
+// expressApp.cjs
+const express = require("express");
+const cors = require("cors");
+const Waitlist = require("./models/Waitlist.cjs");
 
 function configureMiddleware(app) {
   app.use(cors());
@@ -11,8 +12,18 @@ function createExpressApp() {
   app.use(express.json());
   configureMiddleware(app);
 
-  // Register your session routes
-  app.use('/', sessionRoutes);
+  // Define the /waitlist route
+  app.post("/waitlist", (req, res) => {
+    const { name, email, link } = req.body;
+
+    // Create a new document in the 'waitlist' collection
+    const newWaitlistEntry = new Waitlist({ name, email, link });
+
+    newWaitlistEntry
+      .save()
+      .then(() => res.json("Waitlist entry added!"))
+      .catch((err) => res.status(400).json("Error: " + err));
+  });
 
   return app;
 }

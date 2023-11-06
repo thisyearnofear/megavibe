@@ -15,6 +15,7 @@ function ArtistSelection({
   const [selectedArtist, setSelectedArtist] = useState<string>("");
 
   const handleArtistSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    event.stopPropagation();
     const selectedArtist = event.target.value;
     setSelectedArtist(selectedArtist);
     onArtistSelect(selectedArtist);

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import RoleSelection from "./components/RoleSelection";
 import HostSelection from "./components/HostSelection";
-import ArtistSelection from "./components/ArtistSelection";
 import ArtistProfiles from "./components/ArtistProfiles";
 import UserInfoForm from "./components/UserInfoForm";
 import ParentComponent from "./components/ParentComponent";
+import axios from "axios";
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
@@ -79,6 +79,7 @@ function App() {
     link: string;
   }) => {
     console.log("handleFormSubmit called with data:", data);
+
     setRole(null);
     setShowForm(false);
     setShowBackButton(false);
@@ -102,9 +103,15 @@ function App() {
   return (
     <div className="App">
       {error && (
-        <div>
-          Didn't Work.{" "}
-          <a href="https://forms.gle/dvUemCEZ3TEJ8x1b7">Use This.</a>
+        <div className="success-message">
+          Our Bad. Didn't Work.{" "}
+          <a
+            href="https://forms.gle/dvUemCEZ3TEJ8x1b7"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Use This.
+          </a>
         </div>
       )}
       {!showArtistProfile && (
@@ -139,10 +146,12 @@ function App() {
             <UserInfoForm
               onSubmit={handleFormSubmit}
               onBack={handleBackClick}
+              setError={setError}
             />
           )}
         </button>
       )}
+
       {showArtistProfile && selectedArtistProfile && (
         <ArtistProfiles artist={selectedArtistProfile} />
       )}
