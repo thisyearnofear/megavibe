@@ -25,8 +25,8 @@ function App() {
 
   const handleButtonClick = () => {
     console.log("handleButtonClick called");
-    if (showRoleSelection) {
-      console.log("Role selection is showing");
+    if (showRoleSelection || showArtistProfile) {
+      console.log("Role selection or Artist selection is showing");
       return;
     }
     if (role === null) {
