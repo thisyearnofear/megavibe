@@ -196,6 +196,12 @@ select {
   .ArtistSelection,
   .HostSelection,
   .RoleSelection {
-    transform: scale(2);
+    transform: scale(1.3);
+  }
+  .role-selection-text {
+    font-size: 1.3em;
+    font-weight: bold;
+    position: relative;
+    top: -8px;
   }
 }

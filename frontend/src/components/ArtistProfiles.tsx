@@ -47,7 +47,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
   const [totalBountyAmount, setTotalBountyAmount] = useState<number>(0);
 
   const handleNextSlide = () => {
-    setSlideIndex((prev) => Math.min(prev + 1, 2)); // 2 is the maximum index
+    setSlideIndex((prev) => Math.min(prev + 1, 3)); // 3 is the maximum index
   };
 
   const handlePrevSlide = () => {
@@ -207,9 +207,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
                 </div>
               )}
               {/* Arrows */}
-              <div className="arrow left" onClick={handlePrevSlide}>
-                ←
-              </div>
+
               <div className="arrow right" onClick={handleNextSlide}>
                 →
               </div>
@@ -349,7 +347,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
               {showExplainer3 && slideIndex === 2 && (
                 <div className="explainer">
-                  Set song bounties using supportive actions, or simply tip! ‣
+                  Song bounties via support actions, or simply tip! ‣
                   <button onClick={() => setShowExplainer3(false)}>
                     Got it
                   </button>
@@ -424,10 +422,68 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
               </button>
             </div>
 
+            {/* Information Page */}
+            <div
+              className={`artist-profile ${isMorphed ? "visible" : ""}`}
+              ref={profileRef}
+            >
+              {showExplainer1 && slideIndex === 3 && (
+                <div className="explainer">
+                  Share Feedback ‣
+                  <button onClick={() => setShowExplainer1(false)}>
+                    Got it
+                  </button>
+                </div>
+              )}
+              {/* Arrows */}
+              <div className="arrow left" onClick={handlePrevSlide}>
+                ←
+              </div>
+
+              <img
+                src="/images/boom.jpg"
+                alt="Artist Name"
+                className="artist-image"
+              />
+              <h2 className="artist-name">Papa</h2>
+              <div className="information-box">
+                <h3>Beta Phase I </h3>
+                <p>Megavibe.</p>
+                <p>Live performance experience app.</p>
+                <p>Interactive touchpoints for deep connection.</p>
+                <p>Phase I: Fan. Phase II: Artist. Phase III: Host. </p>
+                <p>
+                  <a
+                    href="https://forms.gle/dvUemCEZ3TEJ8x1b7"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Mail + Feedback
+                  </a>
+                  .
+                </p>
+                <p>
+                  <a
+                    href="https://medium.com/@ungethe"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Blog
+                  </a>
+                  .
+                </p>
+              </div>
+
+              <button onClick={handleDoneClick} className="done-button">
+                Leave
+              </button>
+            </div>
+
             <div className="nav-indicators">
               <div className={`dot ${activeIndex === 0 ? "active" : ""}`}></div>
               <div className={`dot ${activeIndex === 1 ? "active" : ""}`}></div>
               <div className={`dot ${activeIndex === 2 ? "active" : ""}`}></div>
+              <div className={`dot ${activeIndex === 3 ? "active" : ""}`}></div>
             </div>
           </SwipeableViews>
         </>

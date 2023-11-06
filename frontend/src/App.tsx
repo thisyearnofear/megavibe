@@ -16,7 +16,7 @@ function App() {
   const [showRoleSelection, setShowRoleSelection] = useState(false);
   const [showBackButton, setShowBackButton] = useState(false);
   const [showHostSelection, setShowHostSelection] = useState(false);
-  const [location, setLocation] = useState<string | null>(null);
+  const [showArtistSelection, setShowArtistSelection] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showArtistProfile, setShowArtistProfile] = useState(false);
   const [selectedArtistProfile, setSelectedArtistProfile] = useState<
@@ -49,6 +49,7 @@ function App() {
     setHost(selectedHost);
     setArtist(null);
     setShowHostSelection(false);
+    setShowArtistSelection(true);
   };
 
   const handleRoleSelect = (selectedRole: string) => {
@@ -94,7 +95,7 @@ function App() {
     console.log("handleArtistSelect called with artist:", selectedArtist);
     setArtist(selectedArtist);
     setHost(null);
-    setShowHostSelection(false);
+    setShowArtistSelection(false);
     setShowArtistProfile(true);
     setSelectedArtistProfile(selectedArtist);
   };
@@ -121,7 +122,9 @@ function App() {
           }${showRoleSelection ? " disable-click" : ""}`}
           onClick={handleButtonClick}
         >
-          {role === null ? "MEGA" : role === "selecting" ? "Select Role" : ""}
+          <span className="role-selection-text">
+            {role === null ? "MEGA" : role === "selecting" ? "Select Role" : ""}
+          </span>
           {showRoleSelection && role === "selecting" && (
             <RoleSelection
               onSelect={handleRoleSelect}
@@ -135,7 +138,7 @@ function App() {
               hosts={[]}
             />
           )}
-          {host && !artist && (
+          {showArtistSelection && (
             <ParentComponent
               onSelect={handleArtistSelect}
               onBack={handleBackClick}
