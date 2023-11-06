@@ -14,7 +14,7 @@ const app = express();
 createExpressApp(app);
 
 // Middleware
-const { requestLogger } = require("./middleware/loggerMiddleware.cjs");
+const loggerMiddleware = require("./middleware/loggerMiddleware.cjs");
 
 // Static assets
 app.use(express.static("public"));
@@ -23,7 +23,7 @@ app.use(express.static("public"));
 app.use(cors());
 
 // Use request logger
-app.use(requestLogger);
+app.use(loggerMiddleware);
 
 // Body Parser
 app.use(bodyParser.json());

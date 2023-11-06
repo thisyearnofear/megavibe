@@ -178,6 +178,10 @@ select {
   line-height: 0.3;
 }
 
+select option {
+  text-align: center;
+}
+
 .success-message {
   position: fixed;
   top: 50%;

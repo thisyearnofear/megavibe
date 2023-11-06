@@ -30,7 +30,7 @@ function RoleSelection({ onSelect, roles }: RoleSelectionProps) {
   return (
     <div className="RoleSelection">
       <select value={selectedRole} onChange={handleSelect}>
-        <option value="🎹"> 🎹 🕺 👇🏾 </option>
+        <option value="🎹"> &nbsp;&nbsp;&nbsp;&nbsp;🎹 </option>
 
         {roles.map((role) => (
           <option key={role} value={role}>

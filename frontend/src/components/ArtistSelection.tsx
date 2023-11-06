@@ -35,7 +35,7 @@ function ArtistSelection({
     <div className="ArtistSelection">
       <h4>Select Artist</h4>
       <select value={selectedArtist} onChange={handleArtistSelect}>
-        <option value="">🎤 🎵 🎶</option>
+        <option value=""> &nbsp;&nbsp;&nbsp;&nbsp;🎤 </option>
         {artists.map((artist) => (
           <option
             key={artist}
