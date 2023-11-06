@@ -6,10 +6,8 @@ const bodyParser = require("body-parser");
 const connectDB = require("./services/db.cjs");
 const app = require("./expressApp.cjs");
 const port = process.env.PORT || 3000;
+const helmet = require("helmet");
 const { handleError } = require("./utils/errorHandler.cjs");
-
-// Modularize configuration
-const { securityConfig } = require("./config/securityconfig.cjs");
 
 // Middleware
 const { requestLogger } = require("./middleware/loggerMiddleware.cjs");
@@ -20,18 +18,14 @@ app.use(express.static("public"));
 // CORS
 app.use(cors());
 
+// Use request logger
+app.use(requestLogger);
+
 // Body Parser
 app.use(bodyParser.json());
 
-// Logging
-if (process.env.NODE_ENV === "development") {
-  app.use(requestLogger);
-}
-
 // Security
-if (process.env.NODE_ENV === "production") {
-  app.use(securityConfig);
-}
+app.use(helmet());
 
 // Connect to MongoDB
 connectDB();

@@ -200,7 +200,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             >
               {showExplainer1 && slideIndex === 0 && (
                 <div className="explainer">
-                  Connect with {artist} on your preferred platform ‣
+                  Connect on your preferred platform ‣
                   <button onClick={() => setShowExplainer1(false)}>
                     Got it
                   </button>
@@ -257,7 +257,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
               {showExplainer2 && slideIndex === 1 && (
                 <div className="explainer">
-                  Rate what you are hearing LIVE. Tweet it out ‣
+                  Rate performances. Share to activate Emojiboard ‣
                   <button onClick={() => setShowExplainer2(false)}>
                     Got it
                   </button>
