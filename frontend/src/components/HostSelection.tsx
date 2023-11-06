@@ -31,7 +31,7 @@ function HostSelection({ onSelect, onBack, hosts }: HostSelectionProps) {
     <div className="HostSelection">
       <h4>Select Host</h4>
       <select value={selectedHost} onChange={handleHostSelect}>
-        <option value=""> &nbsp;&nbsp;&nbsp;&nbsp;🌎 </option>
+        <option value=""> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;🌎 </option>
         <option value="London">London</option>
         <option value="Medellin" disabled>
           Medellin

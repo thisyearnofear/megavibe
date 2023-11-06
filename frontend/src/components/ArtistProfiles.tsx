@@ -257,7 +257,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
               {showExplainer2 && slideIndex === 1 && (
                 <div className="explainer">
-                  Rate performances. Share to activate Emojiboard ‣
+                  Rate performance. Share. Awaken Emojiboard ‣
                   <button onClick={() => setShowExplainer2(false)}>
                     Got it
                   </button>
@@ -347,7 +347,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
               {showExplainer3 && slideIndex === 2 && (
                 <div className="explainer">
-                  Song bounties via support actions, or simply tip! ‣
+                  Set bounties via actions, or simply tip! ‣
                   <button onClick={() => setShowExplainer3(false)}>
                     Got it
                   </button>
