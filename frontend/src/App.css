@@ -191,3 +191,10 @@ select {
   z-index: 1000;
   text-align: center;
 }
+
+@media (max-width: 768px) {
+  .button-class {
+    width: 400px;
+    height: 400px;
+  }
+}

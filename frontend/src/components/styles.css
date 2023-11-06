@@ -514,3 +514,22 @@ body.no-scroll {
     right: 10%;
   }
 }
+
+@media (max-width: 768px) {
+  .button-class {
+    width: 600px;
+    height: 600px;
+  }
+
+  .arrow {
+    width: 200px;
+  }
+
+  .arrow.left {
+    left: 20%;
+  }
+
+  .arrow.right {
+    right: 20%;
+  }
+}
