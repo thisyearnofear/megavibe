@@ -193,8 +193,9 @@ select {
 }
 
 @media (max-width: 768px) {
-  .button-class {
-    width: 400px;
-    height: 400px;
+  .ArtistSelection,
+  .HostSelection,
+  .RoleSelection {
+    transform: scale(2);
   }
 }

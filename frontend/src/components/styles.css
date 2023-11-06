@@ -523,13 +523,14 @@ body.no-scroll {
 
   .arrow {
     width: 200px;
+    font-size: 1rem;
   }
 
   .arrow.left {
-    left: 20%;
+    left: 25%;
   }
 
   .arrow.right {
-    right: 20%;
+    right: 25%;
   }
 }

@@ -278,20 +278,20 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
               />
               <h2 className="artist-name">Papa</h2>
 
-              <div className="song-emoji-row">
-                <select
-                  className="song-dropdown"
-                  onChange={handleSongSelect}
-                  value={selectedSong}
-                >
-                  <option value="" disabled style={{ fontStyle: "italic" }}>
-                    Pick A Song
-                  </option>
-                  <option value="Chupacabra">Chupacabra</option>
-                  <option value="OnMyWay">On My Way</option>
-                  <option value="Hubba">Hubba</option>
-                </select>
+              <select
+                className="song-dropdown"
+                onChange={handleSongSelect}
+                value={selectedSong}
+              >
+                <option value="" disabled style={{ fontStyle: "italic" }}>
+                  Pick A Song
+                </option>
+                <option value="Chupacabra">Chupacabra</option>
+                <option value="OnMyWay">On My Way</option>
+                <option value="Hubba">Hubba</option>
+              </select>
 
+              <div className="song-emoji-row">
                 <div className="emojis">
                   <button onClick={() => handleEmojiClick("emoji1")}>
                     🤘🏿 {emojiCounts.emoji1}
