@@ -516,11 +516,6 @@ body.no-scroll {
 }
 
 @media (max-width: 768px) {
-  .button-class {
-    width: 600px;
-    height: 600px;
-  }
-
   .arrow {
     width: 200px;
     font-size: 1rem;
