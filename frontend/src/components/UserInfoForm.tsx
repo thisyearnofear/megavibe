@@ -56,7 +56,7 @@ function UserInfoForm({
     setIsSubmitting(true);
 
     // Send a POST request to the server
-    fetch("https://megavibe.onrender.com", {
+    fetch("https://megavibe.onrender.com/waitlist", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
