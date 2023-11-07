@@ -462,7 +462,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
                 </p>
                 <p>
                   <a
-                    href="https://medium.com/@ungethe"
+                    href="https://medium.com/megavibe/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
