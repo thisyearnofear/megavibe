@@ -18,10 +18,13 @@ function App() {
   const [showHostSelection, setShowHostSelection] = useState(false);
   const [showArtistSelection, setShowArtistSelection] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showArtistProfile, setShowArtistProfile] = useState(false);
-  const [selectedArtistProfile, setSelectedArtistProfile] = useState<
-    string | null
-  >(null);
+  const [showArtistProfile, setShowArtistProfile] = useState(true);
+  const [selectedArtistProfile, setSelectedArtistProfile] = useState("Papa");
+
+  // const [showArtistProfile, setShowArtistProfile] = useState(false);
+  // const [selectedArtistProfile, setSelectedArtistProfile] = useState<
+  //   string | null
+  // >(null);
 
   const handleButtonClick = () => {
     console.log("handleButtonClick called");

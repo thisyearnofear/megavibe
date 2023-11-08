@@ -287,6 +287,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
                 <option value="Chupacabra">Chupacabra</option>
                 <option value="OnMyWay">On My Way</option>
                 <option value="Hubba">Hubba</option>
+                <option value="Shadow">Shadow</option>
               </select>
 
               <div className="song-emoji-row">
@@ -429,7 +430,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             >
               {showExplainer1 && slideIndex === 3 && (
                 <div className="explainer">
-                  Share Feedback ‣
+                  Share email/feedback. Read blog ‣
                   <button onClick={() => setShowExplainer1(false)}>
                     Got it
                   </button>
@@ -447,17 +448,24 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
               />
               <h2 className="artist-name">Papa</h2>
               <div className="information-box">
-                <p>Megavibe </p>
+                <p>
+                  {" "}
+                  <a
+                    href="  https://github.com/thisyearnofear/megavibe"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Megavibe
+                  </a>
+                </p>
                 <p>Live Experience App</p>
-                <p>Phase I: Fans </p>
-                <p>II: Artists III: Hosts </p>
                 <p>
                   <a
                     href="https://forms.gle/dvUemCEZ3TEJ8x1b7"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Mail + Feedback
+                    Mail List + Feedback
                   </a>
                 </p>
                 <p>
@@ -493,7 +501,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             }`}
             onClick={handleButtonClick}
           >
-            VIBE
+            MEGAVIBE
           </button>
         </div>
       )}
