@@ -3,6 +3,63 @@ import { TwitterShareButton, TwitterIcon } from 'react-share';
 import './styles.css';
 import SwipeableViews from 'react-swipeable-views-react-18-fix';
 
+// Artist data structure
+interface ArtistData {
+  name: string;
+  image: string;
+  bio: string;
+  genre: string;
+  socialLinks: {
+    spotify?: string;
+    instagram?: string;
+    twitter?: string;
+    youtube?: string;
+  };
+  songs: string[];
+}
+
+const ARTIST_DATA: Record<string, ArtistData> = {
+  Papa: {
+    name: 'Papa',
+    image: '/images/boom.jpg',
+    bio: 'Live Experience App creator and indie rock performer',
+    genre: 'Indie Rock',
+    socialLinks: {
+      spotify: 'https://spoti.fi/3FEOjci',
+      instagram: 'https://bit.ly/3FLPDKk',
+      twitter: 'https://bit.ly/3FHRTT5',
+      youtube: 'https://youtube.com/c/papajams'
+    },
+    songs: ['Chupacabra', 'Digital Dreams', 'City Lights', 'Midnight Drive', 'Electric Soul']
+  },
+  Anatu: {
+    name: 'Anatu',
+    image: '/images/boom.jpg',
+    bio: 'Nigerian-born electronic artist blending traditional Afrobeat with modern production. Known for creating immersive live experiences that bridge cultures.',
+    genre: 'Afrobeat/Electronic',
+    socialLinks: {
+      spotify: 'https://open.spotify.com/artist/anatu',
+      instagram: 'https://instagram.com/anatumusic',
+      twitter: 'https://twitter.com/anatumusic',
+      youtube: 'https://youtube.com/c/anatumusic'
+    },
+    songs: ['Lagos Nights', 'Rhythm of the Streets', 'Ancestral Beats', 'Modern Tribe', 'Electronic Sunrise', 'Digital Diaspora']
+  },
+  Andrew: {
+    name: 'Andrew',
+    image: '/images/boom.jpg',
+    bio: 'Storytelling singer-songwriter with a passion for connecting through music. Specializes in intimate acoustic performances that create deep audience connections.',
+    genre: 'Acoustic/Singer-Songwriter',
+    socialLinks: {
+      spotify: 'https://open.spotify.com/artist/andrewmusic',
+      instagram: 'https://instagram.com/andrewsongs',
+      twitter: 'https://twitter.com/andrewsongs',
+      youtube: 'https://youtube.com/c/andrewsongs'
+    },
+    songs: ['City Stories', 'Coffee Shop Tales', 'Rainy Day Thoughts', 'Hometown Memories', 'Acoustic Dreams', 'Whispered Truths']
+  }
+};
+
 type ArtistProfilesProps = {
   artist: string;
   onClose?: () => void;
@@ -54,6 +111,9 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({
   };
 
   const [totalBountyAmount, setTotalBountyAmount] = useState<number>(0);
+
+  // Get current artist data
+  const currentArtist = ARTIST_DATA[artist] || ARTIST_DATA.Papa;
 
   const handleNextSlide = () => {
     setSlideIndex(prev => Math.min(prev + 1, 3)); // 3 is the maximum index
@@ -234,40 +294,48 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({
                 →
               </div>
               <img
-                src="/images/boom.jpg"
-                alt="Artist Name"
+                src={currentArtist.image}
+                alt={currentArtist.name}
                 className="artist-image"
               />
-              <h2 className="artist-name">Papa</h2>
+              <h2 className="artist-name">{currentArtist.name}</h2>
               <div className="integrations-list">
-                <a
-                  href="https://spoti.fi/3FEOjci"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Spotify
-                </a>
-                <a
-                  href="https://bit.ly/3FLPDKk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Instagram
-                </a>
-                <a
-                  href="https://bit.ly/3FHRTT5"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Twitter/X
-                </a>
-                <a
-                  href="https://youtube.com/c/papajams"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Youtube
-                </a>
+                {currentArtist.socialLinks.spotify && (
+                  <a
+                    href={currentArtist.socialLinks.spotify}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Spotify
+                  </a>
+                )}
+                {currentArtist.socialLinks.instagram && (
+                  <a
+                    href={currentArtist.socialLinks.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Instagram
+                  </a>
+                )}
+                {currentArtist.socialLinks.twitter && (
+                  <a
+                    href={currentArtist.socialLinks.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Twitter/X
+                  </a>
+                )}
+                {currentArtist.socialLinks.youtube && (
+                  <a
+                    href={currentArtist.socialLinks.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Youtube
+                  </a>
+                )}
               </div>
 
               <button onClick={handleDoneClick} className="done-button">
@@ -292,11 +360,11 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({
                 →
               </div>
               <img
-                src="/images/boom.jpg"
-                alt="Artist Name"
+                src={currentArtist.image}
+                alt={currentArtist.name}
                 className="artist-image"
               />
-              <h2 className="artist-name">Papa</h2>
+              <h2 className="artist-name">{currentArtist.name}</h2>
 
               <select
                 className="song-dropdown"
@@ -352,7 +420,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({
 
                 <TwitterShareButton
                   url={window.location.href}
-                  title={`${artist} - live!\nMy @megavibeapp song ratings\n${leaderboardString}\n@papajimjams\nhttps://bit.ly/papaspotify\n`}
+                  title={`${currentArtist.name} - live!\nMy @megavibeapp song ratings\n${leaderboardString}\n@${currentArtist.name.toLowerCase()}\n${currentArtist.socialLinks.spotify || ''}\n`}
                   hashtags={['livemusic', 'megavibelondon']}
                   className="custom-twitter-share-button"
                   disabled={leaderboardData.length === 0}
@@ -383,11 +451,11 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({
                 →
               </div>
               <img
-                src="/images/boom.jpg"
-                alt="Artist Name"
+                src={currentArtist.image}
+                alt={currentArtist.name}
                 className="artist-image"
               />
-              <h2 className="artist-name">Papa</h2>
+              <h2 className="artist-name">{currentArtist.name}</h2>
 
               <div className="bounty-options">
                 {/* Dropdown for songs */}
@@ -395,9 +463,9 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({
                   <option value="" disabled style={{ fontStyle: 'italic' }}>
                     Bounty Song
                   </option>
-                  <option value="Isn't She Lovely">Isn't She Lovely</option>
-                  <option value="Happy Birthday">Happy Birthday</option>
-                  <option value="Under The Sea">Under The Sea</option>
+                  {currentArtist.songs.map((song, index) => (
+                    <option key={index} value={song}>{song}</option>
+                  ))}
                 </select>
 
                 <button className="set-bounty-button" onClick={handleOpenGleam}>
@@ -464,12 +532,18 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({
               </div>
 
               <img
-                src="/images/boom.jpg"
-                alt="Artist Name"
+                src={currentArtist.image}
+                alt={currentArtist.name}
                 className="artist-image"
               />
-              <h2 className="artist-name">Papa</h2>
+              <h2 className="artist-name">{currentArtist.name}</h2>
               <div className="information-box">
+                <p>
+                  {currentArtist.bio}
+                </p>
+                <p>
+                  <strong>Genre:</strong> {currentArtist.genre}
+                </p>
                 <p>
                   {' '}
                   <a

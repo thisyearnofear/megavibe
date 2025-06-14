@@ -6,10 +6,10 @@
 
 const mongoose = require("mongoose");
 const config = require("../config/env.cjs");
-const Venue = require("../models/Venue.cjs");
-const Event = require("../models/Event.cjs");
-const Song = require("../models/Song.cjs");
-const AudioSnippet = require("../models/AudioSnippet.cjs");
+const Venue = require("../models/venueModel.cjs");
+const Event = require("../models/eventModel.cjs");
+const Song = require("../models/songModel.cjs");
+const AudioSnippet = require("../models/snippetModel.cjs");
 
 async function createIndexes() {
   try {

@@ -2,11 +2,11 @@
 
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const Venue = require("../models/Venue.cjs");
-const Event = require("../models/Event.cjs");
-const Song = require("../models/Song.cjs");
-const Artist = require("../models/Artist.cjs");
-const AudioSnippet = require("../models/AudioSnippet.cjs");
+const Venue = require("../models/venueModel.cjs");
+const Event = require("../models/eventModel.cjs");
+const Song = require("../models/songModel.cjs");
+const Artist = require("../models/userModel.cjs"); // Artists are users
+const AudioSnippet = require("../models/snippetModel.cjs");
 
 // Load environment variables
 dotenv.config({ path: "../.env" });
@@ -96,6 +96,9 @@ const venues = [
 ];
 
 const artists = [
+  { name: "Papa", genre: "Indie Rock" },
+  { name: "Anatu", genre: "Afrobeat/Electronic" },
+  { name: "Andrew", genre: "Acoustic/Singer-Songwriter" },
   { name: "John Coltrane Tribute Band", genre: "Jazz" },
   { name: "The Rolling Stones Cover", genre: "Rock" },
   { name: "Indie Waves", genre: "Indie" },
@@ -109,6 +112,30 @@ const artists = [
 ];
 
 const songs = [
+  // Papa's songs
+  { title: "Chupacabra", artist: "Papa", duration: 245000 },
+  { title: "Digital Dreams", artist: "Papa", duration: 198000 },
+  { title: "City Lights", artist: "Papa", duration: 223000 },
+  { title: "Midnight Drive", artist: "Papa", duration: 267000 },
+  { title: "Electric Soul", artist: "Papa", duration: 234000 },
+
+  // Anatu's songs
+  { title: "Lagos Nights", artist: "Anatu", duration: 289000 },
+  { title: "Rhythm of the Streets", artist: "Anatu", duration: 256000 },
+  { title: "Ancestral Beats", artist: "Anatu", duration: 312000 },
+  { title: "Modern Tribe", artist: "Anatu", duration: 278000 },
+  { title: "Electronic Sunrise", artist: "Anatu", duration: 234000 },
+  { title: "Digital Diaspora", artist: "Anatu", duration: 298000 },
+
+  // Andrew's songs
+  { title: "City Stories", artist: "Andrew", duration: 187000 },
+  { title: "Coffee Shop Tales", artist: "Andrew", duration: 203000 },
+  { title: "Rainy Day Thoughts", artist: "Andrew", duration: 176000 },
+  { title: "Hometown Memories", artist: "Andrew", duration: 215000 },
+  { title: "Acoustic Dreams", artist: "Andrew", duration: 192000 },
+  { title: "Whispered Truths", artist: "Andrew", duration: 168000 },
+
+  // Original songs
   {
     title: "My Favorite Things",
     artist: "John Coltrane Tribute Band",

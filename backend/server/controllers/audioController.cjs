@@ -3,11 +3,11 @@
  * Handles audio file uploads, streaming, and management for audio snippets in the MegaVibe platform.
  */
 
-const AudioSnippet = require("../models/AudioSnippet.cjs");
+const AudioSnippet = require("../models/snippetModel.cjs");
 const asyncHandler = require("express-async-handler");
 const fs = require("fs");
 const path = require("path");
-const { uploadToIPFS } = require("../services/ipfs.cjs");
+const { uploadToIPFS } = require("../services/ipfsService.cjs");
 
 // Define upload directory for local storage (fallback if IPFS fails)
 const UPLOAD_DIR = path.join(__dirname, "..", "uploads", "snippets");

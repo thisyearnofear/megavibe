@@ -1,9 +1,9 @@
 // eventSimulator.cjs - Service to simulate live events for MegaVibe
 
-const Event = require("../models/Event.cjs");
-const Song = require("../models/Song.cjs");
-const Tip = require("../models/Tip.cjs");
-const Reaction = require("../models/Reaction.cjs");
+const Event = require("../models/eventModel.cjs");
+const Song = require("../models/songModel.cjs");
+const Tip = require("../models/tipModel.cjs");
+const Reaction = require("../models/reactionModel.cjs");
 const io = require("socket.io-client");
 
 // Connect to WebSocket server for real-time updates

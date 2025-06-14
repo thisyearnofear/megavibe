@@ -40,7 +40,6 @@ function ArtistSelection({
           <option
             key={artist}
             value={artist}
-            disabled={artist === 'Anatu' || artist === 'Andrew'}
           >
             {artist}
           </option>

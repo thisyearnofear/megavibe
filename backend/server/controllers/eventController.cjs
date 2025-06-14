@@ -4,8 +4,8 @@
  * Events represent live performances or setlists at venues.
  */
 
-const Event = require("../models/Event.cjs");
-const Venue = require("../models/Venue.cjs");
+const Event = require("../models/eventModel.cjs");
+const Venue = require("../models/venueModel.cjs");
 const asyncHandler = require("express-async-handler");
 
 // @desc    Get all events

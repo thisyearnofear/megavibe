@@ -1,5 +1,5 @@
-const Joi = require('joi');
-const { validationResult } = require('express-validator'); // Import validationResult
+const Joi = require("joi");
+const { validationResult } = require("express-validator"); // Import validationResult
 
 const paymentSchema = Joi.object({
   amount: Joi.number().required(),
@@ -51,6 +51,17 @@ const validateQuery = (validations) => (req, res, next) => {
   next();
 };
 
+const validateRequest = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      message: "Validation failed",
+      errors: errors.array(),
+    });
+  }
+  next();
+};
+
 const handleErrors = (err, req, res, next) => {
   res.status(err.statusCode || 500).json({
     message: err.message,
@@ -62,5 +73,6 @@ module.exports = {
   validateUserSession,
   validateUser,
   validateQuery,
+  validateRequest,
   handleErrors,
 };

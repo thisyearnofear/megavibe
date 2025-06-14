@@ -1,0 +1,531 @@
+.connection-hub {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  color: white;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Detection Status */
+.detection-status {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.status-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 20px;
+}
+
+.status-indicator.detecting .status-icon {
+  background: #ffd700;
+}
+
+.status-indicator.connected .status-icon {
+  background: #4caf50;
+}
+
+.status-indicator.error .status-icon {
+  background: #f44336;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.status-text {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.detection-time {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.fast-badge {
+  background: #4caf50;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Venue Info */
+.venue-info {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.venue-info h2 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.venue-address {
+  margin: 0 0 15px 0;
+  opacity: 0.8;
+  font-size: 16px;
+}
+
+.venue-stats {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+}
+
+.venue-stats span {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+/* Current Speakers */
+.current-speakers {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.current-speakers h3 {
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.speakers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.speaker-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  gap: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.speaker-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.speaker-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.speaker-title {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.speaker-expertise {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.expertise-tag {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.social-proof {
+  display: flex;
+  gap: 15px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* Session Context */
+.session-context {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.session-context h3 {
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.current-event {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.current-event h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.current-event p {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.event-time {
+  font-size: 12px;
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+.upcoming-events h4 {
+  margin: 15px 0 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.upcoming-event {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.upcoming-event:last-child {
+  border-bottom: none;
+}
+
+.event-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.event-time {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* Expertise Matches */
+.expertise-matches {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.expertise-matches h3 {
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.matches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+.match-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.match-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.attendee-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 10px;
+}
+
+.match-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.match-activity {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.match-expertise {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.reputation-badge {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-bottom: 15px;
+}
+
+.connect-btn {
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.connect-btn:hover {
+  background: linear-gradient(135deg, #45a049, #4caf50);
+  transform: translateY(-1px);
+}
+
+/* All Attendees */
+.all-attendees {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.all-attendees h3 {
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.attendees-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.attendee-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.attendee-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.attendee-avatar-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.attendee-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.attendee-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.attendee-activity {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.attendee-reputation {
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.connect-btn-small {
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.connect-btn-small:hover {
+  background: linear-gradient(135deg, #45a049, #4caf50);
+  transform: translateY(-1px);
+}
+
+/* Manual Detection Button */
+.detect-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.detect-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #764ba2, #667eea);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.detect-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .connection-hub {
+    padding: 15px;
+    margin: 10px;
+    border-radius: 15px;
+  }
+
+  .speakers-grid,
+  .matches-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .speaker-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .venue-stats {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .upcoming-event {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.venue-info,
+.current-speakers,
+.session-context,
+.expertise-matches,
+.all-attendees {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Scrollbar Styling */
+.attendees-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.attendees-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.attendees-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.attendees-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
