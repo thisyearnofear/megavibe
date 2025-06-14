@@ -10,8 +10,7 @@
     "test": "jest --env=node",
     "test:setup": "node setEnvVars.js && jest",
     "seed": "node server/data/cryptoEventsSeed.cjs",
-    "seed:crypto": "node server/data/cryptoEventsSeed.cjs",
-    "postinstall": "npm run seed:crypto"
+    "seed:crypto": "node server/data/cryptoEventsSeed.cjs"
   },
   "dependencies": {
     "@stripe/stripe-js": "^2.1.7",

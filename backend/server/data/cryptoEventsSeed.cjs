@@ -547,6 +547,17 @@ module.exports = {
 
 // Run seeding if called directly
 if (require.main === module) {
+  // Check if MONGO_URI is available
+  if (!process.env.MONGO_URI) {
+    console.log(
+      "⏭️  Skipping seeding: MONGO_URI environment variable not found"
+    );
+    console.log(
+      "This is normal in CI/CD environments or when MongoDB is not configured"
+    );
+    process.exit(0);
+  }
+
   // Connect directly to MongoDB without using the db service
   mongoose
     .connect(process.env.MONGO_URI, {
