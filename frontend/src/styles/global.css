@@ -66,12 +66,12 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(26, 15, 10, 0.8);
+  background-color: rgba(15, 10, 8, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: var(--z-modal);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
   padding: var(--space-lg);
 }
 
@@ -86,11 +86,125 @@ body {
   animation: slideUp 0.3s ease-out;
   margin: auto;
   width: 100%;
+  border: 2px solid var(--gray-100);
+}
+
+/* Modal Header */
+.modal-header {
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.modal-header h2 {
+  color: var(--primary);
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Modal Body */
+.modal-body {
+  padding: var(--space-lg);
+}
+
+.modal-body h3 {
+  color: var(--primary);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  margin: 0 0 var(--space-md) 0;
+}
+
+.modal-body p {
+  color: var(--gray-700);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  background: none;
+  border: none;
+  color: var(--gray-500);
+  font-size: var(--font-size-2xl);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: var(--space-xs);
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  color: var(--primary);
+  background-color: var(--gray-100);
+  transform: scale(1.1);
 }
 
 .venue-picker-modal {
   max-width: 600px;
   margin: 0 auto;
+}
+
+/* Tutorial Modal Responsive Design */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: var(--space-md);
+  }
+
+  .modal {
+    max-width: 95vw;
+    max-height: 85vh;
+  }
+
+  .modal-header h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .modal-body h3 {
+    font-size: var(--font-size-lg);
+  }
+
+  .modal-body p {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
+
+  .close-btn {
+    top: var(--space-sm);
+    right: var(--space-sm);
+    font-size: var(--font-size-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: var(--space-sm);
+  }
+
+  .modal-header {
+    padding: var(--space-md) var(--space-md) var(--space-sm);
+  }
+
+  .modal-body {
+    padding: var(--space-md);
+  }
+
+  .modal-header h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  .modal-body h3 {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-sm);
+  }
 }
 
 /* Loading states */

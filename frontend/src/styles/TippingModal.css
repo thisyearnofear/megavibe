@@ -15,13 +15,13 @@
 }
 
 .tipping-modal-content {
-  background-color: var(--surface-color);
-  border-radius: var(--border-radius);
+  background-color: var(--white);
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
   width: 90%;
   max-width: 450px;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(123, 104, 238, 0.2);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--gray-200);
   position: relative;
   animation: slideUp 0.3s ease-out;
 }
@@ -34,8 +34,8 @@
 .tipping-modal-header h2 {
   margin: 0 0 0.5rem 0;
   font-size: 1.5rem;
-  color: var(--text-color);
-  text-shadow: var(--glow);
+  color: var(--primary);
+  text-shadow: none;
 }
 
 .tipping-modal-header p {

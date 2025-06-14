@@ -285,8 +285,8 @@ function App() {
                       <div className="welcome-screen">
                         <div className="welcome-hero">
                           <h1 className="welcome-title">
-                            The Future of{' '}
-                            <span className="brand-gradient">LIVE MUSIC</span>
+                            TURN UP. TUNE IN.{' '}
+                            <span className="brand-gradient">VIBE OUT.</span>
                           </h1>
                           <p className="welcome-subtitle">
                             <strong>MegaVibe</strong> is Shazam for live performances.
@@ -401,54 +401,61 @@ function App() {
                   <div
                     className="modal"
                     style={{
-                      maxWidth: '500px',
-                      backgroundColor: 'var(--surface-color)',
-                      color: 'var(--text-color)',
+                      maxWidth: '520px',
                     }}
                   >
                     <button className="close-btn" onClick={handleSkipTutorial}>
                       ×
                     </button>
                     <div className="modal-header">
-                      <h2 style={{ margin: 0 }}>Welcome to MegaVibe!</h2>
+                      <h2>Welcome to MegaVibe!</h2>
+                      <p style={{
+                        color: 'var(--gray-600)',
+                        fontSize: 'var(--font-size-base)',
+                        margin: 'var(--space-sm) 0 0 0',
+                        fontWeight: '400'
+                      }}>
+                        Step {tutorialStep + 1} of 4
+                      </p>
                     </div>
                     <div className="modal-body">
                       {tutorialStep === 0 && (
                         <>
-                          <h3>Step 1: Explore Venues</h3>
+                          <h3>🎵 Explore Venues</h3>
                           <p>
-                            Use the venue selector to find live music events
+                            Use the venue selector to find live performances
                             near you. Click on "Select Venue" to explore
-                            available locations.
+                            available locations and discover what's happening now.
                           </p>
                         </>
                       )}
                       {tutorialStep === 1 && (
                         <>
-                          <h3>Step 2: Discover Live Music</h3>
+                          <h3>🎤 Discover Live Performances</h3>
                           <p>
                             In the "Live Music" tab, you can see current events
                             at your selected venue and interact with the
-                            MegaVibe button to identify songs.
+                            MegaVibe button to identify songs and performances.
                           </p>
                         </>
                       )}
                       {tutorialStep === 2 && (
                         <>
-                          <h3>Step 3: Connect with Social Feed</h3>
+                          <h3>📱 Connect with Social Feed</h3>
                           <p>
                             Switch to the "Social Feed" tab to browse audio
                             snippets, connect with artists, and share your own
-                            content.
+                            content from live performances.
                           </p>
                         </>
                       )}
                       {tutorialStep === 3 && (
                         <>
-                          <h3>Step 4: Support Artists</h3>
+                          <h3>💰 Support Artists</h3>
                           <p>
                             Connect your wallet to send tips directly to
                             performers using cryptocurrency during live events.
+                            Help support the artists you love!
                           </p>
                         </>
                       )}
@@ -456,7 +463,9 @@ function App() {
                         style={{
                           display: 'flex',
                           justifyContent: 'space-between',
-                          marginTop: '1.5rem',
+                          alignItems: 'center',
+                          marginTop: 'var(--space-xl)',
+                          gap: 'var(--space-md)',
                         }}
                       >
                         <button
@@ -465,6 +474,24 @@ function App() {
                         >
                           Skip Tutorial
                         </button>
+                        <div style={{
+                          display: 'flex',
+                          gap: 'var(--space-xs)',
+                          alignItems: 'center'
+                        }}>
+                          {[0, 1, 2, 3].map((step) => (
+                            <div
+                              key={step}
+                              style={{
+                                width: '8px',
+                                height: '8px',
+                                borderRadius: '50%',
+                                backgroundColor: step <= tutorialStep ? 'var(--accent)' : 'var(--gray-300)',
+                                transition: 'all var(--transition-fast)',
+                              }}
+                            />
+                          ))}
+                        </div>
                         <button
                           className="btn btn-primary"
                           onClick={() => {

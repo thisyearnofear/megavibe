@@ -15,13 +15,13 @@
 }
 
 .bounty-modal-content {
-  background-color: var(--surface-color);
-  border-radius: var(--border-radius);
+  background-color: var(--white);
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
   width: 90%;
   max-width: 500px;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(123, 104, 238, 0.2);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--gray-200);
   position: relative;
   animation: slideUp 0.3s ease-out;
 }
@@ -34,12 +34,12 @@
 .bounty-modal-header h2 {
   margin: 0 0 0.5rem 0;
   font-size: 1.5rem;
-  color: var(--text-color);
-  text-shadow: var(--glow);
+  color: var(--primary);
+  text-shadow: none;
 }
 
 .bounty-modal-header p {
-  color: var(--text-muted);
+  color: var(--gray-600);
   margin: 0;
 }
 
@@ -49,23 +49,23 @@
   right: 0.5rem;
   background: none;
   border: none;
-  color: var(--text-muted);
+  color: var(--gray-500);
   font-size: 1.5rem;
   cursor: pointer;
-  transition: var(--transition);
+  transition: var(--transition-fast);
   padding: 0.2rem;
   line-height: 1;
 }
 
 .bounty-close-button:hover {
-  color: var(--text-color);
+  color: var(--primary);
   transform: scale(1.1);
 }
 
 .bounty-description {
   margin-bottom: 1.5rem;
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: var(--gray-600);
   text-align: center;
 }
 

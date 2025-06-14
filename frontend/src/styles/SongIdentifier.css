@@ -15,15 +15,15 @@
 }
 
 .song-identifier-content {
-  background-color: var(--surface-color);
-  border-radius: var(--border-radius);
+  background-color: var(--white);
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
   width: 90%;
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(123, 104, 238, 0.2);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--gray-200);
   position: relative;
   animation: slideUp 0.3s ease-out;
 }
@@ -39,8 +39,8 @@
 .spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid var(--border-color);
-  border-top: 4px solid var(--primary-color);
+  border: 4px solid var(--gray-200);
+  border-top: 4px solid var(--accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
@@ -52,16 +52,16 @@
   right: 0.5rem;
   background: none;
   border: none;
-  color: var(--text-muted);
+  color: var(--gray-500);
   font-size: 1.5rem;
   cursor: pointer;
-  transition: var(--transition);
+  transition: var(--transition-fast);
   padding: 0.2rem;
   line-height: 1;
 }
 
 .close-button:hover {
-  color: var(--text-color);
+  color: var(--primary);
   transform: scale(1.1);
 }
 
