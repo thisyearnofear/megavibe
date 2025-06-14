@@ -222,8 +222,8 @@ export const EnhancedWalletConnector: React.FC<
             <div className="connect-prompt">
               <h3>Connect Your Wallet</h3>
               <p>
-                Connect your wallet to start tipping artists and identifying
-                songs
+                Set bounties and tips, or earn (from) them, monetize live content
+          
               </p>
             </div>
 

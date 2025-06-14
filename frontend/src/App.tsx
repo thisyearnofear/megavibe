@@ -196,7 +196,7 @@ function App() {
                       }`}
                       onClick={() => setActiveView('live')}
                     >
-                      🎵 Live Music
+                      🎵 Live Vibes
                     </button>
                     <button
                       className={`nav-tab ${
@@ -325,7 +325,7 @@ function App() {
                               </div>
                             </div>
                             <h3>💰 Bounty Requests</h3>
-                            <p><strong>Pay for Content:</strong> Create bounties for specific performances - "50 USDC for funniest crypto talk" - and watch creators compete.</p>
+                            <p><strong>Pay for Content:</strong> Create bounties for specific performances - "50 USDC for funniest ZK proofs talk" - foster fun incentives.</p>
                           </div>
                           <div className="feature-card" onClick={() => handleFeatureCardClick('tokenization')}>
                             <div className="feature-icon-wrapper">
@@ -343,7 +343,7 @@ function App() {
                               </div>
                             </div>
                             <h3>⚡ Live Influence</h3>
-                            <p><strong>Shape Performances:</strong> Tips and audience reactions influence what happens on stage in real-time. Your voice matters.</p>
+                            <p><strong>Shape Reality:</strong> Tips and audience reactions influence what happens on stage in real-time. Your voice matters.</p>
                           </div>
                           <div className="feature-card" onClick={() => handleFeatureCardClick('reputation')}>
                             <div className="feature-icon-wrapper">
