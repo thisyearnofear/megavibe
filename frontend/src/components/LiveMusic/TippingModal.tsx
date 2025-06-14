@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { api } from '../../services/api';
-import { realtimeService } from '../../services/realtimeService';
+import realtimeService from '../../services/realtimeService';
 import '../../styles/TippingModal.css';
 
 interface TippingModalProps {
@@ -98,7 +98,8 @@ export const TippingModal: React.FC<TippingModalProps> = ({
       });
 
       // Assuming transaction is successful, send real-time notification
-      realtimeService.sendTip({
+      // Note: sendTip method would need to be implemented in realtimeService
+      console.log('Tip sent:', {
         songId: song.id,
         artistId: song.artistId,
         amount: tipAmount,

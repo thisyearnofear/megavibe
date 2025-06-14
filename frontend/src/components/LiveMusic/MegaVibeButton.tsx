@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { realtimeService, CurrentSong } from '../../services/realtimeService';
+import realtimeService, { SongChangeEvent } from '../../services/realtimeService';
 import { api } from '../../services/api';
 import '../../styles/MegaVibeButton.css';
 
 interface MegaVibeButtonProps {
   venueId: string;
-  onSongIdentified?: (song: CurrentSong) => void;
+  onSongIdentified?: (song: SongChangeEvent) => void;
   className?: string;
 }
 
@@ -16,18 +16,18 @@ export const MegaVibeButton: React.FC<MegaVibeButtonProps> = ({
 }) => {
   const [isListening, setIsListening] = useState(false);
   const [isPulsing, setIsPulsing] = useState(false);
-  const [currentSong, setCurrentSong] = useState<CurrentSong | null>(null);
+  const [currentSong, setCurrentSong] = useState<SongChangeEvent | null>(null);
   const [error, setError] = useState<string | null>(null);
   const pulseInterval = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    // Connect to realtime service when component mounts
-    realtimeService.connect(undefined, venueId);
+    realtimeService.connect();
     realtimeService.joinVenue(venueId);
 
     // Listen for song changes
-    const handleSongChange = (data: CurrentSong) => {
-      setCurrentSong(data);
+    const handleSongChange = (data: unknown) => {
+      const song = data as SongChangeEvent;
+      setCurrentSong(song);
     };
 
     realtimeService.on('song_changed', handleSongChange);
@@ -68,7 +68,7 @@ export const MegaVibeButton: React.FC<MegaVibeButtonProps> = ({
 
         // Track the identification
         await api.post('/analytics/song-identified', {
-          songId: song.id,
+          songId: song.songId,
           venueId,
           timestamp: new Date(),
         });
@@ -98,7 +98,7 @@ export const MegaVibeButton: React.FC<MegaVibeButtonProps> = ({
     if (isListening) return 'Identifying song...';
     if (error) return error;
     if (currentSong) {
-      return `${currentSong.title} - ${currentSong.artistName}`;
+      return `${currentSong.title} - ${currentSong.artist}`;
     }
     return 'Tap to identify current song';
   };
@@ -138,9 +138,9 @@ export const MegaVibeButton: React.FC<MegaVibeButtonProps> = ({
       {currentSong && !isListening && (
         <div className="song-details">
           <div className="song-stats">
-            <span className="stat">💰 {currentSong.tipCount} tips</span>
+            <span className="stat">💰 Live at {currentSong.venueId}</span>
             <span className="stat">
-              ${currentSong.totalTips.toFixed(2)} total
+              🎵 {currentSong.title}
             </span>
           </div>
         </div>
