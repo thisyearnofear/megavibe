@@ -1,0 +1,325 @@
+/* ===========================
+   VenuePicker Component Styles
+   =========================== */
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+/* Location Prompt */
+.locationPrompt {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  color: white;
+  text-align: center;
+}
+
+.promptContent h3 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-3);
+  color: white;
+}
+
+.promptContent p {
+  font-size: var(--font-size-base);
+  margin-bottom: var(--space-4);
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+.promptActions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.promptActions .btn {
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-base);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-size: var(--font-size-base);
+}
+
+.promptActions .btn-primary {
+  background: white;
+  color: var(--color-primary);
+}
+
+.promptActions .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+}
+
+.promptActions .btn-outline {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.promptActions .btn-outline:hover {
+  background: white;
+  color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+/* Search Section */
+.searchContainer {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.searchInput {
+  flex: 1;
+}
+
+.searchButton {
+  white-space: nowrap;
+}
+
+/* Venues List */
+.venuesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: var(--space-2);
+}
+
+/* Venue Card */
+.venueCard {
+  background-color: var(--color-surface);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.venueCard:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.venueCard.selected {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface-light);
+}
+
+.venueCard.selected::before {
+  content: '✓';
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+}
+
+.venueCard.inactive {
+  opacity: 0.7;
+}
+
+/* Venue Info */
+.venueInfo {
+  margin-bottom: var(--space-3);
+}
+
+.venueName {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.venueAddress {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.venueDistance {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Current Event */
+.currentEvent {
+  background-color: var(--color-surface-light);
+  border-radius: var(--radius-base);
+  padding: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.eventBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  background-color: var(--color-success);
+  color: white;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  margin-bottom: var(--space-2);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.eventBadge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background-color: white;
+  border-radius: var(--radius-full);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.eventName {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.eventArtists {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Venue Status */
+.venueStatus {
+  margin-top: var(--space-3);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: var(--color-surface-light);
+  color: var(--color-text-muted);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-sm);
+}
+
+/* Location Info */
+.locationInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+.statusText {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.refreshButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Help Text */
+.helpText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-2);
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  color: var(--color-text-muted);
+}
+
+.emptyStateIcon {
+  font-size: var(--font-size-4xl);
+  margin-bottom: var(--space-4);
+  opacity: 0.5;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+  }
+
+  .venuesList {
+    max-height: 300px;
+  }
+
+  .venueCard {
+    padding: var(--space-4);
+  }
+
+  .searchContainer {
+    flex-direction: column;
+  }
+
+  .searchButton {
+    width: 100%;
+  }
+
+  .promptActions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .promptActions .btn {
+    width: 100%;
+    max-width: 250px;
+  }
+
+  .locationInfo {
+    flex-direction: column;
+    gap: var(--space-3);
+    text-align: center;
+  }
+}

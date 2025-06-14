@@ -1,0 +1,211 @@
+/* ===========================
+   MEGAVIBE Global Styles v2.0
+   =========================== */
+
+/* Import the new design system */
+@import './design-system.css';
+
+/* Additional legacy component imports for compatibility */
+@import './animations.css';
+
+/* Global overrides and additional styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  /* Design system handles base styles */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Legacy compatibility classes */
+.text-muted {
+  color: var(--gray-500);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+.text-secondary {
+  color: var(--secondary);
+}
+
+.text-success {
+  color: var(--success);
+}
+
+.text-warning {
+  color: var(--warning);
+}
+
+.text-error {
+  color: var(--error);
+}
+
+/* Spacing utilities for backward compatibility */
+.space-y-xs > * + * { margin-top: var(--space-xs); }
+.space-y-sm > * + * { margin-top: var(--space-sm); }
+.space-y-md > * + * { margin-top: var(--space-md); }
+.space-y-lg > * + * { margin-top: var(--space-lg); }
+.space-y-xl > * + * { margin-top: var(--space-xl); }
+.space-y-2xl > * + * { margin-top: var(--space-2xl); }
+
+/* Width utilities */
+.w-full { width: 100%; }
+.w-16 { width: 4rem; }
+.h-16 { height: 4rem; }
+
+/* Border utilities */
+.border-t { border-top: var(--border-width) solid var(--gray-100); }
+.border-b { border-bottom: var(--border-width) solid var(--gray-100); }
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(26, 15, 10, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  backdrop-filter: blur(4px);
+  padding: var(--space-lg);
+}
+
+.modal {
+  background-color: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+  animation: slideUp 0.3s ease-out;
+  margin: auto;
+  width: 100%;
+}
+
+.venue-picker-modal {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Loading states */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  padding: var(--space-4xl);
+  color: var(--gray-500);
+  min-height: 200px;
+}
+
+/* Error states */
+.error-container {
+  background-color: rgba(255, 87, 87, 0.1);
+  border: var(--border-width) solid var(--error);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  color: var(--error);
+}
+
+/* Empty states */
+.empty-state {
+  text-align: center;
+  padding: var(--space-4xl) var(--space-2xl);
+  color: var(--gray-500);
+}
+
+.empty-state-icon {
+  font-size: var(--font-size-6xl);
+  margin-bottom: var(--space-lg);
+  opacity: 0.5;
+}
+
+/* Focus management */
+.focus-trap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card {
+    border: 2px solid var(--primary);
+  }
+
+  .btn {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Print styles */
+@media print {
+  .app-nav,
+  .modal-overlay,
+  .btn,
+  .loading-container {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .card {
+    border: 1px solid #ccc;
+    break-inside: avoid;
+  }
+}
+
+/* Legacy scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+}
+
+/* Firefox scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-300) var(--light);
+}

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import ArtistSelection from "./ArtistSelection";
-import ArtistProfiles from "./ArtistProfiles";
+import React, { useState } from 'react';
+import ArtistSelection from './ArtistSelection';
+import ArtistProfiles from './ArtistProfiles';
 
 type ParentComponentProps = {
   onSelect: (selectedArtist: string) => void;

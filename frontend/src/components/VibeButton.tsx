@@ -1,9 +1,9 @@
-import React, { useRef, useState } from "react";
-import "./styles.css";
-import SwipeableViews from "react-swipeable-views";
+import React, { useRef, useState } from 'react';
+import './styles.css';
+import SwipeableViews from 'react-swipeable-views';
 // import PaymentDialog from "./PaymentDialog"; // Import the PaymentDialog component
 
-type EmojiKey = "emoji1" | "emoji2" | "emoji3";
+type EmojiKey = 'emoji1' | 'emoji2' | 'emoji3';
 
 type EmojiCounts = {
   emoji1: number;
@@ -21,24 +21,24 @@ const VibeButton: React.FC = () => {
   const [slideIndex, setSlideIndex] = React.useState(0);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
-  const [selectedSong, setSelectedSong] = useState<string>("");
-  const [selectedAction, setSelectedAction] = useState<string>("");
+  const [selectedSong, setSelectedSong] = useState<string>('');
+  const [selectedAction, setSelectedAction] = useState<string>('');
 
   const handleOpenPaymentDialog = (
     songName: string | null,
     actionType: string | null
   ) => {
-    console.log("Opening payment dialog"); // Add this line for debugging
-    console.log("isPaymentDialogOpen:", isPaymentDialogOpen); // Add this line for debugging
+    console.log('Opening payment dialog'); // Add this line for debugging
+    console.log('isPaymentDialogOpen:', isPaymentDialogOpen); // Add this line for debugging
 
-    setSelectedSong(songName || "");
-    setSelectedAction(actionType || "");
+    setSelectedSong(songName || '');
+    setSelectedAction(actionType || '');
     setIsPaymentDialogOpen(true);
   };
 
   const handleClosePaymentDialog = () => {
-    console.log("Closing payment dialog"); // Add this line for debugging
-    console.log("isPaymentDialogOpen:", isPaymentDialogOpen); // Add this line for debugging
+    console.log('Closing payment dialog'); // Add this line for debugging
+    console.log('isPaymentDialogOpen:', isPaymentDialogOpen); // Add this line for debugging
 
     setIsPaymentDialogOpen(false);
   };
@@ -56,15 +56,15 @@ const VibeButton: React.FC = () => {
   const [totalBountyAmount, setTotalBountyAmount] = useState<number>(0);
 
   const handleNextSlide = () => {
-    setSlideIndex((prev) => Math.min(prev + 1, 2)); // 2 is the maximum index
+    setSlideIndex(prev => Math.min(prev + 1, 2)); // 2 is the maximum index
   };
 
   const handlePrevSlide = () => {
-    setSlideIndex((prev) => Math.max(prev - 1, 0)); // 0 is the minimum index
+    setSlideIndex(prev => Math.max(prev - 1, 0)); // 0 is the minimum index
   };
 
   const handleButtonClick = () => {
-    console.log("Button clicked"); // Add this line for debugging
+    console.log('Button clicked'); // Add this line for debugging
     setIsSpinning(true);
     setTimeout(() => {
       setIsMorphed(true);
@@ -84,7 +84,7 @@ const VibeButton: React.FC = () => {
   };
 
   const handleEmojiClick = (emoji: EmojiKey) => {
-    setEmojiCounts((prev) => {
+    setEmojiCounts(prev => {
       let newCount = prev[emoji] + 1;
 
       // If count reaches 10, reset to 1 on next click
@@ -109,15 +109,15 @@ const VibeButton: React.FC = () => {
       // Show feedback message only when count is increasing
       if (newCount % 5 === 0 && newCount !== 10) {
         const messages = [
-          "Vibes!",
-          "Amazing!",
-          "Jaysus!",
-          "Woop!",
-          "Yeehar!",
-          "Pow!",
-          "Zing!",
-          "Chee!",
-          "Yes!",
+          'Vibes!',
+          'Amazing!',
+          'Jaysus!',
+          'Woop!',
+          'Yeehar!',
+          'Pow!',
+          'Zing!',
+          'Chee!',
+          'Yes!',
         ];
         const randomMessage =
           messages[Math.floor(Math.random() * messages.length)];
@@ -143,7 +143,7 @@ const VibeButton: React.FC = () => {
   // Function to handle tip button clicks
   const handleTipClick = (amount: number) => {
     // Add the tip amount to the total amount
-    setTotalAmount((prevTotal) => prevTotal + amount);
+    setTotalAmount(prevTotal => prevTotal + amount);
   };
 
   return (
@@ -152,11 +152,11 @@ const VibeButton: React.FC = () => {
         <>
           <SwipeableViews
             index={slideIndex}
-            onChangeIndex={(index) => setSlideIndex(index)}
+            onChangeIndex={index => setSlideIndex(index)}
           >
             {/* Mini Profile Page */}
             <div
-              className={`artist-profile ${isMorphed ? "visible" : ""}`}
+              className={`artist-profile ${isMorphed ? 'visible' : ''}`}
               ref={profileRef}
             >
               {/* Arrows */}
@@ -215,7 +215,7 @@ const VibeButton: React.FC = () => {
               </button>
             </div>
             {/* VibeCheck Page */}
-            <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
+            <div className={`artist-profile ${isMorphed ? 'visible' : ''}`}>
               <div className="arrow left" onClick={handlePrevSlide}>
                 ←
               </div>
@@ -237,17 +237,17 @@ const VibeButton: React.FC = () => {
                   Chupacabra
                 </a>
                 <div className="emojis">
-                  <button onClick={() => handleEmojiClick("emoji1")}>
+                  <button onClick={() => handleEmojiClick('emoji1')}>
                     🤘🏿 {emojiCounts.emoji1}
                   </button>
-                  <button onClick={() => handleEmojiClick("emoji2")}>
+                  <button onClick={() => handleEmojiClick('emoji2')}>
                     🥹 {emojiCounts.emoji2}
                   </button>
-                  <button onClick={() => handleEmojiClick("emoji3")}>
+                  <button onClick={() => handleEmojiClick('emoji3')}>
                     🔥 {emojiCounts.emoji3}
                   </button>
                 </div>
-                <div className="emoji-feedback">{feedbackMessage}</div>{" "}
+                <div className="emoji-feedback">{feedbackMessage}</div>{' '}
                 {/* Moved feedback message here */}
               </div>
               <div className="song">
@@ -259,17 +259,17 @@ const VibeButton: React.FC = () => {
                   Black Man
                 </a>
                 <div className="emojis">
-                  <button onClick={() => handleEmojiClick("emoji1")}>
+                  <button onClick={() => handleEmojiClick('emoji1')}>
                     🤘🏿 {emojiCounts.emoji1}
                   </button>
-                  <button onClick={() => handleEmojiClick("emoji2")}>
+                  <button onClick={() => handleEmojiClick('emoji2')}>
                     🥹 {emojiCounts.emoji2}
                   </button>
-                  <button onClick={() => handleEmojiClick("emoji3")}>
+                  <button onClick={() => handleEmojiClick('emoji3')}>
                     🔥 {emojiCounts.emoji3}
                   </button>
                 </div>
-                <div className="emoji-feedback">{feedbackMessage}</div>{" "}
+                <div className="emoji-feedback">{feedbackMessage}</div>{' '}
                 {/* Moved feedback message here */}
               </div>
               <button onClick={handleDoneClick} className="done-button">
@@ -277,7 +277,7 @@ const VibeButton: React.FC = () => {
               </button>
             </div>
             {/* Bounty Page */}
-            <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
+            <div className={`artist-profile ${isMorphed ? 'visible' : ''}`}>
               <div className="arrow left" onClick={handlePrevSlide}>
                 ←
               </div>
@@ -293,7 +293,7 @@ const VibeButton: React.FC = () => {
 
               {/* Dropdown for songs */}
               <select className="song-dropdown" defaultValue="">
-                <option value="" disabled style={{ fontStyle: "italic" }}>
+                <option value="" disabled style={{ fontStyle: 'italic' }}>
                   Pick A Song
                 </option>
                 <option value="song1">On My Way</option>
@@ -324,7 +324,7 @@ const VibeButton: React.FC = () => {
 
               <div className="tally-box">
                 <div className="total-amount-box">
-                  {" "}
+                  {' '}
                   <span>Total: £{totalAmount}</span>
                 </div>
                 <button className="clear-button" onClick={handleClearTotal}>
@@ -336,7 +336,7 @@ const VibeButton: React.FC = () => {
               <button
                 className="set-bounty-button"
                 onClick={() =>
-                  handleOpenPaymentDialog(selectedSong, "Set A Bounty")
+                  handleOpenPaymentDialog(selectedSong, 'Set A Bounty')
                 }
               >
                 Set As Bounty To Play It
@@ -346,7 +346,7 @@ const VibeButton: React.FC = () => {
               <button
                 className="send-tip-button"
                 onClick={() =>
-                  handleOpenPaymentDialog(selectedSong, "Send As A Thank You")
+                  handleOpenPaymentDialog(selectedSong, 'Send As A Thank You')
                 }
               >
                 Send As A Thank You
@@ -358,9 +358,9 @@ const VibeButton: React.FC = () => {
             </div>
 
             <div className="nav-indicators">
-              <div className={`dot ${activeIndex === 0 ? "active" : ""}`}></div>
-              <div className={`dot ${activeIndex === 1 ? "active" : ""}`}></div>
-              <div className={`dot ${activeIndex === 2 ? "active" : ""}`}></div>
+              <div className={`dot ${activeIndex === 0 ? 'active' : ''}`}></div>
+              <div className={`dot ${activeIndex === 1 ? 'active' : ''}`}></div>
+              <div className={`dot ${activeIndex === 2 ? 'active' : ''}`}></div>
             </div>
           </SwipeableViews>
         </>
@@ -369,7 +369,7 @@ const VibeButton: React.FC = () => {
           {/* Add a specific class for the "MEGA VIBE" button */}
           <button
             className={`button-class custom-mega-vibe-button ${
-              isSpinning ? "spinning" : ""
+              isSpinning ? 'spinning' : ''
             }`}
             onClick={handleButtonClick}
           >

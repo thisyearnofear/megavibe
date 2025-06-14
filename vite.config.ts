@@ -3,12 +3,19 @@ import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  root: "./frontend/src",
+  root: "./frontend",
   plugins: [react()],
   define: {
     "process.env": process.env,
   },
   build: {
-    outDir: "build", // Add this line
+    outDir: "dist",
+  },
+  server: {
+    port: 5173,
+    host: true,
+  },
+  resolve: {
+    dedupe: ["react", "react-dom"],
   },
 });

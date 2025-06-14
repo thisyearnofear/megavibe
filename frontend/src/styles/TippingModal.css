@@ -1,0 +1,231 @@
+/* Tipping Modal Styles */
+.tipping-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.tipping-modal-content {
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(123, 104, 238, 0.2);
+  position: relative;
+  animation: slideUp 0.3s ease-out;
+}
+
+.tipping-modal-header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.tipping-modal-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  color: var(--text-color);
+  text-shadow: var(--glow);
+}
+
+.tipping-modal-header p {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.tipping-close-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 0.2rem;
+  line-height: 1;
+}
+
+.tipping-close-button:hover {
+  color: var(--text-color);
+  transform: scale(1.1);
+}
+
+.tipping-amounts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.tipping-amount {
+  background-color: var(--surface-light);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius);
+  padding: 1rem 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.tipping-amount:hover {
+  background-color: rgba(123, 104, 238, 0.2);
+  transform: translateY(-2px);
+}
+
+.tipping-amount.selected {
+  background-color: rgba(123, 104, 238, 0.3);
+  border-color: var(--primary-color);
+  box-shadow: var(--glow);
+}
+
+.tipping-amount::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, transparent 70%, rgba(123, 104, 238, 0.1));
+  z-index: -1;
+}
+
+.tipping-custom-amount {
+  margin-bottom: 1.5rem;
+}
+
+.tipping-custom-amount label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.tipping-custom-input {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--surface-light);
+  color: var(--text-color);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.tipping-custom-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: var(--glow);
+}
+
+.tipping-message {
+  margin-bottom: 1.5rem;
+}
+
+.tipping-message label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.tipping-message textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--surface-light);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  resize: vertical;
+  transition: var(--transition);
+}
+
+.tipping-message textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: var(--glow);
+}
+
+.tipping-submit {
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+  color: var(--text-color);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  text-shadow: var(--glow);
+}
+
+.tipping-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(123, 104, 238, 0.4);
+}
+
+.tipping-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.tipping-wallet-info {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.tipping-wallet-info a {
+  color: var(--primary-light);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.tipping-wallet-info a:hover {
+  text-decoration: underline;
+}
+
+/* Animations */
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .tipping-amounts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

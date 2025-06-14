@@ -1,0 +1,99 @@
+.venue-content-marketplace {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.venue-content-marketplace h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.venue-content-marketplace p {
+  color: var(--text-muted-color);
+  margin-bottom: 1.5rem;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.content-card {
+  background-color: var(--card-bg-color);
+  border-radius: 8px;
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.content-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.content-thumbnail {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+}
+
+.content-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.content-card:hover .content-thumbnail img {
+  transform: scale(1.05);
+}
+
+.premium-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.content-info {
+  padding: 1rem;
+}
+
+.content-info h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.content-info p {
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.content-info .btn {
+  width: 100%;
+  text-align: center;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  color: var(--text-muted-color);
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 type HostSelectionProps = {
   onSelect: (selectedHost: string) => void;
@@ -7,7 +7,7 @@ type HostSelectionProps = {
 };
 
 function HostSelection({ onSelect, onBack, hosts }: HostSelectionProps) {
-  const [selectedHost, setSelectedHost] = useState<string>("");
+  const [selectedHost, setSelectedHost] = useState<string>('');
 
   const handleHostSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     event.stopPropagation();
@@ -19,7 +19,7 @@ function HostSelection({ onSelect, onBack, hosts }: HostSelectionProps) {
 
     // Validate selected host
     if (!selectedHost) {
-      console.error("No host selected");
+      console.error('No host selected');
       return;
     }
 
@@ -39,7 +39,7 @@ function HostSelection({ onSelect, onBack, hosts }: HostSelectionProps) {
         <option value="Nairobi" disabled>
           Nairobi
         </option>
-        {hosts.map((host) => (
+        {hosts.map(host => (
           <option key={host} value={host}>
             {host}
           </option>

@@ -1,3 +1,7 @@
+require("dotenv").config({
+  path: "/Users/udingethe/Desktop/gpt-engineer/MANTLE/megavibe/backend/server/.env",
+});
+console.log("MONGO_URI from .env:", process.env.MONGO_URI);
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");

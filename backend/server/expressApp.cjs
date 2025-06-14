@@ -4,7 +4,12 @@ const cors = require("cors");
 const Waitlist = require("./models/Waitlist.cjs");
 
 function configureMiddleware(app) {
-  app.use(cors());
+  app.use(
+    cors({
+      origin: "http://localhost:5173",
+      credentials: true,
+    })
+  );
 }
 
 function createExpressApp(app) {

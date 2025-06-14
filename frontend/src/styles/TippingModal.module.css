@@ -1,0 +1,291 @@
+/* ===========================
+   TippingModal Component Styles
+   =========================== */
+
+.content {
+  width: 500px;
+  max-width: 90vw;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-2);
+}
+
+.subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+}
+
+/* Tip Amount Section */
+.tipSection {
+  margin-bottom: var(--space-6);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-3);
+}
+
+.presetAmounts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.presetButton {
+  padding: var(--space-3);
+  background-color: var(--color-surface-light);
+  border: 2px solid transparent;
+  border-radius: var(--radius-base);
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.presetButton:hover {
+  background-color: var(--color-surface);
+  border-color: var(--color-primary);
+}
+
+.presetButton.selected {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+/* Custom Amount Input */
+.customAmount {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.customLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.customInput {
+  flex: 1;
+  padding: var(--space-3);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+}
+
+/* Message Section */
+.messageSection {
+  margin-bottom: var(--space-6);
+}
+
+.messageInput {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.charCount {
+  text-align: right;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-2);
+}
+
+/* Wallet Section */
+.walletSection {
+  background-color: var(--color-surface-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.walletInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.walletAddress {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.walletBalance {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.balanceLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.balanceValue {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.connectWallet {
+  width: 100%;
+  padding: var(--space-4);
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.connectWallet:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* Summary Section */
+.summary {
+  background-color: var(--color-surface-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) 0;
+}
+
+.summaryRow:not(:last-child) {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.summaryLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.summaryValue {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.totalRow {
+  padding-top: var(--space-3);
+  border-top: 2px solid var(--color-border);
+}
+
+.totalRow .summaryLabel {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.totalRow .summaryValue {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+/* Action Buttons */
+.actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.cancelButton {
+  flex: 1;
+}
+
+.sendButton {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+/* Success State */
+.successState {
+  text-align: center;
+  padding: var(--space-8);
+}
+
+.successIcon {
+  font-size: var(--font-size-4xl);
+  margin-bottom: var(--space-4);
+  animation: bounce 0.5s ease-out;
+}
+
+.successMessage {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-success);
+  margin-bottom: var(--space-2);
+}
+
+.successDetails {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+}
+
+/* Loading State */
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  gap: var(--space-4);
+}
+
+.loadingText {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .content {
+    width: 100%;
+  }
+
+  .presetAmounts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .customAmount {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .cancelButton,
+  .sendButton {
+    flex: 1;
+    width: 100%;
+  }
+}

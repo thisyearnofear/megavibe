@@ -2,7 +2,7 @@
   "compilerOptions": {
     "composite": true,
     "target": "ESNext",
-    "types": ["@stripe/stripe-js", "node"],
+    "types": [],
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,

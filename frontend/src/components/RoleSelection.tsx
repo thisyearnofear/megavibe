@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 interface RoleSelectionProps {
   onSelect: (selectedRole: string) => void;
@@ -6,11 +6,11 @@ interface RoleSelectionProps {
 }
 
 function RoleSelection({ onSelect, roles }: RoleSelectionProps) {
-  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedRole, setSelectedRole] = useState('');
 
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     event.stopPropagation();
-    console.log("Selected role:", event.target.value); // Add this line
+    console.log('Selected role:', event.target.value); // Add this line
     setSelectedRole(event.target.value);
   };
 
@@ -19,7 +19,7 @@ function RoleSelection({ onSelect, roles }: RoleSelectionProps) {
 
     // Validate selected role
     if (!selectedRole) {
-      console.error("No role selected");
+      console.error('No role selected');
       return;
     }
 
@@ -32,7 +32,7 @@ function RoleSelection({ onSelect, roles }: RoleSelectionProps) {
       <select value={selectedRole} onChange={handleSelect}>
         <option value="🎹"> &nbsp;&nbsp;🎹 </option>
 
-        {roles.map((role) => (
+        {roles.map(role => (
           <option key={role} value={role}>
             {role}
           </option>

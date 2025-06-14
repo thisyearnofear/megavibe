@@ -1,5 +1,5 @@
 // ArtistSelection.tsx
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 type ArtistSelectionProps = {
   onArtistSelect: (selectedArtist: string) => void; // Add this line
@@ -12,7 +12,7 @@ function ArtistSelection({
   onBack,
   artists,
 }: ArtistSelectionProps) {
-  const [selectedArtist, setSelectedArtist] = useState<string>("");
+  const [selectedArtist, setSelectedArtist] = useState<string>('');
 
   const handleArtistSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     event.stopPropagation();
@@ -26,7 +26,7 @@ function ArtistSelection({
 
     // Validate selected artist
     if (!selectedArtist) {
-      console.error("No artist selected");
+      console.error('No artist selected');
       return;
     }
   };
@@ -36,11 +36,11 @@ function ArtistSelection({
       <h4>Select Artist</h4>
       <select value={selectedArtist} onChange={handleArtistSelect}>
         <option value=""> &nbsp;&nbsp;&nbsp;&nbsp;🎤 </option>
-        {artists.map((artist) => (
+        {artists.map(artist => (
           <option
             key={artist}
             value={artist}
-            disabled={artist === "Anatu" || artist === "Andrew"}
+            disabled={artist === 'Anatu' || artist === 'Andrew'}
           >
             {artist}
           </option>

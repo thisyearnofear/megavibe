@@ -1,13 +1,13 @@
-import React, { useRef, useState, useEffect } from "react";
-import { TwitterShareButton, TwitterIcon } from "react-share";
-import "./styles.css";
-import SwipeableViews from "react-swipeable-views";
+import React, { useRef, useState, useEffect } from 'react';
+import { TwitterShareButton, TwitterIcon } from 'react-share';
+import './styles.css';
+import SwipeableViews from 'react-swipeable-views';
 
 type ArtistProfilesProps = {
   artist: string;
 };
 
-type EmojiKey = "emoji1" | "emoji2" | "emoji3";
+type EmojiKey = 'emoji1' | 'emoji2' | 'emoji3';
 
 type EmojiCounts = {
   emoji1: number;
@@ -24,14 +24,14 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [slideIndex, setSlideIndex] = React.useState(0);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
-  const [selectedSong, setSelectedSong] = useState<string>("");
+  const [selectedSong, setSelectedSong] = useState<string>('');
   const [showExplainer1, setShowExplainer1] = useState<boolean>(true);
   const [showExplainer2, setShowExplainer2] = useState<boolean>(true);
   const [showExplainer3, setShowExplainer3] = useState<boolean>(true);
 
   const handleOpenGleam = () => {
     // Open the Gleam page in a new tab
-    window.open("https://gleam.io/kNvwc/bounty", "_blank");
+    window.open('https://gleam.io/kNvwc/bounty', '_blank');
   };
 
   const [emojiCounts, setEmojiCounts] = React.useState<EmojiCounts>({
@@ -47,15 +47,15 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
   const [totalBountyAmount, setTotalBountyAmount] = useState<number>(0);
 
   const handleNextSlide = () => {
-    setSlideIndex((prev) => Math.min(prev + 1, 3)); // 3 is the maximum index
+    setSlideIndex(prev => Math.min(prev + 1, 3)); // 3 is the maximum index
   };
 
   const handlePrevSlide = () => {
-    setSlideIndex((prev) => Math.max(prev - 1, 0)); // 0 is the minimum index
+    setSlideIndex(prev => Math.max(prev - 1, 0)); // 0 is the minimum index
   };
 
   const handleButtonClick = () => {
-    console.log("Button clicked");
+    console.log('Button clicked');
     setIsSpinning(true);
     setTimeout(() => {
       setIsMorphed(true);
@@ -71,7 +71,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
   };
 
   const handleEmojiClick = (emoji: EmojiKey) => {
-    setEmojiCounts((prev) => {
+    setEmojiCounts(prev => {
       let newCount = prev[emoji] + 1;
 
       // If count reaches 10, reset to 1 on next click
@@ -97,21 +97,21 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
       // Show feedback message only when count is increasing
       if (newCount % 5 === 0 && newCount !== 10) {
         const messages = [
-          "Vibes!",
-          "Amazing!",
-          "Jaysus!",
-          "Woop!",
-          "Yeehar!",
-          "Pow!",
-          "Zing!",
-          "Chee!",
-          "Yes!",
+          'Vibes!',
+          'Amazing!',
+          'Jaysus!',
+          'Woop!',
+          'Yeehar!',
+          'Pow!',
+          'Zing!',
+          'Chee!',
+          'Yes!',
         ];
 
         const randomMessage =
           messages[Math.floor(Math.random() * messages.length)];
-        console.log("New count:", newCount);
-        console.log("Selected feedback message:", randomMessage);
+        console.log('New count:', newCount);
+        console.log('Selected feedback message:', randomMessage);
         setFeedbackMessage(randomMessage);
         setTimeout(() => setFeedbackMessage(null), 3000);
       }
@@ -134,11 +134,11 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
   // Function to handle tip button clicks
   const handleTipClick = (amount: number) => {
     // Add the tip amount to the total amount
-    setTotalAmount((prevTotal) => prevTotal + amount);
+    setTotalAmount(prevTotal => prevTotal + amount);
   };
 
   const handleCheckout = () => {
-    window.open("https://buy.stripe.com/test_3cs5oe0J20fo7h6aEE", "_blank");
+    window.open('https://buy.stripe.com/test_3cs5oe0J20fo7h6aEE', '_blank');
   };
 
   const [leaderboardData, setLeaderboardData] = useState<
@@ -153,11 +153,11 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
     if (selectedSong) {
       // Check if the song has already been submitted
       const alreadySubmitted = leaderboardData.some(
-        (data) => data.song === selectedSong
+        data => data.song === selectedSong
       );
 
       if (!alreadySubmitted) {
-        setLeaderboardData((prevData) => [
+        setLeaderboardData(prevData => [
           ...prevData,
           {
             song: selectedSong,
@@ -165,7 +165,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
           },
         ]);
         // Clear the selected song after submission
-        setSelectedSong("");
+        setSelectedSong('');
       } else {
         alert("You've already submitted a rating for this song.");
       }
@@ -173,15 +173,15 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
   };
 
   const handleRemoveSubmission = (index: number) => {
-    setLeaderboardData((prevData) => prevData.filter((_, i) => i !== index));
+    setLeaderboardData(prevData => prevData.filter((_, i) => i !== index));
   };
 
   const leaderboardString = leaderboardData
     .map(
-      (data) =>
+      data =>
         `${data.song}: 🤘🏿 ${data.emojiCounts.emoji1} 🥹 ${data.emojiCounts.emoji2} 🔥 ${data.emojiCounts.emoji3}`
     )
-    .join("\n ");
+    .join('\n ');
 
   return (
     <div className="content">
@@ -195,7 +195,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
           >
             {/* Mini Profile Page */}
             <div
-              className={`artist-profile ${isMorphed ? "visible" : ""}`}
+              className={`artist-profile ${isMorphed ? 'visible' : ''}`}
               ref={profileRef}
             >
               {showExplainer1 && slideIndex === 0 && (
@@ -254,7 +254,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             </div>
 
             {/* Emoji VibeCheck Page */}
-            <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
+            <div className={`artist-profile ${isMorphed ? 'visible' : ''}`}>
               {showExplainer2 && slideIndex === 1 && (
                 <div className="explainer">
                   Rate songs live. Awaken Emojiboard. Share ‣
@@ -281,7 +281,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
                 onChange={handleSongSelect}
                 value={selectedSong}
               >
-                <option value="" disabled style={{ fontStyle: "italic" }}>
+                <option value="" disabled style={{ fontStyle: 'italic' }}>
                   Pick A Song
                 </option>
                 <option value="Chupacabra">Chupacabra</option>
@@ -292,13 +292,13 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
 
               <div className="song-emoji-row">
                 <div className="emojis">
-                  <button onClick={() => handleEmojiClick("emoji1")}>
+                  <button onClick={() => handleEmojiClick('emoji1')}>
                     🤘🏿 {emojiCounts.emoji1}
                   </button>
-                  <button onClick={() => handleEmojiClick("emoji2")}>
+                  <button onClick={() => handleEmojiClick('emoji2')}>
                     🥹 {emojiCounts.emoji2}
                   </button>
-                  <button onClick={() => handleEmojiClick("emoji3")}>
+                  <button onClick={() => handleEmojiClick('emoji3')}>
                     🔥 {emojiCounts.emoji3}
                   </button>
                 </div>
@@ -306,7 +306,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
 
               <button
                 onClick={handleSubmit}
-                disabled={!selectedSong || selectedSong === "Pick A Song"}
+                disabled={!selectedSong || selectedSong === 'Pick A Song'}
               >
                 Submit A Rating
               </button>
@@ -319,7 +319,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
                   <div key={index}>
                     <div>{data.song}</div>
                     <div>
-                      🤘🏿 {data.emojiCounts.emoji1} 🥹 {data.emojiCounts.emoji2}{" "}
+                      🤘🏿 {data.emojiCounts.emoji1} 🥹 {data.emojiCounts.emoji2}{' '}
                       🔥 {data.emojiCounts.emoji3}
                     </div>
                     <button onClick={() => handleRemoveSubmission(index)}>
@@ -331,7 +331,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
                 <TwitterShareButton
                   url={window.location.href}
                   title={`${artist} - live!\nMy @megavibeapp song ratings\n${leaderboardString}\n@papajimjams\nhttps://bit.ly/papaspotify\n`}
-                  hashtags={["livemusic", "megavibelondon"]}
+                  hashtags={['livemusic', 'megavibelondon']}
                   className="custom-twitter-share-button"
                   disabled={leaderboardData.length === 0}
                 >
@@ -345,7 +345,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             </div>
 
             {/* Bounty Page */}
-            <div className={`artist-profile ${isMorphed ? "visible" : ""}`}>
+            <div className={`artist-profile ${isMorphed ? 'visible' : ''}`}>
               {showExplainer3 && slideIndex === 2 && (
                 <div className="explainer">
                   Set bounties via actions, or simply tip! ‣
@@ -370,7 +370,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
               <div className="bounty-options">
                 {/* Dropdown for songs */}
                 <select className="song-dropdown" defaultValue="">
-                  <option value="" disabled style={{ fontStyle: "italic" }}>
+                  <option value="" disabled style={{ fontStyle: 'italic' }}>
                     Bounty Song
                   </option>
                   <option value="Isn't She Lovely">Isn't She Lovely</option>
@@ -406,7 +406,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
 
               <div className="tally-box">
                 <div className="total-amount-box">
-                  {" "}
+                  {' '}
                   <span>Total: £{totalAmount}</span>
                 </div>
                 <button className="clear-button" onClick={handleClearTotal}>
@@ -425,7 +425,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
 
             {/* Information Page */}
             <div
-              className={`artist-profile ${isMorphed ? "visible" : ""}`}
+              className={`artist-profile ${isMorphed ? 'visible' : ''}`}
               ref={profileRef}
             >
               {showExplainer1 && slideIndex === 3 && (
@@ -449,7 +449,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
               <h2 className="artist-name">Papa</h2>
               <div className="information-box">
                 <p>
-                  {" "}
+                  {' '}
                   <a
                     href="  https://github.com/thisyearnofear/megavibe"
                     target="_blank"
@@ -485,10 +485,10 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
             </div>
 
             <div className="nav-indicators">
-              <div className={`dot ${activeIndex === 0 ? "active" : ""}`}></div>
-              <div className={`dot ${activeIndex === 1 ? "active" : ""}`}></div>
-              <div className={`dot ${activeIndex === 2 ? "active" : ""}`}></div>
-              <div className={`dot ${activeIndex === 3 ? "active" : ""}`}></div>
+              <div className={`dot ${activeIndex === 0 ? 'active' : ''}`}></div>
+              <div className={`dot ${activeIndex === 1 ? 'active' : ''}`}></div>
+              <div className={`dot ${activeIndex === 2 ? 'active' : ''}`}></div>
+              <div className={`dot ${activeIndex === 3 ? 'active' : ''}`}></div>
             </div>
           </SwipeableViews>
         </>
@@ -497,7 +497,7 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
           {/* Add a specific class for the "MEGA VIBE" button */}
           <button
             className={`button-class custom-mega-vibe-button ${
-              isSpinning ? "spinning" : ""
+              isSpinning ? 'spinning' : ''
             }`}
             onClick={handleButtonClick}
           >

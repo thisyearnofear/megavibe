@@ -1,0 +1,222 @@
+/* ===========================
+   MegaVibeButton Component Styles
+   =========================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6);
+}
+
+/* Main Button */
+.button {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.button:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-xl), var(--shadow-glow);
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Button States */
+.button.listening {
+  animation: pulse 1s ease-in-out infinite;
+  background: linear-gradient(
+    135deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
+}
+
+.button.identified {
+  background: linear-gradient(135deg, var(--color-success), #059669);
+}
+
+.button.error {
+  background: linear-gradient(135deg, var(--color-error), #dc2626);
+}
+
+/* Button Content */
+.buttonContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.buttonText {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Wave Animation */
+.waveAnimation {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.wave {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+}
+
+.button.listening .wave {
+  animation: wave 2s ease-out infinite;
+}
+
+.wave1 {
+  animation-delay: 0s;
+}
+.wave2 {
+  animation-delay: 0.5s;
+}
+.wave3 {
+  animation-delay: 1s;
+}
+
+/* Listening Indicator */
+.listeningIndicator {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 30px;
+}
+
+.bar {
+  width: 4px;
+  background-color: white;
+  border-radius: var(--radius-sm);
+  animation: audioBar 0.8s ease-in-out infinite;
+}
+
+.bar1 {
+  animation-delay: 0s;
+  height: 20%;
+}
+.bar2 {
+  animation-delay: 0.1s;
+  height: 40%;
+}
+.bar3 {
+  animation-delay: 0.2s;
+  height: 60%;
+}
+.bar4 {
+  animation-delay: 0.3s;
+  height: 40%;
+}
+.bar5 {
+  animation-delay: 0.4s;
+  height: 20%;
+}
+
+/* Subtext */
+.subtext {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 300px;
+}
+
+/* Song Details */
+.songDetails {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-top: var(--space-4);
+  animation: slideUp var(--transition-base);
+}
+
+.songStats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Pulsing Animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(99, 102, 241, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .button {
+    width: 150px;
+    height: 150px;
+  }
+
+  .buttonText {
+    font-size: var(--font-size-lg);
+  }
+
+  .container {
+    padding: var(--space-4);
+  }
+
+  .subtext {
+    font-size: var(--font-size-sm);
+  }
+}

@@ -1,13 +1,24 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App';
+import './styles/design-system.css';
+import './styles/global.css';
 
-const container = document.getElementById("root");
+// Force cache refresh
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister();
+    }
+  });
+}
+
+const container = document.getElementById('root');
 if (container) {
-  ReactDOM.render(
+  const root = createRoot(container);
+  root.render(
     <React.StrictMode>
       <App />
-    </React.StrictMode>,
-    container
+    </React.StrictMode>
   );
 }
