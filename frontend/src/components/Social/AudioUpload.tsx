@@ -6,8 +6,25 @@ import '../../styles/AudioUpload.css';
 interface AudioUploadProps {
   venueId?: string;
   eventId?: string;
-  onUploadSuccess?: (snippet: any) => void;
+  onUploadSuccess?: (snippet: AudioSnippet) => void;
   onClose?: () => void;
+}
+
+interface AudioSnippet {
+  _id: string;
+  title: string;
+  artist: string;
+  url: string;
+  duration: number;
+  createdAt: string;
+  user: {
+    _id: string;
+    username: string;
+    avatar?: string;
+  };
+  likes: number;
+  plays: number;
+  shares: number;
 }
 
 export const AudioUpload: React.FC<AudioUploadProps> = ({
@@ -16,7 +33,7 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({
   onUploadSuccess,
   onClose,
 }) => {
-  const { user, isAuthenticated } = useDynamicContext();
+  const { user, primaryWallet } = useDynamicContext();
   const [isRecording, setIsRecording] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -31,7 +48,7 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const startRecording = useCallback(async () => {
@@ -131,7 +148,7 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({
       return;
     }
 
-    if (!isAuthenticated || !user) {
+    if (!primaryWallet || !user) {
       setError('Please connect your wallet to upload audio');
       return;
     }
@@ -141,9 +158,9 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({
 
     try {
       // Convert blob to file if needed
-      const audioFile = audioBlob instanceof File
+      const audioFile = audioBlob instanceof window.File
         ? audioBlob
-        : new File([audioBlob], `recording-${Date.now()}.webm`, {
+        : new window.File([audioBlob], `recording-${Date.now()}.webm`, {
             type: audioBlob.type
           });
 
@@ -190,7 +207,7 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  if (!isAuthenticated) {
+  if (!primaryWallet) {
     return (
       <div className="audio-upload-container">
         <div className="card">

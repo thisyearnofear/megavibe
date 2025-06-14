@@ -1,6 +1,6 @@
-const { create, findOne, findById } = require('../models/userModel.cjs');
-const { generateToken } = require('../utils/token.cjs');
-const { handleError } = require('../utils/errorhandlers.cjs'); // Import your error handling module
+const { create, findOne, findById } = require("../models/userModel.cjs");
+const { generateToken } = require("../utils/token.cjs");
+const { handleError } = require("../utils/errorHandler.cjs"); // Import your error handling module
 
 async function registerUser(req, res) {
   const { name, email, password } = req.body;
@@ -20,19 +20,18 @@ async function loginUser(req, res) {
     const user = await findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await user.checkPassword(password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const token = generateToken(user._id);
 
     res.json({ token });
-
   } catch (err) {
     handleError(res, err);
   }
@@ -43,7 +42,7 @@ async function getUserProfile(req, res) {
     const user = await findById(req.user._id);
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
 
     res.json(user);

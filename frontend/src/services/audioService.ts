@@ -36,7 +36,7 @@ export interface AudioFeedResponse {
 export class AudioService {
   async getFeed(limit: number = 10, offset: number = 0, filter: string = 'all'): Promise<AudioFeedResponse> {
     try {
-      const response = await api.get(`/api/audio/feed?limit=${limit}&offset=${offset}&filter=${filter}`);
+      const response = await api.get(`/audio/feed?limit=${limit}&offset=${offset}&filter=${filter}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching audio feed:', error);
@@ -51,7 +51,7 @@ export class AudioService {
       formData.append('title', title);
       formData.append('artist', artist);
 
-      const response = await api.post('/api/audio/snippets', formData, {
+      const response = await api.post('/audio/snippets', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -65,7 +65,7 @@ export class AudioService {
 
   async likeSnippet(snippetId: string): Promise<{ likes: number }> {
     try {
-      const response = await api.post(`/api/audio/snippets/${snippetId}/like`);
+      const response = await api.post(`/audio/snippets/${snippetId}/like`);
       return response.data;
     } catch (error) {
       console.error('Error liking audio snippet:', error);
@@ -75,7 +75,7 @@ export class AudioService {
 
   async playSnippet(snippetId: string): Promise<{ plays: number }> {
     try {
-      const response = await api.post(`/api/audio/snippets/${snippetId}/play`);
+      const response = await api.post(`/audio/snippets/${snippetId}/play`);
       return response.data;
     } catch (error) {
       console.error('Error recording play for audio snippet:', error);

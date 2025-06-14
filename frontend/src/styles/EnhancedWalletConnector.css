@@ -478,21 +478,40 @@
   }
 
   .wallet-disconnected {
-    padding: var(--space-lg);
+    padding: var(--space-sm);
+    margin: 0;
   }
 
   .connect-prompt h3 {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-xs);
   }
 
   .connect-prompt p {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
+    margin-bottom: var(--space-sm);
+  }
+
+  /* Make the Dynamic widget more compact */
+  .dynamic-widget-wrapper {
+    transform: scale(0.7);
+    transform-origin: center;
+  }
+
+  /* Hide the connection indicator text on mobile */
+  .connection-indicator .status-text {
+    display: none;
+  }
+
+  /* Make the entire disconnected state much smaller */
+  .wallet-disconnected .connection-indicator {
+    margin-bottom: 0;
   }
 }
 
 @media (max-width: 480px) {
   .wallet-compact-button {
-    min-width: 80px;
+    min-width: 60px;
     padding: var(--space-xs);
   }
 
@@ -521,6 +540,76 @@
 
   .balance-value {
     font-size: var(--font-size-xs);
+  }
+
+  /* Ultra-compact disconnected state */
+  .wallet-disconnected {
+    padding: var(--space-xs);
+    border: none;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .connect-prompt h3,
+  .connect-prompt p {
+    display: none;
+  }
+
+  .connection-indicator {
+    margin-bottom: var(--space-xs);
+  }
+
+  .dynamic-widget-wrapper {
+    transform: scale(0.6);
+  }
+
+  /* Hide status text completely on small screens */
+  .status-text {
+    display: none;
+  }
+
+  /* Make status dot smaller */
+  .status-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Override Dynamic.xyz button styles for ultra-compact mobile */
+  .dynamic-widget-wrapper button {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+    min-height: 28px !important;
+    border-radius: 6px !important;
+  }
+
+  /* Make the entire wallet section take minimal space */
+  .wallet-disconnected {
+    max-height: 40px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .connect-section {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Target Dynamic.xyz specific elements for mobile */
+  .dynamic-widget-wrapper div[data-dynamic-widget] {
+    transform: scale(0.6) !important;
+  }
+
+  /* Additional mobile-specific overrides */
+  @media (max-width: 480px) {
+    .dynamic-widget-wrapper {
+      transform: scale(0.5) !important;
+      max-width: 80px;
+      overflow: hidden;
+    }
   }
 }
 

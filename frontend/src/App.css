@@ -730,6 +730,26 @@
     max-width: 200px;
   }
 
+  /* Mobile Wallet Connector Optimization */
+  .wallet-connector-wrapper {
+    flex: 1;
+    max-width: 200px;
+  }
+
+  /* Hide wallet connector content on mobile to save space */
+  .wallet-disconnected .connect-prompt {
+    display: none;
+  }
+
+  .wallet-disconnected {
+    padding: var(--space-sm);
+    text-align: center;
+  }
+
+  .dynamic-widget-wrapper {
+    margin: 0;
+  }
+
   .app-content {
     padding: var(--space-lg) var(--space-md);
   }
@@ -829,6 +849,32 @@
   .wallet-connector-wrapper {
     width: 100%;
     max-width: none;
+  }
+
+  /* Ultra-compact wallet connector for small screens */
+  .wallet-disconnected .connect-prompt h3,
+  .wallet-disconnected .connect-prompt p {
+    display: none;
+  }
+
+  .wallet-disconnected {
+    padding: var(--space-xs);
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    min-height: auto;
+  }
+
+  /* Make the entire nav actions section more compact */
+  .nav-actions {
+    gap: var(--space-xs);
+    min-height: 40px;
+  }
+
+  /* Reduce wallet connector wrapper size */
+  .wallet-connector-wrapper {
+    max-width: 120px;
+    min-width: 80px;
   }
 
   .welcome-title {

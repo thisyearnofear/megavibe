@@ -1,5 +1,5 @@
-const Reaction = require('../models/reactionModel.cjs');
-const { handleError } = require('../utils/errorHandlers'); // Import your error handling module
+const Reaction = require("../models/reactionModel.cjs");
+const { handleError } = require("../utils/errorHandler.cjs"); // Import your error handling module
 
 // Add a new reaction
 exports.addReaction = async (req, res) => {

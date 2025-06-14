@@ -3,6 +3,16 @@ const express = require("express");
 const cors = require("cors");
 const Waitlist = require("./models/Waitlist.cjs");
 
+// Import route modules
+const audioRoutes = require("./routes/audioRoutes.cjs");
+const venueRoutes = require("./routes/venueRoutes.cjs");
+const usersRoutes = require("./routes/usersRoutes.cjs");
+const tipRoutes = require("./routes/tipRoutes.cjs");
+const bountyRoutes = require("./routes/bountyRoutes.cjs");
+const reactionRoutes = require("./routes/reactionRoutes.cjs");
+const paymentsRoutes = require("./routes/paymentsRoutes.cjs");
+const healthRoutes = require("./routes/health.cjs");
+
 function configureMiddleware(app) {
   app.use(
     cors({
@@ -16,6 +26,16 @@ function createExpressApp(app) {
   app.use(express.json());
   configureMiddleware(app);
 
+  // API Routes
+  app.use("/api/audio", audioRoutes);
+  app.use("/api/venues", venueRoutes);
+  app.use("/api/users", usersRoutes);
+  app.use("/api/tips", tipRoutes);
+  app.use("/api/bounties", bountyRoutes);
+  app.use("/api/reactions", reactionRoutes);
+  app.use("/api/payments", paymentsRoutes);
+  app.use("/api/health", healthRoutes);
+
   // Define the /waitlist route
   app.post("/waitlist", (req, res) => {
     const { name, email, link } = req.body;
@@ -27,6 +47,25 @@ function createExpressApp(app) {
       .save()
       .then(() => res.json("Waitlist entry added!"))
       .catch((err) => res.status(400).json("Error: " + err));
+  });
+
+  // Root API endpoint
+  app.get("/api", (req, res) => {
+    res.json({
+      message: "MegaVibe API is running",
+      version: "1.0.0",
+      status: "🚀 MVP READY - All core features enabled",
+      endpoints: {
+        audio: "/api/audio",
+        venues: "/api/venues",
+        users: "/api/users",
+        tips: "/api/tips",
+        bounties: "/api/bounties",
+        reactions: "/api/reactions",
+        payments: "/api/payments",
+        health: "/api/health",
+      },
+    });
   });
 }
 

@@ -24,7 +24,18 @@ const loggerMiddleware = require("./middleware/loggerMiddleware.cjs");
 app.use(express.static("public"));
 
 // CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://megavibe.vercel.app",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // Use request logger
 app.use(loggerMiddleware);

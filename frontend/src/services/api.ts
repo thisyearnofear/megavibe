@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // API client for making requests to backend
 export const api = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' ? 'https://megavibe.vercel.app/api' : 'http://localhost:3000/api',
+  baseURL: process.env.NODE_ENV === 'production' ? 'https://megavibe.vercel.app' : 'http://localhost:3000',
   headers: {
     'Content-Type': 'application/json',
   },
