@@ -6,12 +6,13 @@
   "scripts": {
     "dev": "node server/server.cjs",
     "start": "node server/server.cjs",
-    "build": "tsc && vite build",
+    "build": "echo 'No build step needed for backend'",
     "preview": "vite preview",
     "test": "jest --env=jsdom",
     "test:setup": "node setEnvVars.js && jest",
     "seed": "node server/data/cryptoEventsSeed.cjs",
-    "seed:crypto": "node server/data/cryptoEventsSeed.cjs"
+    "seed:crypto": "node server/data/cryptoEventsSeed.cjs",
+    "postinstall": "npm run seed:crypto"
   },
   "dependencies": {
     "@clerk/clerk-react": "^4.27.1",

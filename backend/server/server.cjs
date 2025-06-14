@@ -1,7 +1,14 @@
+// Load environment variables
+const path = require("path");
 require("dotenv").config({
-  path: "/Users/udingethe/Desktop/gpt-engineer/MANTLE/megavibe/backend/server/.env",
+  path:
+    process.env.NODE_ENV === "production"
+      ? path.join(__dirname, ".env.production")
+      : path.join(__dirname, ".env"),
 });
-console.log("MONGO_URI from .env:", process.env.MONGO_URI);
+
+console.log("Environment:", process.env.NODE_ENV);
+console.log("MONGO_URI configured:", !!process.env.MONGO_URI);
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -23,14 +30,19 @@ const loggerMiddleware = require("./middleware/loggerMiddleware.cjs");
 // Static assets
 app.use(express.static("public"));
 
-// CORS
+// CORS Configuration
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? ["https://megavibe.vercel.app", "https://megavibe.onrender.com"]
+    : [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://megavibe.vercel.app",
+      ];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:3000",
-      "https://megavibe.vercel.app",
-    ],
+    origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],

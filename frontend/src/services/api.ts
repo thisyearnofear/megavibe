@@ -3,12 +3,25 @@
 import axios from 'axios';
 
 // API client for making requests to backend
+const getApiBaseUrl = () => {
+  // Use environment variable if available, otherwise fallback to defaults
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  // Fallback based on environment
+  return import.meta.env.PROD
+    ? 'https://megavibe.onrender.com'
+    : 'http://localhost:3000';
+};
+
 export const api = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' ? 'https://megavibe.vercel.app' : 'http://localhost:3000',
+  baseURL: getApiBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },
   withCredentials: true, // For session cookies
+  timeout: 30000, // 30 second timeout for production
 });
 
 // Request interceptor for auth

@@ -1,68 +1,58 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const fetch = require('node-fetch'); // Import fetch if not already imported
+const mongoose = require("mongoose");
 
-// Example external API check
-async function checkApiHealth() {
+// Check database connection
+async function checkDatabaseConnection() {
   try {
-    const res = await fetch('/health'); // Replace with the actual API URL
-    if (res.status === 200) {
+    // Check if mongoose is connected
+    if (mongoose.connection.readyState === 1) {
+      // Perform a simple ping to verify connection
+      await mongoose.connection.db.admin().ping();
       return true;
     } else {
-      throw new Error('API health check failed');
+      throw new Error("Database not connected");
     }
   } catch (err) {
-    throw err;
+    throw new Error(`Database health check failed: ${err.message}`);
   }
 }
 
-// The main health route
-router.get('/', async (req, res) => {
-  let dbStatus, apiStatus;
+// Main health check endpoint
+router.get("/", async (req, res) => {
+  const healthCheck = {
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || "development",
+    version: "1.0.0",
+    services: {
+      database: "unknown",
+      server: "healthy",
+    },
+  };
 
   try {
     // Check database connection
     await checkDatabaseConnection();
-    dbStatus = true;
+    healthCheck.services.database = "healthy";
   } catch (err) {
-    dbStatus = false;
+    healthCheck.status = "unhealthy";
+    healthCheck.services.database = "unhealthy";
+    healthCheck.error = err.message;
   }
 
-  try {
-    // Check API health
-    await checkApiHealth();
-    apiStatus = true;
-  } catch (err) {
-    apiStatus = false;
-  }
-
-  if (dbStatus && apiStatus) {
-    return res.json({ status: 'healthy' });
-  }
-
-  res.status(500).json({
-    status: 'unhealthy',
-    message: 'One or more health checks failed',
-  });
+  // Return appropriate status code
+  const statusCode = healthCheck.status === "healthy" ? 200 : 503;
+  res.status(statusCode).json(healthCheck);
 });
 
-// Example DB check function
-async function checkDatabaseConnection() {
-  try {
-    // Connect to the database
-    // Replace with your MongoDB connection code
-    const db = db.getCollection(collection); // Replace with the collection name
-    // Perform a health check query
-    const result = await db.find().limit(1); // Perform a simple query
-    if (result.length > 0) {
-      // The database is reachable and healthy
-      return true;
-    } else {
-      throw new Error('Database health check failed');
-    }
-  } catch (err) {
-    throw new Error('Database health check failed');
-  }
-}
+// Simple ping endpoint
+router.get("/ping", (req, res) => {
+  res.json({
+    message: "pong",
+    timestamp: new Date().toISOString(),
+  });
+});
 
 module.exports = router;
