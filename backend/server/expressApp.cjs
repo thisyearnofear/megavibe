@@ -14,6 +14,7 @@ const paymentsRoutes = require("./routes/paymentsRoutes.cjs");
 const healthRoutes = require("./routes/health.cjs");
 const liveInfluenceRoutes = require("./routes/liveInfluenceRoutes.cjs");
 const contentPoolRoutes = require("./routes/contentPoolRoutes.cjs");
+const reputationRoutes = require("./routes/reputationRoutes.cjs");
 
 function configureMiddleware(app) {
   app.use(
@@ -39,6 +40,7 @@ function createExpressApp(app) {
   app.use("/api/health", healthRoutes);
   app.use("/api/live-influence", liveInfluenceRoutes);
   app.use("/api/content-pools", contentPoolRoutes);
+  app.use("/api/reputation", reputationRoutes);
 
   // Define the /waitlist route
   app.post("/waitlist", (req, res) => {
@@ -70,6 +72,7 @@ function createExpressApp(app) {
         health: "/api/health",
         liveInfluence: "/api/live-influence",
         contentPools: "/api/content-pools",
+        reputation: "/api/reputation",
       },
     });
   });
