@@ -5,6 +5,9 @@ import SwipeableViews from 'react-swipeable-views';
 
 type ArtistProfilesProps = {
   artist: string;
+  onClose?: () => void;
+  onBack?: () => void;
+  demoMode?: 'connection' | 'bounty' | 'tokenization' | 'influence' | 'reputation' | 'demo';
 };
 
 type EmojiKey = 'emoji1' | 'emoji2' | 'emoji3';
@@ -15,8 +18,14 @@ type EmojiCounts = {
   emoji3: number;
 };
 
-const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
-  const [isMorphed, setIsMorphed] = React.useState(false);
+const ArtistProfiles: React.FC<ArtistProfilesProps> = ({
+  artist,
+  onClose,
+  onBack,
+  demoMode = 'demo'
+}) => {
+  // If called from dashboard (has onBack prop), start in morphed state
+  const [isMorphed, setIsMorphed] = React.useState(!!onBack);
   const [isSpinning, setIsSpinning] = React.useState(false);
   const buttonRef = useRef(null);
   const profileRef = useRef(null);
@@ -63,11 +72,17 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
   };
 
   const handleDoneClick = () => {
-    setIsMorphed(false);
-    setTimeout(() => {
-      setIsSpinning(false);
-    }, 500); // Wait for 500ms (the duration of the fade-out animation) before showing the button
-    window.location.reload();
+    if (onBack) {
+      onBack();
+    } else if (onClose) {
+      onClose();
+    } else {
+      setIsMorphed(false);
+      setTimeout(() => {
+        setIsSpinning(false);
+      }, 500);
+      window.location.reload();
+    }
   };
 
   const handleEmojiClick = (emoji: EmojiKey) => {
@@ -185,6 +200,13 @@ const ArtistProfiles: React.FC<ArtistProfilesProps> = ({ artist }) => {
 
   return (
     <div className="content">
+      {onBack && (
+        <div className="artist-profile-header">
+          <button className="back-to-dashboard-btn" onClick={onBack}>
+            ← Back to Performers
+          </button>
+        </div>
+      )}
       {isMorphed ? (
         <>
           <SwipeableViews

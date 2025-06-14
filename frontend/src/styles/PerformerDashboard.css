@@ -1,0 +1,306 @@
+/* Performer Dashboard Styles */
+.performer-dashboard-modal {
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.performer-dashboard-modal .modal-header {
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--gray-200);
+  flex-shrink: 0;
+}
+
+.performer-dashboard-modal .modal-header h2 {
+  color: var(--primary);
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.feature-description {
+  color: var(--gray-600);
+  font-size: var(--font-size-base);
+  margin: 0;
+  line-height: var(--line-height-relaxed);
+}
+
+.performer-dashboard-modal .modal-body {
+  padding: var(--space-lg);
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Performers Grid */
+.performers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+/* Performer Card */
+.performer-card {
+  background: var(--white);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.performer-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.performer-card:hover .performer-name {
+  color: var(--accent);
+}
+
+/* Performer Avatar */
+.performer-avatar-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+}
+
+.performer-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--gray-200);
+  transition: all var(--transition-fast);
+}
+
+.performer-card:hover .performer-avatar {
+  border-color: var(--accent);
+  transform: scale(1.05);
+}
+
+.live-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--accent);
+  color: var(--white);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
+  animation: pulse 2s infinite;
+}
+
+/* Performer Info */
+.performer-info {
+  text-align: center;
+  margin-bottom: var(--space-md);
+}
+
+.performer-name {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--primary);
+  margin: 0 0 var(--space-xs) 0;
+  transition: color var(--transition-fast);
+}
+
+.performer-genre {
+  color: var(--gray-600);
+  font-size: var(--font-size-sm);
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.current-song {
+  color: var(--accent);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin: 0 0 var(--space-md) 0;
+  font-style: italic;
+}
+
+/* Performer Stats */
+.performer-stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.stat-label {
+  font-size: var(--font-size-xs);
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Performer Actions */
+.performer-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.performer-actions .btn {
+  min-width: 120px;
+}
+
+/* Dashboard Footer */
+.dashboard-footer {
+  text-align: center;
+  padding: var(--space-lg);
+  border-top: 1px solid var(--gray-200);
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+}
+
+.demo-note {
+  color: var(--gray-600);
+  font-size: var(--font-size-sm);
+  margin: 0;
+  line-height: var(--line-height-relaxed);
+}
+
+.demo-note strong {
+  color: var(--primary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .performer-dashboard-modal {
+    max-width: 95vw;
+    max-height: 85vh;
+  }
+  
+  .performers-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+  
+  .performer-card {
+    padding: var(--space-md);
+  }
+  
+  .performer-avatar {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .performer-stats {
+    gap: var(--space-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .performer-dashboard-modal .modal-header {
+    padding: var(--space-md);
+  }
+  
+  .performer-dashboard-modal .modal-body {
+    padding: var(--space-md);
+  }
+  
+  .performer-dashboard-modal .modal-header h2 {
+    font-size: var(--font-size-xl);
+  }
+  
+  .feature-description {
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Artist Profile Header */
+.artist-profile-header {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--gray-200);
+  background: var(--white);
+}
+
+.back-to-dashboard-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  cursor: pointer;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.back-to-dashboard-btn:hover {
+  background: var(--gray-100);
+  color: var(--accent);
+  transform: translateX(-2px);
+}
+
+/* Animation for live indicator */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 87, 34, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 87, 34, 0);
+  }
+}
+
+/* Loading states */
+.performers-grid.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.performer-card.loading {
+  background: var(--gray-100);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Empty state */
+.performers-grid.empty {
+  grid-template-columns: 1fr;
+  text-align: center;
+  padding: var(--space-2xl);
+}
+
+.empty-state {
+  color: var(--gray-500);
+  font-size: var(--font-size-lg);
+}
+
+.empty-state-icon {
+  font-size: var(--font-size-4xl);
+  margin-bottom: var(--space-md);
+  opacity: 0.5;
+}

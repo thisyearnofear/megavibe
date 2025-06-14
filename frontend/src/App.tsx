@@ -35,6 +35,11 @@ const VenueContentMarketplace = lazy(() =>
     default: module.default,
   }))
 );
+const PerformerDashboard = lazy(() =>
+  import('./components/Demo/PerformerDashboard').then(module => ({
+    default: module.PerformerDashboard,
+  }))
+);
 const ArtistSupport = lazy(() =>
   import('./components/LiveMusic/ArtistSupport').then(module => ({
     default: module.default,
@@ -78,6 +83,8 @@ function App() {
   >(undefined);
   const [showTutorial, setShowTutorial] = useState<boolean>(false);
   const [tutorialStep, setTutorialStep] = useState<number>(0);
+  const [showPerformerDashboard, setShowPerformerDashboard] = useState(false);
+  const [selectedFeatureType, setSelectedFeatureType] = useState<'connection' | 'bounty' | 'tokenization' | 'influence' | 'reputation' | 'demo'>('demo');
 
   const appRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
@@ -125,6 +132,11 @@ function App() {
   const handleSkipTutorial = () => {
     setShowTutorial(false);
     setTutorialStep(0);
+  };
+
+  const handleFeatureCardClick = (featureType: 'connection' | 'bounty' | 'tokenization' | 'influence' | 'reputation' | 'demo') => {
+    setSelectedFeatureType(featureType);
+    setShowPerformerDashboard(true);
   };
 
   // Remove automatic location detection on app load
@@ -295,14 +307,14 @@ function App() {
                         </div>
 
                         <div className="welcome-features">
-                          <div className="feature-card">
+                          <div className="feature-card" onClick={() => handleFeatureCardClick('connection')}>
                             <div className="feature-icon-wrapper">
                               <div className="vinyl-record"></div>
                             </div>
                             <h3>🎯 Instant Connection</h3>
                             <p><strong>GPS Magic:</strong> Walk into any venue and instantly know who's performing, what's happening, and who else is there. Zero friction discovery.</p>
                           </div>
-                          <div className="feature-card">
+                          <div className="feature-card" onClick={() => handleFeatureCardClick('bounty')}>
                             <div className="feature-icon-wrapper">
                               <div className="sound-wave">
                                 <div className="sound-wave-bar"></div>
@@ -315,7 +327,7 @@ function App() {
                             <h3>💰 Bounty Requests</h3>
                             <p><strong>Pay for Content:</strong> Create bounties for specific performances - "50 USDC for funniest crypto talk" - and watch creators compete.</p>
                           </div>
-                          <div className="feature-card">
+                          <div className="feature-card" onClick={() => handleFeatureCardClick('tokenization')}>
                             <div className="feature-icon-wrapper">
                               <div className="status-indicator status-live">
                                 <span>NFT</span>
@@ -324,7 +336,7 @@ function App() {
                             <h3>🎬 Moment Tokenization</h3>
                             <p><strong>Own Viral Clips:</strong> Contribute content to pools, earn when it's used, and watch viral moments become tradeable assets.</p>
                           </div>
-                          <div className="feature-card">
+                          <div className="feature-card" onClick={() => handleFeatureCardClick('influence')}>
                             <div className="feature-icon-wrapper">
                               <div className="status-indicator status-live">
                                 <span>⚡</span>
@@ -333,7 +345,7 @@ function App() {
                             <h3>⚡ Live Influence</h3>
                             <p><strong>Shape Performances:</strong> Tips and audience reactions influence what happens on stage in real-time. Your voice matters.</p>
                           </div>
-                          <div className="feature-card">
+                          <div className="feature-card" onClick={() => handleFeatureCardClick('reputation')}>
                             <div className="feature-icon-wrapper">
                               <div className="status-indicator status-live">
                                 <span>🏆</span>
@@ -342,7 +354,7 @@ function App() {
                             <h3>🏆 Build Reputation</h3>
                             <p><strong>Prove Your Taste:</strong> On-chain proof of expertise across events. Great curators and supporters get recognized and rewarded.</p>
                           </div>
-                          <div className="feature-card demo-feature-card">
+                          <div className="feature-card demo-feature-card" onClick={() => handleFeatureCardClick('demo')}>
                             <div className="feature-icon-wrapper">
                               <div className="megavibe-button-container compact-demo">
                                 <button className="megavibe-btn-enhanced demo-button">
@@ -408,6 +420,15 @@ function App() {
                     currentSong={currentSong}
                     venueId={selectedVenue.id}
                     onClose={handleCloseSongIdentifier}
+                  />
+                </Suspense>
+              )}
+
+              {showPerformerDashboard && (
+                <Suspense fallback={<div>Loading Performer Dashboard...</div>}>
+                  <PerformerDashboard
+                    featureType={selectedFeatureType}
+                    onClose={() => setShowPerformerDashboard(false)}
                   />
                 </Suspense>
               )}
