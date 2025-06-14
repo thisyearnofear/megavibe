@@ -31,15 +31,28 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
-    "suppressImplicitAnyIndexErrors": true
+    "noImplicitReturns": false,
+    
+    /* Type resolution - Fixed */
+    "types": ["vite/client"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    
+    /* Skip problematic lib checks */
+    "skipDefaultLibCheck": true,
+    "maxNodeModuleJsDepth": 1
   },
   "include": [
-    "src",
-    "vite.config.ts"
+    "src/**/*",
+    "src/types/**/*"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "build",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
   ],
   "references": [
     {

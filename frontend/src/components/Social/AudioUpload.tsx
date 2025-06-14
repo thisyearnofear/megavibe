@@ -166,9 +166,13 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({
 
       // Upload to backend with user info
       const snippet = await audioService.uploadSnippet(
-        audioFile,
-        title.trim(),
-        user.email || user.userId || 'Anonymous'
+        { blob: audioBlob, duration },
+        {
+          title: title.trim(),
+          venueId: venueId || 'default',
+          eventId: eventId,
+          tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
+        }
       );
 
       // Success

@@ -1,0 +1,341 @@
+/* Live Influence Hub Styles */
+.live-influence-hub {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.live-influence-hub.minimized {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+  border-radius: 25px;
+  padding: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  animation: pulse-glow 3s infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 212, 255, 0.3);
+  }
+  50% { 
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 107, 107, 0.4);
+  }
+}
+
+.live-influence-hub.minimized .minimize-button {
+  background: none;
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.live-influence-hub.minimized .minimize-button:hover {
+  transform: scale(1.05);
+}
+
+/* Hub Header */
+.hub-header {
+  padding: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.header-content h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.minimize-button,
+.close-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.minimize-button:hover,
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.close-button:hover {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: rgba(244, 67, 54, 0.4);
+}
+
+/* User Role Indicator */
+.user-role-indicator {
+  margin-bottom: 16px;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.role-badge.audience {
+  background: rgba(0, 212, 255, 0.2);
+  color: #00d4ff;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.role-badge.performer {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.role-badge.organizer {
+  background: rgba(255, 152, 0, 0.2);
+  color: #FF9800;
+  border: 1px solid rgba(255, 152, 0, 0.3);
+}
+
+/* Feature Selector */
+.feature-selector {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.feature-tab {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.feature-tab:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.feature-tab.active {
+  background: linear-gradient(45deg, #00d4ff, #0099cc);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+}
+
+/* Hub Content */
+.hub-content {
+  padding: 0;
+  min-height: 400px;
+}
+
+/* Override child component styles to remove extra padding */
+.hub-content .analytics-dashboard,
+.hub-content .performance-steering,
+.hub-content .social-sharing-incentives,
+.hub-content .organizer-tools {
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  margin: 0;
+  max-width: none;
+}
+
+/* Hub Footer */
+.hub-footer {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.feature-description {
+  text-align: center;
+}
+
+.feature-description p {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .live-influence-hub {
+    margin: 16px;
+    max-width: none;
+  }
+  
+  .hub-header {
+    padding: 20px;
+  }
+  
+  .header-content h2 {
+    font-size: 20px;
+  }
+  
+  .feature-selector {
+    flex-wrap: wrap;
+  }
+  
+  .feature-tab {
+    flex: none;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .live-influence-hub {
+    margin: 8px;
+    border-radius: 12px;
+  }
+  
+  .hub-header {
+    padding: 16px;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .header-controls {
+    align-self: flex-end;
+  }
+  
+  .feature-selector {
+    width: 100%;
+  }
+  
+  .feature-tab {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .hub-footer {
+    padding: 12px 16px;
+  }
+  
+  .live-influence-hub.minimized {
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+/* Animation for feature transitions */
+.hub-content > * {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Special styling for embedded components */
+.hub-content .analytics-dashboard .dashboard-header,
+.hub-content .performance-steering .steering-header,
+.hub-content .social-sharing-incentives .sharing-header,
+.hub-content .organizer-tools .tools-header {
+  display: none; /* Hide duplicate headers */
+}
+
+/* Ensure proper spacing for embedded content */
+.hub-content .dashboard-content,
+.hub-content .steering-content,
+.hub-content .tools-content {
+  padding: 24px;
+}
+
+.hub-content .social-sharing-incentives {
+  padding: 24px;
+}
+
+/* Loading states */
+.hub-content .loading,
+.hub-content .error {
+  padding: 40px 24px;
+  text-align: center;
+}
+
+/* Success/notification states */
+.hub-notification {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 10;
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

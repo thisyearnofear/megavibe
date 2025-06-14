@@ -12,6 +12,8 @@ const bountyRoutes = require("./routes/bountyRoutes.cjs");
 const reactionRoutes = require("./routes/reactionRoutes.cjs");
 const paymentsRoutes = require("./routes/paymentsRoutes.cjs");
 const healthRoutes = require("./routes/health.cjs");
+const liveInfluenceRoutes = require("./routes/liveInfluenceRoutes.cjs");
+const contentPoolRoutes = require("./routes/contentPoolRoutes.cjs");
 
 function configureMiddleware(app) {
   app.use(
@@ -35,6 +37,8 @@ function createExpressApp(app) {
   app.use("/api/reactions", reactionRoutes);
   app.use("/api/payments", paymentsRoutes);
   app.use("/api/health", healthRoutes);
+  app.use("/api/live-influence", liveInfluenceRoutes);
+  app.use("/api/content-pools", contentPoolRoutes);
 
   // Define the /waitlist route
   app.post("/waitlist", (req, res) => {
@@ -64,6 +68,8 @@ function createExpressApp(app) {
         reactions: "/api/reactions",
         payments: "/api/payments",
         health: "/api/health",
+        liveInfluence: "/api/live-influence",
+        contentPools: "/api/content-pools",
       },
     });
   });

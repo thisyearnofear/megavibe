@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CurrentSong } from '../../services/realtimeService';
+import { SongChangeEvent } from '../../services/realtimeService';
 import { api } from '../../services/api';
 import { TippingModal } from './TippingModal';
 import { BountyModal } from './BountyModal';
@@ -28,10 +28,13 @@ interface Song {
   album?: string;
   year?: number;
   lyrics?: string;
+  tipCount?: number;
+  totalTips?: number;
+  artistId?: string;
 }
 
 interface SongIdentifierProps {
-  currentSong: CurrentSong;
+  currentSong: SongChangeEvent;
   venueId: string;
   onClose: () => void;
 }
@@ -54,11 +57,11 @@ export const SongIdentifier: React.FC<SongIdentifierProps> = ({
 
   useEffect(() => {
     fetchSongDetails();
-  }, [currentSong.id]);
+  }, [currentSong.songId]);
 
   const fetchSongDetails = async () => {
     try {
-      const response = await api.get(`/songs/${currentSong.id}`);
+      const response = await api.get(`/songs/${currentSong.songId}`);
       setSongDetails(response.data);
     } catch (error) {
       console.error('Error fetching song details:', error);
@@ -76,7 +79,7 @@ export const SongIdentifier: React.FC<SongIdentifierProps> = ({
       }));
 
       await api.post('/reactions', {
-        songId: currentSong.id,
+        songId: currentSong.songId,
         type,
         venueId,
       });
@@ -136,7 +139,7 @@ export const SongIdentifier: React.FC<SongIdentifierProps> = ({
 
             <div className="song-info">
               <h2 className="song-title">{currentSong.title}</h2>
-              <p className="artist-name">{currentSong.artistName}</p>
+              <p className="artist-name">{currentSong.artist}</p>
 
               {songDetails && (
                 <div className="song-meta">
@@ -261,19 +264,19 @@ export const SongIdentifier: React.FC<SongIdentifierProps> = ({
 
           <div className="stats-section">
             <div className="stat-item">
-              <span className="stat-value">{currentSong.tipCount}</span>
+              <span className="stat-value">{songDetails?.tipCount || 0}</span>
               <span className="stat-label">Tips Tonight</span>
             </div>
             <div className="stat-item">
               <span className="stat-value">
-                ${currentSong.totalTips.toFixed(2)}
+                ${songDetails?.totalTips?.toFixed(2) || '0.00'}
               </span>
               <span className="stat-label">Total Tips</span>
             </div>
             <div className="stat-item">
               <span className="stat-value">
                 {Math.floor(
-                  (Date.now() - new Date(currentSong.startedAt).getTime()) /
+                  (Date.now() - new Date(currentSong.timestamp).getTime()) /
                     1000
                 )}
                 s
@@ -287,10 +290,10 @@ export const SongIdentifier: React.FC<SongIdentifierProps> = ({
       {showTipping && songDetails && (
         <TippingModal
           song={{
-            id: currentSong.id,
+            id: currentSong.songId,
             title: currentSong.title,
-            artistId: currentSong.artistId,
-            artistName: currentSong.artistName,
+            artistId: songDetails?.artistId || currentSong.artist,
+            artistName: currentSong.artist,
           }}
           venueId={venueId}
           onClose={() => setShowTipping(false)}
@@ -304,7 +307,7 @@ export const SongIdentifier: React.FC<SongIdentifierProps> = ({
       {showBounty && songDetails && (
         <BountyModal
           venueId={venueId}
-          currentArtistId={currentSong.artistId}
+          currentArtistId={songDetails?.artistId || currentSong.artist}
           onClose={() => setShowBounty(false)}
           onSuccess={() => {
             setShowBounty(false);
