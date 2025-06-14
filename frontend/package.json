@@ -30,7 +30,7 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.18.0",
     "react-share": "^4.4.1",
-    "react-swipeable-views": "^0.14.0",
+    "react-swipeable-views-react-18-fix": "^0.14.1",
     "viem": "^2.31.0",
     "wagmi": "^2.15.6"
   },
@@ -39,7 +39,6 @@
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.0.10",
     "@types/react-router-dom": "^5.3.3",
-    "@types/react-swipeable-views": "^0.13.4",
     "@types/stripe": "^8.0.416",
     "@typescript-eslint/eslint-plugin": "^8.34.0",
     "@typescript-eslint/parser": "^8.34.0",

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import './styles.css';
-import SwipeableViews from 'react-swipeable-views';
+import SwipeableViews from 'react-swipeable-views-react-18-fix';
 // import PaymentDialog from "./PaymentDialog"; // Import the PaymentDialog component
 
 type EmojiKey = 'emoji1' | 'emoji2' | 'emoji3';

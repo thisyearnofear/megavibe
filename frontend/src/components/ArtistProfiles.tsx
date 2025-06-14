@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { TwitterShareButton, TwitterIcon } from 'react-share';
 import './styles.css';
-import SwipeableViews from 'react-swipeable-views';
+import SwipeableViews from 'react-swipeable-views-react-18-fix';
 
 type ArtistProfilesProps = {
   artist: string;
