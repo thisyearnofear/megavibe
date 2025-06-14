@@ -25,31 +25,33 @@
 
 **POIDH-style incentivised content creation**
 
-- [ ] **Bounty Creation**: "50 USDC for funniest ZK proofs talk" style requests
-- [ ] **POIDH Integration**: Proof-or-it-didn't-happen verification system
-- [ ] **Community Verification**: Audience votes on bounty fulfillment quality
-- [ ] **Smart Contracts**: Automated bounty payouts on Mantle Network
-- [ ] **Live Bounty Display**: Real-time bounty requests visible to performers
+- [x] **Bounty Creation**: "50 USDC for funniest ZK proofs talk" style requests
+- [x] **POIDH Integration**: Proof-or-it-didn't-happen verification system
+- [x] **Bounty Marketplace**: Browse active bounties by venue/event/topic
+- [x] **Community Verification**: Audience votes on bounty fulfillment quality
+- [x] **Smart Contracts**: Automated bounty payouts on Mantle Network
+- [x] **Live Bounty Display**: Real-time bounty requests visible to performers
 
 ### 🎯 Priority 2: Moment Tokenization (Week 2)
 
 **Pay-to-contribute content pools with usage-based rewards**
 
-- [ ] **Content Pool System**: Pay small fee to contribute clips to venue/event pools
-- [ ] **Usage-Based Payouts**: Get paid when your content is used/shared
-- [ ] **Perspective Marketplace**: Multiple angles of same moment create value
-- [ ] **Quality Curation**: Community voting for premium pool entry
-- [ ] **Auto-NFT Minting**: Popular clips become tradeable assets
+- [x] **Content Pool System**: Pay small fee to contribute clips to venue/event pools
+- [x] **Usage-Based Payouts**: Get paid when your content is used/shared
+- [x] **Perspective Marketplace**: Multiple angles of same moment create value
+- [x] **Quality Curation**: Community voting for premium pool entry
+- [x] **Viral Revenue Sharing**: Popular clips generate ongoing revenue for all contributors
+- [x] **Auto-NFT Minting**: Popular clips become tradeable assets
 
 ### 🎯 Priority 3: Live Influence Economy (Week 3)
 
 **Real-time influence with venue analytics**
 
-- [ ] **Real-time Tip Influence**: Tips change setlists, topics, Q&A
-- [ ] **Sentiment Analytics**: Live audience reaction dashboards for venues
-- [ ] **Social Sharing Incentives**: Reward sharing to gauge viral potential
-- [ ] **Venue Intelligence**: Heat maps of engagement and topic popularity
-- [ ] **Organiser Tools**: Real-time data for event optimization
+- [x] **Real-time Tip Influence**: Tips change setlists, topics, Q&A
+- [x] **Sentiment Analytics**: Live audience reaction dashboards for venues
+- [x] **Social Sharing Incentives**: Reward sharing to gauge viral potential
+- [x] **Venue Intelligence**: Heat maps of engagement and topic popularity
+- [x] **Organiser Tools**: Real-time data for event optimization
 
 ### 🎯 Priority 4: Engagement Reputation (Week 4)
 
