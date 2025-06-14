@@ -289,9 +289,8 @@ function App() {
                             <span className="brand-gradient">VIBE OUT.</span>
                           </h1>
                           <p className="welcome-subtitle">
-                            <strong>MegaVibe</strong> is Shazam for live performances.
-                            Walk into any venue, tap our button, and instantly identify songs
-                            while tipping artists in real-time.
+                            <strong>MegaVibe</strong> transforms any live experience into a collaborative content creation and monetization ecosystem.
+                            Walk into any venue, instantly connect with performers and audiences, create bounties for content, and earn on-chain.
                           </p>
                         </div>
 
@@ -300,8 +299,8 @@ function App() {
                             <div className="feature-icon-wrapper">
                               <div className="vinyl-record"></div>
                             </div>
-                            <h3>🎯 Auto-Detect Venues</h3>
-                            <p><strong>GPS Magic:</strong> Walk into participating venues and MegaVibe automatically knows where you are. No manual check-ins needed.</p>
+                            <h3>🎯 Instant Connection</h3>
+                            <p><strong>GPS Magic:</strong> Walk into any venue and instantly know who's performing, what's happening, and who else is there. Zero friction discovery.</p>
                           </div>
                           <div className="feature-card">
                             <div className="feature-icon-wrapper">
@@ -313,17 +312,35 @@ function App() {
                                 <div className="sound-wave-bar"></div>
                               </div>
                             </div>
-                            <h3>🎵 Identify Live Songs</h3>
-                            <p><strong>Like Shazam, But Live:</strong> Tap the MegaVibe button to instantly identify what song is being performed right now on stage.</p>
+                            <h3>💰 Bounty Requests</h3>
+                            <p><strong>Pay for Content:</strong> Create bounties for specific performances - "50 USDC for funniest crypto talk" - and watch creators compete.</p>
                           </div>
                           <div className="feature-card">
                             <div className="feature-icon-wrapper">
                               <div className="status-indicator status-live">
-                                <span>TIP</span>
+                                <span>NFT</span>
                               </div>
                             </div>
-                            <h3>💰 Tip Artists Instantly</h3>
-                            <p><strong>Direct Support:</strong> Send tips directly to performers the moment they play a song you love. Artists get paid instantly.</p>
+                            <h3>🎬 Moment Tokenization</h3>
+                            <p><strong>Own Viral Clips:</strong> Contribute content to pools, earn when it's used, and watch viral moments become tradeable assets.</p>
+                          </div>
+                          <div className="feature-card">
+                            <div className="feature-icon-wrapper">
+                              <div className="status-indicator status-live">
+                                <span>⚡</span>
+                              </div>
+                            </div>
+                            <h3>⚡ Live Influence</h3>
+                            <p><strong>Shape Performances:</strong> Tips and audience reactions influence what happens on stage in real-time. Your voice matters.</p>
+                          </div>
+                          <div className="feature-card">
+                            <div className="feature-icon-wrapper">
+                              <div className="status-indicator status-live">
+                                <span>🏆</span>
+                              </div>
+                            </div>
+                            <h3>🏆 Build Reputation</h3>
+                            <p><strong>Prove Your Taste:</strong> On-chain proof of expertise across events. Great curators and supporters get recognized and rewarded.</p>
                           </div>
                           <div className="feature-card demo-feature-card">
                             <div className="feature-icon-wrapper">
@@ -336,7 +353,7 @@ function App() {
                               </div>
                             </div>
                             <h3>🎯 See It In Action</h3>
-                            <p><strong>This is the button</strong> you'll tap at live venues to identify songs and tip artists instantly.</p>
+                            <p><strong>This is the button</strong> that starts it all - tap to connect, create, influence, and earn at any live performance.</p>
                           </div>
                         </div>
 
@@ -345,13 +362,13 @@ function App() {
                             className="btn btn-primary btn-xl"
                             onClick={() => setShowVenuePicker(true)}
                           >
-                            🎵 Try MegaVibe Now
+                            � Explore Live Venues
                           </button>
                           <button
                             className="btn btn-secondary btn-xl"
                             onClick={() => setActiveView('social')}
                           >
-                            📱 View Live Feed
+                            📱 Browse Content Feed
                           </button>
                         </div>
 
@@ -359,8 +376,8 @@ function App() {
 
                         <div className="welcome-note">
                           <p>
-                            <strong>🚀 Beta Launch:</strong> We're partnering with venues and artists in major cities.
-                            Connect your wallet to start tipping and join the future of live music support!
+                            <strong>🚀 Live Experience Economy:</strong> We're partnering with venues, conferences, and creators worldwide.
+                            Connect your wallet to create bounties, tokenize moments, build reputation, earn onchain across events!
                           </p>
                         </div>
                       </div>
