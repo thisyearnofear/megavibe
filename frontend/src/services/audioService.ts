@@ -44,12 +44,29 @@ export class AudioService {
     }
   }
 
-  async uploadSnippet(file: File, title: string, artist: string): Promise<AudioSnippet> {
+  async uploadSnippet(recording: { blob: Blob; duration: number }, metadata: {
+    title: string;
+    venueId: string;
+    eventId?: string;
+    tags: string[];
+  }): Promise<AudioSnippet> {
     try {
       const formData = new FormData();
+      
+      // Convert blob to file
+      const file = new File([recording.blob], `snippet-${Date.now()}.webm`, {
+        type: recording.blob.type || 'audio/webm',
+      });
+      
       formData.append('file', file);
-      formData.append('title', title);
-      formData.append('artist', artist);
+      formData.append('title', metadata.title);
+      formData.append('venueId', metadata.venueId);
+      formData.append('duration', recording.duration.toString());
+      formData.append('tags', JSON.stringify(metadata.tags));
+      
+      if (metadata.eventId) {
+        formData.append('eventId', metadata.eventId);
+      }
 
       const response = await api.post('/audio/snippets', formData, {
         headers: {

@@ -82,10 +82,10 @@ export const EnhancedMegaVibeButton: React.FC<EnhancedMegaVibeButtonProps> = ({
       setCurrentSong(data);
     };
 
-    realtimeService.on('song_changed', handleSongChange);
+    const unsubscribe = realtimeService.onSongChanged(handleSongChange);
 
     return () => {
-      realtimeService.off('song_changed', handleSongChange);
+      unsubscribe();
       realtimeService.leaveVenue(venueId);
       if (pulseInterval.current) {
         clearInterval(pulseInterval.current);

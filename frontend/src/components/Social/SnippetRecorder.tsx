@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  audioService,
-  AudioRecording,
-  AudioSnippet,
-} from '../../services/audioService';
+import audioService, { AudioSnippet } from '../../services/audioService';
 import '../../styles/SnippetRecorder.css';
+
+interface AudioRecording {
+  url: string;
+  blob: Blob;
+  duration: number;
+}
 
 interface SnippetRecorderProps {
   venueId?: string;
