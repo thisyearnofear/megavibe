@@ -18,6 +18,15 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["react", "react-hooks"],
+  ignorePatterns: [
+    "dist/",
+    "build/",
+    "node_modules/",
+    "*.config.js",
+    "*.config.ts",
+    ".env*",
+    "coverage/",
+  ],
   rules: {
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
