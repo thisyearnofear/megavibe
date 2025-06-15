@@ -20,9 +20,9 @@ const connectionRoutes = require("./routes/connectionRoutes.cjs");
 function configureMiddleware(app) {
   app.use(
     cors({
-      origin: "http://localhost:5173",
+      origin: ["http://localhost:5173", "http://localhost:3000"],
       credentials: true,
-    })
+    }),
   );
 }
 

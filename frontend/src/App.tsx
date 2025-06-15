@@ -304,14 +304,7 @@ function App() {
                             <strong>MegaVibe</strong> transforms any live experience into a collaborative content creation and monetization ecosystem.
                             Walk into any venue, instantly connect with performers and audiences, create bounties for content, and earn on-chain.
                           </p>
-                          <div className="progress-highlight">
-                            <div className="progress-badge">
-                              <span className="badge-text">✅ ALL 5 CORE FEATURES IMPLEMENTED</span>
-                            </div>
-                            <p className="progress-description">
-                              Experience the complete live performance economy: Connection, Bounties, Tokenization, Live Influence, and Reputation - all ready to use!
-                            </p>
-                          </div>
+
                         </div>
 
                         <div className="features-showcase">
@@ -463,25 +456,24 @@ function App() {
                             <div className="status-grid">
                               <div className="status-item">
                                 <span className="status-icon">✅</span>
-                                <span className="status-text">5/5 Core Features</span>
+                                <span className="status-text">Full Features</span>
                               </div>
                               <div className="status-item">
                                 <span className="status-icon">🎭</span>
-                                <span className="status-text">3 Real Artists</span>
+                                <span className="status-text">Artist Profiles</span>
                               </div>
                               <div className="status-item">
                                 <span className="status-icon">🏗️</span>
-                                <span className="status-text">Mantle Network</span>
+                                <span className="status-text">On-Chain</span>
                               </div>
                               <div className="status-item">
                                 <span className="status-icon">📱</span>
-                                <span className="status-text">Mobile Ready</span>
+                                <span className="status-text">Mobile Friendly</span>
                               </div>
                             </div>
                           </div>
                           <p>
-                            <strong>🚀 Complete Live Experience Economy:</strong> All core features are live and ready to use!
-                            Connect your wallet to create bounties, tokenize moments, build reputation, and earn onchain across events.
+                            <strong>Live Performance Economy:</strong> Connect your wallet to create bounties, tokenize moments, build reputation, and earn onchain across events.
                           </p>
                         </div>
                       </div>

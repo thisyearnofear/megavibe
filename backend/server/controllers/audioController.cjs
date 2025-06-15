@@ -57,15 +57,16 @@ const uploadSnippet = asyncHandler(async (req, res) => {
     // Create audio snippet record in database
     const snippet = await AudioSnippet.create({
       title: title || fileName,
-      description,
-      fileUrl: ipfsResult.url,
-      fileCid: ipfsResult.cid,
-      fileSize,
-      mimeType,
+      creator: req.user._id,
       venue,
       event,
-      uploadedBy: req.user._id,
-      storageType: "ipfs",
+      audioFile: {
+        url: ipfsResult.url,
+        ipfsHash: ipfsResult.cid,
+        size: fileSize,
+        format: mimeType,
+        duration: duration || 0,
+      },
     });
 
     // Clean up local file after successful IPFS upload
@@ -79,14 +80,15 @@ const uploadSnippet = asyncHandler(async (req, res) => {
     const localUrl = `/uploads/snippets/${fileName}`;
     const snippet = await AudioSnippet.create({
       title: title || fileName,
-      description,
-      fileUrl: localUrl,
-      fileSize,
-      mimeType,
+      creator: req.user._id,
       venue,
       event,
-      uploadedBy: req.user._id,
-      storageType: "local",
+      audioFile: {
+        url: localUrl,
+        size: fileSize,
+        format: mimeType,
+        duration: duration || 0,
+      },
     });
 
     res.status(201).json(snippet);
@@ -94,21 +96,21 @@ const uploadSnippet = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all audio snippets
-// @route   GET /api/audio/snippets
+// @route   GET /api/audio
 // @access  Public
 const getSnippets = asyncHandler(async (req, res) => {
   const snippets = await AudioSnippet.find()
-    .populate("uploadedBy venue event")
+    .populate("creator venue event artist")
     .sort({ createdAt: -1 });
   res.status(200).json(snippets);
 });
 
 // @desc    Get a single audio snippet by ID
-// @route   GET /api/audio/snippets/:id
+// @route   GET /api/audio/:id
 // @access  Public
 const getSnippetById = asyncHandler(async (req, res) => {
   const snippet = await AudioSnippet.findById(req.params.id).populate(
-    "uploadedBy venue event"
+    "creator venue event artist",
   );
 
   if (snippet) {
@@ -123,8 +125,8 @@ const getSnippetById = asyncHandler(async (req, res) => {
 // @route   GET /api/users/:userId/snippets
 // @access  Public
 const getSnippetsByUser = asyncHandler(async (req, res) => {
-  const snippets = await AudioSnippet.find({ uploadedBy: req.params.userId })
-    .populate("uploadedBy venue event")
+  const snippets = await AudioSnippet.find({ creator: req.params.userId })
+    .populate("creator venue event artist")
     .sort({ createdAt: -1 });
   res.status(200).json(snippets);
 });
@@ -191,7 +193,7 @@ const deleteSnippet = asyncHandler(async (req, res) => {
   if (snippet) {
     // Check if user has permission to delete this snippet
     if (
-      snippet.uploadedBy.toString() !== req.user._id.toString() &&
+      snippet.creator.toString() !== req.user._id.toString() &&
       req.user.role !== "admin"
     ) {
       res.status(403);
@@ -238,7 +240,7 @@ const addReaction = asyncHandler(async (req, res) => {
   const existingReactionIndex = snippet.reactions.findIndex(
     (r) =>
       r.user.toString() === req.user._id.toString() &&
-      r.reactionType === reactionType
+      r.reactionType === reactionType,
   );
 
   if (existingReactionIndex !== -1) {
@@ -253,9 +255,105 @@ const addReaction = asyncHandler(async (req, res) => {
   }
 
   const updatedSnippet = await snippet.save();
-  await updatedSnippet.populate("uploadedBy venue event");
+  await updatedSnippet.populate("creator venue event artist");
 
   res.status(200).json(updatedSnippet);
+});
+
+// @desc    Create sample data for testing
+// @route   POST /api/audio/create-sample
+// @access  Public (for development only)
+const createSampleData = asyncHandler(async (req, res) => {
+  // Only allow in development
+  if (process.env.NODE_ENV === "production") {
+    res.status(403);
+    throw new Error("Sample data creation not allowed in production");
+  }
+
+  try {
+    // Create a sample user if none exists
+    const User = require("../models/userModel.cjs");
+    let sampleUser = await User.findOne({ username: "SampleUser" });
+
+    if (!sampleUser) {
+      sampleUser = await User.create({
+        username: "SampleUser",
+        email: "sample@example.com",
+        password: "password123",
+      });
+    }
+
+    // Create sample audio snippets
+    const sampleSnippets = [
+      {
+        title: "Live Jazz Performance",
+        creator: sampleUser._id,
+        audioFile: {
+          url: "https://example.com/audio/jazz.mp3",
+          duration: 180,
+          format: "audio/mp3",
+          size: 2048000,
+        },
+        stats: {
+          likes: 15,
+          plays: 50,
+          shares: 3,
+        },
+        tags: ["jazz", "live", "performance"],
+        type: "performance",
+        privacy: "public",
+      },
+      {
+        title: "Acoustic Guitar Solo",
+        creator: sampleUser._id,
+        audioFile: {
+          url: "https://example.com/audio/acoustic.mp3",
+          duration: 240,
+          format: "audio/mp3",
+          size: 3072000,
+        },
+        stats: {
+          likes: 25,
+          plays: 80,
+          shares: 5,
+        },
+        tags: ["acoustic", "guitar", "solo"],
+        type: "performance",
+        privacy: "public",
+      },
+      {
+        title: "Electronic Beat",
+        creator: sampleUser._id,
+        audioFile: {
+          url: "https://example.com/audio/electronic.mp3",
+          duration: 195,
+          format: "audio/mp3",
+          size: 2560000,
+        },
+        stats: {
+          likes: 42,
+          plays: 120,
+          shares: 8,
+        },
+        tags: ["electronic", "beat", "live"],
+        type: "performance",
+        privacy: "public",
+      },
+    ];
+
+    // Clear existing snippets and create new ones
+    await AudioSnippet.deleteMany({});
+    const createdSnippets = await AudioSnippet.insertMany(sampleSnippets);
+
+    res.status(201).json({
+      message: `Created ${createdSnippets.length} sample audio snippets`,
+      snippets: createdSnippets,
+    });
+  } catch (error) {
+    console.error("Error creating sample data:", error);
+    res.status(500);
+    throw new Error("Failed to create sample data");
+  }
 });
 
 module.exports = {
@@ -268,4 +366,5 @@ module.exports = {
   streamSnippet,
   deleteSnippet,
   addReaction,
+  createSampleData,
 };
