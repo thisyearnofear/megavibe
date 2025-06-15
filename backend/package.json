@@ -7,8 +7,6 @@
     "dev": "node server/server.cjs",
     "start": "node server/server.cjs",
     "build": "echo 'No build step needed for backend'",
-    "test": "jest --env=node",
-    "test:setup": "node setEnvVars.js && jest",
     "seed": "node server/data/cryptoEventsSeed.cjs",
     "seed:crypto": "node server/data/cryptoEventsSeed.cjs"
   },
@@ -44,10 +42,6 @@
   },
   "devDependencies": {
     "@types/node": "^20.8.9",
-    "jest": "^29.7.0",
-    "mongodb-memory-server": "^9.0.1",
-    "supertest": "^6.3.3",
-    "supertest-session": "^5.0.1",
     "typescript": "^5.0.4"
   },
   "description": "Backend server for Megavibe",

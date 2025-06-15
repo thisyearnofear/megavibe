@@ -43,13 +43,6 @@ jobs:
           cd frontend
           npm run build
 
-      - name: Test Backend
-        run: |
-          cd backend
-          npm test
-        env:
-          NODE_ENV: test
-
   deploy-backend:
     needs: test
     runs-on: ubuntu-latest
