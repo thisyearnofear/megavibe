@@ -48,7 +48,7 @@
     "mongodb-memory-server": "^9.0.1",
     "supertest": "^6.3.3",
     "supertest-session": "^5.0.1",
-    "typescript": "^4.9.3"
+    "typescript": "^5.0.4"
   },
   "description": "Backend server for Megavibe",
   "main": "server.cjs",
