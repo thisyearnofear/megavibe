@@ -47,6 +47,7 @@ megavibe/
    PORT=10000
    MONGO_URI=your_mongodb_connection_string
    JWT_SECRET=your_generated_jwt_secret
+   SESSION_SECRET=your_generated_session_secret
    CORS_ORIGIN=https://megavibe.vercel.app
    PINATA_API_KEY=your_pinata_api_key
    PINATA_API_SECRET=your_pinata_secret
@@ -138,6 +139,7 @@ NODE_ENV=production
 PORT=10000
 MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/megavibe
 JWT_SECRET=your_super_secret_jwt_key
+SESSION_SECRET=your_super_secret_session_key
 CORS_ORIGIN=https://megavibe.vercel.app
 PINATA_API_KEY=your_pinata_api_key
 PINATA_API_SECRET=your_pinata_secret
