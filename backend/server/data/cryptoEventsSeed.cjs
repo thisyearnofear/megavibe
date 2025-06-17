@@ -11,8 +11,8 @@ const Song = require("../models/songModel.cjs");
 const User = require("../models/userModel.cjs");
 const AudioSnippet = require("../models/snippetModel.cjs");
 
-// Crypto/Blockchain Events for Mantle Hackathon
-const cryptoEvents = [
+// Experience Events - Starting with Web3/Blockchain for initial launch
+const experienceEvents = [
   {
     name: "Coinfest Asia 2025",
     dates: { start: new Date("2025-08-21"), end: new Date("2025-08-22") },
@@ -69,7 +69,7 @@ const cryptoEvents = [
     dates: { start: new Date("2025-10-01"), end: new Date("2025-10-02") },
     location: "Singapore",
     coordinates: { lat: 1.3521, lng: 103.8198 },
-    description: "Premier global crypto event, industry leaders",
+    description: "Premier global experience, industry leaders",
     venue: "Marina Bay Sands Convention Center",
     focus: ["Global Crypto", "Industry Leaders", "Innovation"],
     expectedAttendees: 10000,
@@ -216,8 +216,8 @@ const cryptoEvents = [
   },
 ];
 
-// Sample artists/speakers for crypto events
-const cryptoSpeakers = [
+// Sample speakers for experiences - expandable for different event types
+const speakers = [
   "Vitalik Buterin",
   "Changpeng Zhao",
   "Brian Armstrong",
@@ -240,8 +240,8 @@ const cryptoSpeakers = [
   "Tim Draper",
 ];
 
-// Sample songs/content for crypto events
-const cryptoContent = [
+// Sample content for experiences - expandable for different event types
+const content = [
   { title: "The Future of DeFi", type: "panel" },
   { title: "Web3 Mass Adoption", type: "keynote" },
   { title: "NFT Innovation Showcase", type: "demo" },
@@ -256,7 +256,7 @@ const cryptoContent = [
 
 // Generate venues from events
 const generateVenues = (adminUserId) => {
-  return cryptoEvents.map((event, index) => ({
+  return experienceEvents.map((event, index) => ({
     name: event.venue,
     address: `${event.venue}, ${event.location}`,
     description: `Premium venue hosting ${event.name} - ${event.description}`,
@@ -294,7 +294,7 @@ const generateVenues = (adminUserId) => {
 
 // Generate events
 const generateEvents = (venues, adminUserId, users) => {
-  return cryptoEvents.map((eventData, index) => {
+  return experienceEvents.map((eventData, index) => {
     const venue = venues[index];
     const startDate = eventData.dates.start;
     const endDate = eventData.dates.end;
@@ -348,12 +348,12 @@ const generateSongs = (events, users) => {
     const sessionCount = 3 + Math.floor(Math.random() * 3);
 
     for (let i = 0; i < sessionCount; i++) {
-      const content =
-        cryptoContent[Math.floor(Math.random() * cryptoContent.length)];
+      const sessionContent =
+        content[Math.floor(Math.random() * content.length)];
       const randomUser = users[Math.floor(Math.random() * users.length)];
 
       songs.push({
-        title: content.title,
+        title: sessionContent.title,
         artist: randomUser._id, // Reference to User model
         duration: 45 + Math.floor(Math.random() * 45), // 45-90 minutes in seconds * 60
         genre: "electronic", // Using a more standard genre
@@ -411,7 +411,7 @@ const generateUsers = async () => {
         lastName: ["Smith", "Johnson", "Brown", "Davis", "Wilson"][i % 5],
         bio: "Crypto enthusiast and blockchain developer",
         interests: ["DeFi", "NFTs", "Web3", "Ethereum", "Bitcoin"].slice(0, 3),
-        location: cryptoEvents[i % cryptoEvents.length].location,
+        location: experienceEvents[i % experienceEvents.length].location,
       },
       walletAddress: "0x" + Math.random().toString(16).substr(2, 40),
       preferences: {
@@ -465,9 +465,9 @@ const generateAudioSnippets = (users, songs, events) => {
 };
 
 // Main seeding function
-const seedCryptoEvents = async () => {
+const seedExperiences = async () => {
   try {
-    console.log("🚀 Starting crypto events seeding...");
+    console.log("🚀 Starting experiences seeding...");
 
     // Clear existing data
     await Promise.all([
@@ -514,10 +514,10 @@ const seedCryptoEvents = async () => {
     // Skip audio snippets for now due to geo indexing issues
     console.log("⏭️  Skipping audio snippets for now");
 
-    console.log("🎉 Crypto events seeding completed successfully!");
+    console.log("🎉 experiences seeding completed successfully!");
     console.log(`
 📊 Summary:
-- ${venues.length} crypto event venues
+- ${venues.length} experience venues
 - ${events.length} blockchain conferences
 - ${songs.length} speaking sessions
 - ${users.length + 1} crypto enthusiast users
@@ -532,17 +532,22 @@ const seedCryptoEvents = async () => {
       snippets: 0,
     };
   } catch (error) {
-    console.error("❌ Error seeding crypto events:", error);
+    console.error("❌ Error seeding experiences:", error);
     throw error;
   }
 };
 
 // Export for use in other files
 module.exports = {
-  seedCryptoEvents,
-  cryptoEvents,
-  cryptoSpeakers,
-  cryptoContent,
+  seedExperiences,
+  seedCryptoEvents: seedExperiences, // Backward compatibility alias
+  experienceEvents,
+  speakers,
+  content,
+  // Legacy aliases for backward compatibility
+  cryptoEvents: experienceEvents,
+  cryptoSpeakers: speakers,
+  cryptoContent: content,
 };
 
 // Run seeding if called directly
@@ -566,7 +571,7 @@ if (require.main === module) {
     })
     .then(() => {
       console.log("Connected to MongoDB for seeding");
-      return seedCryptoEvents();
+      return seedExperiences();
     })
     .then(() => {
       console.log("Seeding completed, exiting...");
