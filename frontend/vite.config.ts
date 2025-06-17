@@ -9,6 +9,10 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
+    rollupOptions: {
+      // External packages that should not be bundled
+      external: ["crypto"],
+    },
   },
   server: {
     port: 5173,
@@ -16,5 +20,17 @@ export default defineConfig({
   },
   resolve: {
     dedupe: ["react", "react-dom"],
+    alias: {
+      // Polyfill Node.js crypto for browser
+      crypto: "crypto-browserify",
+    },
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      // Node.js global to browser globalThis
+      define: {
+        global: "globalThis",
+      },
+    },
   },
 });

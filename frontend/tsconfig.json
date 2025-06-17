@@ -34,7 +34,7 @@
     "noImplicitReturns": false,
     
     /* Type resolution - Fixed */
-    "types": ["vite/client"],
+    "types": ["vite/client", "node", "scheduler", "webidl-conversions", "whatwg-url"],
     "typeRoots": ["./node_modules/@types", "./src/types"],
     
     /* Skip problematic lib checks */

@@ -18,12 +18,8 @@ const reputationRoutes = require("./routes/reputationRoutes.cjs");
 const connectionRoutes = require("./routes/connectionRoutes.cjs");
 
 function configureMiddleware(app) {
-  app.use(
-    cors({
-      origin: ["http://localhost:5173", "http://localhost:3000"],
-      credentials: true,
-    }),
-  );
+  // CORS configuration is handled in server.cjs
+  // This space is reserved for other middleware configurations
 }
 
 function createExpressApp(app) {

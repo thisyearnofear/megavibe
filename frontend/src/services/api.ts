@@ -19,6 +19,8 @@ export const api = axios.create({
   baseURL: getApiBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Access-Control-Allow-Origin': import.meta.env.PROD ? 'https://megavibe.vercel.app' : 'http://localhost:5173',
   },
   withCredentials: true, // For session cookies
   timeout: 30000, // 30 second timeout for production
