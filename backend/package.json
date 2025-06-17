@@ -9,7 +9,8 @@
     "build": "echo 'No build step needed for backend'",
     "seed": "node server/data/cryptoEventsSeed.cjs",
     "seed:experiences": "node server/data/cryptoEventsSeed.cjs",
-    "seed:crypto": "node server/data/cryptoEventsSeed.cjs"
+    "seed:crypto": "node server/data/cryptoEventsSeed.cjs",
+    "seed:production": "NODE_ENV=production FORCE_SEED=true node server/data/productionSeed.cjs"
   },
   "dependencies": {
     "@stripe/stripe-js": "^2.1.7",

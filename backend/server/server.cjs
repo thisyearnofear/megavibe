@@ -51,11 +51,11 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader(
       "Access-Control-Allow-Methods",
-      "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS"
+      "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
     );
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
     );
   }
   next();
@@ -86,7 +86,7 @@ app.use(
     maxAge: 86400, // 24 hours
     preflightContinue: false,
     optionsSuccessStatus: 204,
-  })
+  }),
 );
 
 // Use request logger
@@ -100,6 +100,33 @@ app.use(helmet());
 
 // Connect to MongoDB
 connectDB();
+
+// Auto-seed production database if needed
+console.log("🔍 Checking seeding conditions...");
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("SEED_ON_START:", process.env.SEED_ON_START);
+console.log("FORCE_SEED:", process.env.FORCE_SEED);
+console.log("RENDER_SERVICE_NAME:", process.env.RENDER_SERVICE_NAME);
+
+if (
+  (process.env.NODE_ENV === "production" || process.env.RENDER_SERVICE_NAME) &&
+  (process.env.SEED_ON_START === "true" || process.env.FORCE_SEED === "true")
+) {
+  console.log("✅ Seeding conditions met, will start seeding in 5 seconds...");
+  setTimeout(async () => {
+    console.log("🌱 Starting production database seeding...");
+    try {
+      const { productionSeed } = require("./data/productionSeed.cjs");
+      const result = await productionSeed();
+      console.log("✅ Production database seeded successfully:", result);
+    } catch (error) {
+      console.error("❌ Production seeding failed:", error.message);
+      console.error("Full error:", error);
+    }
+  }, 5000); // Wait 5 seconds for MongoDB connection to stabilize
+} else {
+  console.log("⏭️ Seeding conditions not met, skipping auto-seed");
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
