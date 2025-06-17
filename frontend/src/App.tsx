@@ -314,9 +314,9 @@ function App() {
                           </div>
 
                           <div className="welcome-features">
-                            <div className="feature-card implemented" onClick={() => handleFeatureCardClick('connection')}>
+                            <div className="feature-card coming-soon" onClick={() => handleFeatureCardClick('connection')}>
                               <div className="feature-status">
-                                <span className="status-badge implemented">✅ LIVE</span>
+                                <span className="status-badge coming-soon">🚧 COMING SOON</span>
                               </div>
                               <div className="feature-icon-wrapper">
                                 <div className="vinyl-record"></div>
@@ -324,13 +324,13 @@ function App() {
                               <h3>🎯 Instant Connection</h3>
                               <p><strong>GPS Magic:</strong> Walk into any venue and instantly know who's performing, what's happening, and who else is there. Zero friction discovery.</p>
                               <div className="feature-cta">
-                                <span>Try with Papa, Anatu & Andrew →</span>
+                                <span>Preview Coming Soon →</span>
                               </div>
                             </div>
 
-                            <div className="feature-card implemented" onClick={() => handleFeatureCardClick('bounty')}>
+                            <div className="feature-card implemented featured" onClick={() => window.location.href = '/tip'}>
                               <div className="feature-status">
-                                <span className="status-badge implemented">✅ LIVE</span>
+                                <span className="status-badge implemented">✅ LIVE NOW</span>
                               </div>
                               <div className="feature-icon-wrapper">
                                 <div className="sound-wave">
@@ -341,16 +341,16 @@ function App() {
                                   <div className="sound-wave-bar"></div>
                                 </div>
                               </div>
-                              <h3>💰 Bounty Requests</h3>
-                              <p><strong>Pay for Content:</strong> Create bounties for specific performances - "50 USDC for funniest ZK proofs talk" - foster fun incentives.</p>
+                              <h3>💰 Live Event Tipping</h3>
+                              <p><strong>Tip Speakers:</strong> Send crypto tips to speakers in real-time during crypto conferences and events.</p>
                               <div className="feature-cta">
-                                <span>Demo Bounty System →</span>
+                                <span>Start Tipping Now →</span>
                               </div>
                             </div>
 
-                            <div className="feature-card implemented" onClick={() => handleFeatureCardClick('tokenization')}>
+                            <div className="feature-card coming-soon" onClick={() => handleFeatureCardClick('tokenization')}>
                               <div className="feature-status">
-                                <span className="status-badge implemented">✅ LIVE</span>
+                                <span className="status-badge coming-soon">🚧 COMING SOON</span>
                               </div>
                               <div className="feature-icon-wrapper">
                                 <div className="status-indicator status-live">
@@ -360,13 +360,13 @@ function App() {
                               <h3>🎬 Moment Tokenization</h3>
                               <p><strong>Own Viral Clips:</strong> Contribute content to pools, earn when it's used, and watch viral moments become tradeable assets.</p>
                               <div className="feature-cta">
-                                <span>See NFT Creation →</span>
+                                <span>Preview Coming Soon →</span>
                               </div>
                             </div>
 
-                            <div className="feature-card implemented" onClick={() => handleFeatureCardClick('influence')}>
+                            <div className="feature-card coming-soon" onClick={() => handleFeatureCardClick('influence')}>
                               <div className="feature-status">
-                                <span className="status-badge implemented">✅ LIVE</span>
+                                <span className="status-badge coming-soon">🚧 COMING SOON</span>
                               </div>
                               <div className="feature-icon-wrapper">
                                 <div className="status-indicator status-live">
@@ -376,13 +376,13 @@ function App() {
                               <h3>⚡ Live Influence</h3>
                               <p><strong>Shape Reality:</strong> Tips and audience reactions influence what happens on stage in real-time. Your voice matters.</p>
                               <div className="feature-cta">
-                                <span>Interactive Demo →</span>
+                                <span>Preview Coming Soon →</span>
                               </div>
                             </div>
 
-                            <div className="feature-card implemented" onClick={() => handleFeatureCardClick('reputation')}>
+                            <div className="feature-card coming-soon" onClick={() => handleFeatureCardClick('reputation')}>
                               <div className="feature-status">
-                                <span className="status-badge implemented">✅ LIVE</span>
+                                <span className="status-badge coming-soon">🚧 COMING SOON</span>
                               </div>
                               <div className="feature-icon-wrapper">
                                 <div className="status-indicator status-live">
@@ -392,7 +392,7 @@ function App() {
                               <h3>🏆 Build Reputation</h3>
                               <p><strong>Prove Your Taste:</strong> On-chain proof of expertise across events. Great curators and supporters get recognized and rewarded.</p>
                               <div className="feature-cta">
-                                <span>Explore Reputation →</span>
+                                <span>Preview Coming Soon →</span>
                               </div>
                             </div>
 

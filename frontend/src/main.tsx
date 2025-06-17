@@ -1,6 +1,8 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
+import { TipPage } from './components/TipPage';
 import './styles/design-system.css';
 import './styles/global.css';
 
@@ -18,7 +20,12 @@ if (container) {
   const root = createRoot(container);
   root.render(
     <React.StrictMode>
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/tip" element={<TipPage />} />
+        </Routes>
+      </BrowserRouter>
     </React.StrictMode>
   );
 }
