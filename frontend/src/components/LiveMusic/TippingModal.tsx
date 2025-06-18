@@ -1,34 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useWallet } from '../../contexts/WalletContext';
 import { api } from '../../services/api';
-import realtimeService from '../../services/realtimeService';
+
+import { walletService } from '../../services/walletService';
 import '../../styles/TippingModal.css';
 
 interface TippingModalProps {
-  song: {
+  speaker: {
     id: string;
-    title: string;
-    artistId: string;
-    artistName: string;
+    name: string;
+    title?: string;
+    avatar?: string;
+    walletAddress?: string;
   };
-  venueId: string;
+  event: {
+    id: string;
+    name: string;
+  };
   onClose: () => void;
   onSuccess: () => void;
 }
 
-const PRESET_AMOUNTS = [1, 5, 10, 20];
+const PRESET_AMOUNTS = [5, 10, 25, 50];
 
 export const TippingModal: React.FC<TippingModalProps> = ({
-  song,
-  venueId,
+  speaker,
+  event,
   onClose,
   onSuccess,
 }) => {
-  const [amount, setAmount] = useState<number>(5);
+  const [amount, setAmount] = useState<number>(10);
   const [customAmount, setCustomAmount] = useState<string>('');
   const [message, setMessage] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [useCustom, setUseCustom] = useState(false);
+  const [walletBalance, setWalletBalance] = useState<string>('0');
+  const [txHash, setTxHash] = useState<string>('');
+  const [step, setStep] = useState<'setup' | 'confirming' | 'success'>('setup');
+
+  const { isConnected, isWalletReady } = useWallet();
 
   const handleAmountSelect = (value: number) => {
     setAmount(value);
@@ -54,66 +65,110 @@ export const TippingModal: React.FC<TippingModalProps> = ({
       return false;
     }
 
-    if (tipAmount < 0.5) {
-      setError('Minimum tip amount is $0.50');
+    if (tipAmount < 1) {
+      setError('Minimum tip amount is $1');
       return false;
     }
 
-    if (tipAmount > 100) {
-      setError('Maximum tip amount is $100');
+    if (tipAmount > 500) {
+      setError('Maximum tip amount is $500');
       return false;
     }
 
     return true;
   };
 
+  // Initialize wallet service
+  useEffect(() => {
+    const initWallet = async () => {
+      if (isConnected) {
+        try {
+          const balance = await walletService.getBalance();
+          setWalletBalance(balance);
+        } catch (error) {
+          console.error('Failed to get balance:', error);
+          setError('Failed to get wallet balance');
+        }
+      }
+    };
+
+    initWallet();
+  }, [isConnected]);
+
   const handleSubmit = async () => {
     if (!validateAmount()) return;
 
     setIsProcessing(true);
     setError(null);
+    setStep('confirming');
 
     try {
       const tipAmount = useCustom ? Number(customAmount) : amount;
 
-      // Check if wallet is connected (assuming a global state or context for wallet)
-      // This is a placeholder for actual wallet connection check
-      const walletConnected = window.localStorage.getItem('wallet_connected') === 'true';
-      if (!walletConnected) {
+      // Check wallet connection
+      if (!isConnected || !isWalletReady()) {
         setError('Please connect your wallet to send tips.');
         return;
       }
 
-      // Create tip transaction on Mantle Network
-      // This is a placeholder for actual transaction logic with Mantle Network
-      const transactionResponse = await api.post('/tips', {
-        songId: song.id,
-        artistId: song.artistId,
-        venueId,
-        amount: tipAmount,
-        message: message.trim(),
-        currency: 'USD', // Will be converted to MANTLE
-        network: 'mantle',
-        chainId: 5000
-      });
+      if (!speaker.walletAddress) {
+        setError('Speaker wallet address not found.');
+        return;
+      }
 
-      // Assuming transaction is successful, send real-time notification
-      // Note: sendTip method would need to be implemented in realtimeService
-      console.log('Tip sent:', {
-        songId: song.id,
-        artistId: song.artistId,
-        amount: tipAmount,
+      // Create tip record in backend
+      const createResponse = await api.post('/api/tips/create', {
+        speakerId: speaker.id,
+        eventId: event.id,
+        amountUSD: tipAmount,
         message: message.trim(),
       });
 
-      // Update live tip counters (handled by WebSocket)
-      // Show success animation with transaction confirmation
-      onSuccess();
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message ||
-          'Failed to process tip. Please try again.'
+      const { tipId, speakerWallet } = createResponse.data;
+
+      // Convert USD to MNT
+      const amountMNT = await walletService.convertUSDToMNT(tipAmount);
+
+      // Send transaction
+      const txResult = await walletService.sendTip(
+        speakerWallet,
+        amountMNT,
+        message.trim(),
+        event.id,
+        speaker.id
       );
+
+      if (!txResult.success) {
+        throw new Error('Transaction failed');
+      }
+
+      setTxHash(txResult.txHash);
+
+      // Confirm tip in backend
+      await api.post('/api/tips/confirm', {
+        tipId: tipId,
+        txHash: txResult.txHash,
+        amountMNT: amountMNT,
+        blockNumber: txResult.blockNumber,
+        gasUsed: txResult.gasUsed,
+      });
+
+      setStep('success');
+
+      // Auto-close after success
+      setTimeout(() => {
+        onSuccess();
+        onClose();
+      }, 3000);
+
+    } catch (err: unknown) {
+      console.error('Tip failed:', err);
+      setError(
+        (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
+        (err as Error)?.message ||
+        'Failed to process tip. Please try again.'
+      );
+      setStep('setup');
     } finally {
       setIsProcessing(false);
     }
@@ -123,68 +178,136 @@ export const TippingModal: React.FC<TippingModalProps> = ({
     <div className="modal-overlay" onClick={onClose}>
       <div className="tipping-modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Tip Artist</h2>
-          <button className="close-button" onClick={onClose}>
+          <h2>
+            {step === 'setup' && 'Tip Speaker'}
+            {step === 'confirming' && 'Confirming Transaction...'}
+            {step === 'success' && 'Tip Sent Successfully!'}
+          </h2>
+          <button className="close-button" onClick={onClose} disabled={isProcessing}>
             ×
           </button>
         </div>
 
-        <div className="song-info">
-          <p className="song-title">{song.title}</p>
-          <p className="artist-name">by {song.artistName}</p>
+        <div className="speaker-info">
+          {speaker.avatar && (
+            <img src={speaker.avatar} alt={speaker.name} className="speaker-avatar" />
+          )}
+          <div className="speaker-details">
+            <p className="speaker-name">{speaker.name}</p>
+            {speaker.title && <p className="speaker-title">{speaker.title}</p>}
+            <p className="event-name">at {event.name}</p>
+          </div>
         </div>
 
-        <div className="amount-section">
-          <h3>Select Amount</h3>
-          <div className="preset-amounts">
-            {PRESET_AMOUNTS.map(preset => (
-              <button
-                key={preset}
-                className={`amount-button ${amount === preset && !useCustom ? 'selected' : ''}`}
-                onClick={() => handleAmountSelect(preset)}
-              >
-                ${preset}
-              </button>
-            ))}
-          </div>
+        {step === 'setup' && (
+          <>
+            <div className="amount-section">
+              <h3>Select Amount</h3>
+              <div className="preset-amounts">
+                {PRESET_AMOUNTS.map(preset => (
+                  <button
+                    key={preset}
+                    className={`amount-button ${amount === preset && !useCustom ? 'selected' : ''}`}
+                    onClick={() => handleAmountSelect(preset)}
+                  >
+                    ${preset}
+                  </button>
+                ))}
+              </div>
 
-          <div className="custom-amount">
-            <label>Custom Amount</label>
-            <div className="input-wrapper">
-              <span className="currency">$</span>
-              <input
-                type="number"
-                placeholder="0.00"
-                value={customAmount}
-                onChange={e => handleCustomAmountChange(e.target.value)}
-                min="0.50"
-                max="100"
-                step="0.50"
+              <div className="custom-amount">
+                <label>Custom Amount</label>
+                <div className="input-wrapper">
+                  <span className="currency">$</span>
+                  <input
+                    type="number"
+                    placeholder="0.00"
+                    value={customAmount}
+                    onChange={e => handleCustomAmountChange(e.target.value)}
+                    min="1"
+                    max="500"
+                    step="1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="message-section">
+              <label>Add a message (optional)</label>
+              <textarea
+                placeholder="Great talk! Thanks for the insights... 🎤"
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+                maxLength={200}
+                rows={3}
               />
+              <span className="char-count">{message.length}/200</span>
+            </div>
+          </>
+        )}
+
+        {step === 'confirming' && (
+          <div className="confirming-section">
+            <div className="loading-spinner"></div>
+            <p>Sending your tip to {speaker.name}...</p>
+            <p>Please confirm the transaction in your wallet.</p>
+            <div className="tip-details">
+              <div>Amount: ${(useCustom ? Number(customAmount) || 0 : amount).toFixed(2)}</div>
+              {message && <div>Message: "{message}"</div>}
             </div>
           </div>
-        </div>
+        )}
 
-        <div className="message-section">
-          <label>Add a message (optional)</label>
-          <textarea
-            placeholder="Great performance! 🎵"
-            value={message}
-            onChange={e => setMessage(e.target.value)}
-            maxLength={100}
-            rows={3}
-          />
-          <span className="char-count">{message.length}/100</span>
-        </div>
+        {step === 'success' && (
+          <div className="success-section">
+            <div className="success-icon">✅</div>
+            <h3>Tip Sent Successfully!</h3>
+            <p>Your ${(useCustom ? Number(customAmount) || 0 : amount).toFixed(2)} tip to {speaker.name} has been confirmed on Mantle Network.</p>
+            {txHash && (
+              <div className="tx-info">
+                <p>Transaction: {walletService.formatTxHash(txHash)}</p>
+                <a
+                  href={walletService.getTxExplorerUrl(txHash)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="view-tx-btn"
+                >
+                  View on Explorer →
+                </a>
+              </div>
+            )}
+          </div>
+        )}
+
+
 
         {error && <div className="error-message">{error}</div>}
 
-        <div className="modal-footer">
+        {step === 'setup' && (
+          <div className="modal-footer">
+          <div className="wallet-info">
+            <div className="wallet-balance">
+              Balance: {parseFloat(walletBalance).toFixed(3)} MNT
+            </div>
+          </div>
+
           <div className="tip-summary">
-            <span>Total:</span>
-            <span className="total-amount">
-              ${(useCustom ? Number(customAmount) || 0 : amount).toFixed(2)}
-            </span>
+            <div className="summary-row">
+              <span>Amount:</span>
+              <span>${(useCustom ? Number(customAmount) || 0 : amount).toFixed(2)} USD</span>
+            </div>
+            <div className="summary-row">
+              <span>Platform Fee (5%):</span>
+              <span>${((useCustom ? Number(customAmount) || 0 : amount) * 0.05).toFixed(2)}</span>
+            </div>
+            <div className="summary-row">
+              <span>Speaker Receives:</span>
+              <span>${((useCustom ? Number(customAmount) || 0 : amount) * 0.95).toFixed(2)}</span>
+            </div>
+            <div className="summary-row total">
+              <span>Gas Fee:</span>
+              <span>~$0.01 💚</span>
+            </div>
           </div>
 
           <div className="action-buttons">
@@ -198,7 +321,7 @@ export const TippingModal: React.FC<TippingModalProps> = ({
             <button
               className="submit-button"
               onClick={handleSubmit}
-              disabled={isProcessing || !validateAmount()}
+              disabled={isProcessing || !validateAmount() || !isConnected || !isWalletReady()}
             >
               {isProcessing ? (
                 <>
@@ -206,16 +329,20 @@ export const TippingModal: React.FC<TippingModalProps> = ({
                   Processing...
                 </>
               ) : (
-                `Send Tip $${(useCustom ? Number(customAmount) || 0 : amount).toFixed(2)}`
+                `💰 Send $${(useCustom ? Number(customAmount) || 0 : amount).toFixed(2)} Tip`
               )}
             </button>
           </div>
         </div>
+        )}
 
-        <div className="payment-info">
-          <p>💡 Tips are sent via Mantle Network with minimal fees</p>
-          <p>🔒 Secure transaction powered by Web3</p>
-        </div>
+        {step === 'setup' && (
+          <div className="payment-info">
+            <p>💡 Tips are sent via Mantle Sepolia with ultra-low fees</p>
+            <p>🔒 Secure transaction powered by smart contracts</p>
+            <p>⚡ Speaker receives tips instantly</p>
+          </div>
+        )}
       </div>
     </div>
   );

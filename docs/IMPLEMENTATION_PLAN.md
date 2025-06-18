@@ -97,14 +97,14 @@
 
 **Tasks**:
 
-- [ ] **Deploy Backend to Render**:
+- [✅ ] **Deploy Backend to Render**:
 
   - Set up Render account and connect GitHub repo
   - Configure environment variables (MONGO_URI, PORT, etc.)
   - Test API endpoints in production
   - Verify database connection
 
-- [ ] **Deploy Frontend to Vercel**:
+- [✅ ] **Deploy Frontend to Vercel**:
 
   - Set up Vercel account and connect GitHub repo
   - Configure build settings and environment variables

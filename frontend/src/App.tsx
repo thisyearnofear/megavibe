@@ -3,14 +3,8 @@ import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import './styles/design-system.css';
 import './App.css';
-import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core';
-import { DynamicWagmiConnector } from '@dynamic-labs/wagmi-connector';
-import { createConfig, WagmiProvider } from 'wagmi';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { http } from 'viem';
-import { mainnet } from 'viem/chains';
-import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
 import { EnhancedWalletConnector as WalletConnector } from './components/Shared/EnhancedWalletConnector';
+import { useWallet } from './contexts/WalletContext';
 import { Venue } from './services/locationService';
 import realtimeService, { SongChangeEvent } from './services/realtimeService';
 
@@ -52,24 +46,7 @@ const AudioFeed = lazy(() =>
 );
 
 
-// Wagmi configuration for Mantle Mainnet (will be updated with correct chain ID)
-const config = createConfig({
-  chains: [mainnet],
-  multiInjectedProviderDiscovery: false,
-  transports: {
-    [mainnet.id]: http(),
-  },
-});
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000, // 1 minute
-      gcTime: 5 * 60 * 1000, // 5 minutes
-      refetchOnWindowFocus: false, // Avoid unnecessary refetches
-    },
-  },
-});
 
 function App() {
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
@@ -78,13 +55,13 @@ function App() {
   const [showSongIdentifier, setShowSongIdentifier] = useState(false);
   const [activeView, setActiveView] = useState<'live' | 'social'>('live');
   const [error, setError] = useState<string | null>(null);
-  const [connectedWalletAddress, setConnectedWalletAddress] = useState<
-    string | undefined
-  >(undefined);
   const [showTutorial, setShowTutorial] = useState<boolean>(false);
   const [tutorialStep, setTutorialStep] = useState<number>(0);
   const [showPerformerDashboard, setShowPerformerDashboard] = useState(false);
   const [selectedFeatureType, setSelectedFeatureType] = useState<'connection' | 'bounty' | 'tokenization' | 'influence' | 'reputation' | 'demo'>('demo');
+
+  // Use wallet context
+  const { address, isConnected } = useWallet();
 
   const appRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
@@ -164,25 +141,17 @@ function App() {
   };
 
   const handleWalletConnect = (address: string) => {
-    setConnectedWalletAddress(address);
-    // Additional logic can be added here for wallet connection effects
+    // Wallet connection is now handled by WalletContext
+    console.log('Wallet connected:', address);
   };
 
   const handleWalletDisconnect = () => {
-    setConnectedWalletAddress(undefined);
+    // Wallet disconnection is now handled by WalletContext
+    console.log('Wallet disconnected');
   };
 
   return (
-    <DynamicContextProvider
-      settings={{
-        environmentId: 'cd08ffe6-e5d5-49d4-8cb3-f9419a7f5e4d',
-        walletConnectors: [EthereumWalletConnectors],
-      }}
-    >
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <DynamicWagmiConnector>
-            <div className="App" ref={appRef}>
+    <div className="App" ref={appRef}>
               {/* Navigation */}
               <nav className="app-nav" ref={navRef}>
                 <div className="nav-container">
@@ -218,7 +187,7 @@ function App() {
                       <WalletConnector
                         onConnect={handleWalletConnect}
                         onDisconnect={handleWalletDisconnect}
-                        connectedAddress={connectedWalletAddress}
+                        connectedAddress={address || undefined}
                         compact={true}
                         showBalance={false}
                       />
@@ -631,11 +600,7 @@ function App() {
                   </div>
                 </div>
               )}
-            </div>
-          </DynamicWagmiConnector>
-        </QueryClientProvider>
-      </WagmiProvider>
-    </DynamicContextProvider>
+    </div>
   );
 }
 

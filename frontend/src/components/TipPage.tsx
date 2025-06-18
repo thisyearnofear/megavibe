@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { VenuePicker } from './LiveMusic/VenuePicker';
 import { TippingModal } from './LiveMusic/TippingModal';
+import { HeaderWalletStatus } from './WalletConnection/HeaderWalletStatus';
+import { useWallet } from '../contexts/WalletContext';
 import { api } from '../services/api';
 import '../styles/TipPage.css';
 
@@ -38,6 +40,9 @@ interface Speaker {
   profilePicture?: string;
   currentTalk?: string;
   isLive: boolean;
+  walletAddress?: string;
+  title?: string;
+  avatar?: string;
 }
 
 export const TipPage: React.FC = () => {
@@ -51,22 +56,21 @@ export const TipPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadExperiences();
-  }, []);
+  // Wallet context
+  const { isConnected, isCorrectNetwork } = useWallet();
 
-  const createSpeakersForEvent = (venueName: string, genres: string[]): Speaker[] => {
+  const createSpeakersForEvent = (venueName: string, _genres: string[]): Speaker[] => {
     // Speaker pool that can be expanded for different event types
     const speakerPool = [
       // Web3/Blockchain speakers
-      { name: 'Vitalik Buterin', bio: 'Ethereum Co-founder', talks: ['The Future of Ethereum Scaling', 'Ethereum Roadmap 2025'], categories: ['Web3', 'Blockchain', 'Ethereum'] },
-      { name: 'Hayden Adams', bio: 'Uniswap Founder', talks: ['DeFi Innovation', 'Automated Market Makers'], categories: ['DeFi', 'Web3'] },
-      { name: 'Changpeng Zhao', bio: 'Former Binance CEO', talks: ['Building Global Infrastructure', 'Exchange Evolution'], categories: ['Web3', 'Global Adoption'] },
-      { name: 'Brian Armstrong', bio: 'Coinbase CEO', talks: ['Digital Asset Adoption', 'Regulatory Landscape'], categories: ['Global Adoption', 'Innovation'] },
-      { name: 'Andre Cronje', bio: 'DeFi Architect', talks: ['Yield Farming Revolution', 'Protocol Design'], categories: ['DeFi', 'Developers'] },
-      { name: 'Stani Kulechov', bio: 'Aave Founder', talks: ['Lending Protocols', 'DeFi Composability'], categories: ['DeFi', 'Innovation'] },
-      { name: 'Sergey Nazarov', bio: 'Chainlink Co-founder', talks: ['Oracle Networks', 'Smart Contract Connectivity'], categories: ['Developers', 'Innovation'] },
-      { name: 'Balaji Srinivasan', bio: 'Former Coinbase CTO', talks: ['Network States', 'Digital Cities'], categories: ['Innovation', 'Future Tech'] }
+      { name: 'Vitalik Buterin', bio: 'Ethereum Co-founder', talks: ['The Future of Ethereum Scaling', 'Ethereum Roadmap 2025'], categories: ['Web3', 'Blockchain', 'Ethereum'], wallet: '0x1234567890123456789012345678901234567890' },
+      { name: 'Hayden Adams', bio: 'Uniswap Founder', talks: ['DeFi Innovation', 'Automated Market Makers'], categories: ['DeFi', 'Web3'], wallet: '0x2345678901234567890123456789012345678901' },
+      { name: 'Changpeng Zhao', bio: 'Former Binance CEO', talks: ['Building Global Infrastructure', 'Exchange Evolution'], categories: ['Web3', 'Global Adoption'], wallet: '0x3456789012345678901234567890123456789012' },
+      { name: 'Brian Armstrong', bio: 'Coinbase CEO', talks: ['Digital Asset Adoption', 'Regulatory Landscape'], categories: ['Global Adoption', 'Innovation'], wallet: '0x4567890123456789012345678901234567890123' },
+      { name: 'Andre Cronje', bio: 'DeFi Architect', talks: ['Yield Farming Revolution', 'Protocol Design'], categories: ['DeFi', 'Developers'], wallet: '0x5678901234567890123456789012345678901234' },
+      { name: 'Stani Kulechov', bio: 'Aave Founder', talks: ['Lending Protocols', 'DeFi Composability'], categories: ['DeFi', 'Innovation'], wallet: '0x6789012345678901234567890123456789012345' },
+      { name: 'Sergey Nazarov', bio: 'Chainlink Co-founder', talks: ['Oracle Networks', 'Smart Contract Connectivity'], categories: ['Developers', 'Innovation'], wallet: '0x7890123456789012345678901234567890123456' },
+      { name: 'Balaji Srinivasan', bio: 'Former Coinbase CTO', talks: ['Network States', 'Digital Cities'], categories: ['Innovation', 'Future Tech'], wallet: '0x8901234567890123456789012345678901234567' }
     ];
 
     // Select 2-3 speakers randomly
@@ -77,11 +81,14 @@ export const TipPage: React.FC = () => {
       name: speaker.name,
       bio: speaker.bio,
       isLive: index === 0, // First speaker is live
-      currentTalk: speaker.talks[Math.floor(Math.random() * speaker.talks.length)]
+      currentTalk: speaker.talks[Math.floor(Math.random() * speaker.talks.length)],
+      walletAddress: speaker.wallet,
+      title: speaker.bio,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(speaker.name)}&background=6366f1&color=fff&size=128`
     }));
   };
 
-  const loadExperiences = async () => {
+  const loadExperiences = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -135,14 +142,18 @@ export const TipPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadExperiences();
+  }, [loadExperiences]);
 
   const handleVenueSelect = (venue: Venue) => {
     setSelectedVenue(venue);
     setShowVenuePicker(false);
-    
+
     // Find events for this venue
-    const venueEvents = events.filter(event => 
+    const venueEvents = events.filter(event =>
       event.venue.toLowerCase().includes(venue.name.toLowerCase())
     );
     if (venueEvents.length > 0) {
@@ -151,6 +162,17 @@ export const TipPage: React.FC = () => {
   };
 
   const handleSpeakerTip = (speaker: Speaker) => {
+    if (!isConnected) {
+      // Show wallet connection hint
+      setError('Please connect your wallet to send tips');
+      return;
+    }
+
+    if (!isCorrectNetwork) {
+      setError('Please switch to Mantle Sepolia network to send tips');
+      return;
+    }
+
     setSelectedSpeaker(speaker);
     setShowTippingModal(true);
   };
@@ -164,10 +186,49 @@ export const TipPage: React.FC = () => {
   if (loading) {
     return (
       <div className="tip-page">
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Loading experiences...</p>
-        </div>
+        <header className="tip-header">
+          <div className="header-content">
+            <div className="header-left">
+              <button
+                className="back-btn"
+                onClick={() => window.location.href = '/'}
+              >
+                ← Back
+              </button>
+              <div className="header-title">
+                <h1>💰 Live Tipping</h1>
+              </div>
+            </div>
+            <div className="header-right">
+              <HeaderWalletStatus />
+            </div>
+          </div>
+        </header>
+
+        <main className="tip-main">
+          <div className="venue-selection">
+            <div className="selection-card">
+              <h2>🏢 Choose an Experience Venue</h2>
+              <p>Loading experiences...</p>
+
+              <div className="venues-grid">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="venue-card skeleton">
+                    <div className="skeleton-header">
+                      <div className="skeleton-title"></div>
+                      <div className="skeleton-badge"></div>
+                    </div>
+                    <div className="skeleton-address"></div>
+                    <div className="skeleton-event">
+                      <div className="skeleton-event-name"></div>
+                      <div className="skeleton-event-time"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
@@ -190,15 +251,20 @@ export const TipPage: React.FC = () => {
     <div className="tip-page">
       <header className="tip-header">
         <div className="header-content">
-          <button 
-            className="back-btn"
-            onClick={() => window.location.href = '/'}
-          >
-            ← Back to MegaVibe
-          </button>
-          <div className="header-title">
-            <h1>💰 Live Event Tipping</h1>
-            <p>Tip speakers in real-time during experiences</p>
+          <div className="header-left">
+            <button
+              className="back-btn"
+              onClick={() => window.location.href = '/'}
+            >
+              ← Back
+            </button>
+            <div className="header-title">
+              <h1>💰 Live Tipping</h1>
+            </div>
+          </div>
+
+          <div className="header-right">
+            <HeaderWalletStatus />
           </div>
         </div>
       </header>
@@ -209,7 +275,32 @@ export const TipPage: React.FC = () => {
             <div className="selection-card">
               <h2>🏢 Choose an Experience Venue</h2>
               <p>Select a venue to see live experiences and speakers you can tip</p>
-              
+
+                {/* Wallet Connection Prompt for Venue Selection */}
+                {!isConnected && (
+                  <div className="wallet-connection-prompt">
+                    <div className="prompt-content">
+                      <span className="prompt-icon">💡</span>
+                      <div className="prompt-text">
+                        <h4>Connect Your Wallet First</h4>
+                        <p>Connect your wallet to send tips to speakers during live experiences</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {isConnected && !isCorrectNetwork && (
+                  <div className="network-switch-prompt">
+                    <div className="prompt-content">
+                      <span className="prompt-icon">⚠️</span>
+                      <div className="prompt-text">
+                        <h4>Switch to Mantle Sepolia</h4>
+                        <p>You need to be on Mantle Sepolia network to send tips with ultra-low fees</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
               <div className="venues-grid">
                 {venues.slice(0, 6).map(venue => {
                   const isLive = venue.currentEvent && new Date(venue.currentEvent.startTime) <= new Date() && new Date() <= new Date(venue.currentEvent.endTime);
@@ -217,7 +308,7 @@ export const TipPage: React.FC = () => {
 
                   return (
                     <div
-                      key={venue.id}
+                      key={venue._id}
                       className={`venue-card ${isLive ? 'active' : ''}`}
                       onClick={() => handleVenueSelect(venue)}
                     >
@@ -250,7 +341,7 @@ export const TipPage: React.FC = () => {
                 })}
               </div>
 
-              <button 
+              <button
                 className="btn btn-outline btn-lg"
                 onClick={() => setShowVenuePicker(true)}
               >
@@ -263,7 +354,7 @@ export const TipPage: React.FC = () => {
             <div className="venue-info">
               <h2>📍 {selectedVenue.name}</h2>
               <p>{selectedVenue.address}</p>
-              <button 
+              <button
                 className="btn btn-outline btn-sm"
                 onClick={() => setSelectedVenue(null)}
               >
@@ -277,7 +368,7 @@ export const TipPage: React.FC = () => {
                   <h3>{selectedEvent.name}</h3>
                   <p>{selectedEvent.description}</p>
                   <div className="event-time">
-                    {new Date(selectedEvent.startTime).toLocaleDateString()} - 
+                    {new Date(selectedEvent.startTime).toLocaleDateString()} -
                     {new Date(selectedEvent.endTime).toLocaleDateString()}
                   </div>
                 </div>
@@ -286,7 +377,7 @@ export const TipPage: React.FC = () => {
                   <h4>🎤 Speakers You Can Tip</h4>
                   <div className="speakers-grid">
                     {selectedEvent.speakers.map(speaker => (
-                      <div 
+                      <div
                         key={speaker.id}
                         className={`speaker-card ${speaker.isLive ? 'live' : ''}`}
                       >
@@ -304,9 +395,17 @@ export const TipPage: React.FC = () => {
                             </p>
                           )}
                         </div>
-                        <button 
-                          className={`btn ${speaker.isLive ? 'btn-primary' : 'btn-outline'}`}
+                        <button
+                          className={`btn ${speaker.isLive ? 'btn-primary' : 'btn-outline'} ${!isConnected || !isCorrectNetwork ? 'btn-disabled' : ''}`}
                           onClick={() => handleSpeakerTip(speaker)}
+                          disabled={!isConnected || !isCorrectNetwork}
+                          title={
+                            !isConnected
+                              ? 'Connect wallet to tip'
+                              : !isCorrectNetwork
+                              ? 'Switch to Mantle Sepolia to tip'
+                              : ''
+                          }
                         >
                           💰 Tip {speaker.isLive ? 'Now' : 'Speaker'}
                         </button>
@@ -319,6 +418,13 @@ export const TipPage: React.FC = () => {
               <div className="no-events">
                 <h3>No Live Experiences</h3>
                 <p>This venue doesn't have any live experiences right now.</p>
+
+                {/* Show wallet status for better UX */}
+                {!isConnected && (
+                  <div className="wallet-prompt">
+                    <p>💡 Connect your wallet to be ready for when experiences go live!</p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -328,20 +434,35 @@ export const TipPage: React.FC = () => {
       {/* Modals */}
       {showVenuePicker && (
         <VenuePicker
-          onVenueSelect={handleVenueSelect}
+          onVenueSelect={(pickedVenue) => {
+            const venue: Venue = {
+              _id: pickedVenue.id,
+              name: pickedVenue.name,
+              address: pickedVenue.address,
+              description: '',
+              isActive: pickedVenue.isActive,
+              capacity: 1000,
+              preferredGenres: ['conference']
+            };
+            handleVenueSelect(venue);
+          }}
           onClose={() => setShowVenuePicker(false)}
         />
       )}
 
       {showTippingModal && selectedSpeaker && selectedEvent && (
         <TippingModal
-          song={{
+          speaker={{
             id: selectedSpeaker.id,
-            title: selectedSpeaker.currentTalk || 'Speaker Tip',
-            artistId: selectedSpeaker.id,
-            artistName: selectedSpeaker.name
+            name: selectedSpeaker.name,
+            title: selectedSpeaker.title,
+            avatar: selectedSpeaker.avatar,
+            walletAddress: selectedSpeaker.walletAddress
           }}
-          venueId={selectedVenue?.id || ''}
+          event={{
+            id: selectedEvent.id,
+            name: selectedEvent.name
+          }}
           onClose={() => setShowTippingModal(false)}
           onSuccess={handleTipSuccess}
         />
