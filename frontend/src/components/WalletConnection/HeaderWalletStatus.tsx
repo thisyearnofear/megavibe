@@ -7,10 +7,12 @@ export const HeaderWalletStatus: React.FC = () => {
     isConnected,
     isConnecting,
     address,
+    balance,
     isCorrectNetwork,
     connectWallet,
     switchToMantleSepolia,
     formatAddress,
+    formatBalance,
   } = useWallet();
 
   if (!isConnected) {
@@ -51,7 +53,10 @@ export const HeaderWalletStatus: React.FC = () => {
   return (
     <div className="header-wallet-status connected">
       <span className="wallet-icon">✅</span>
-      <span className="wallet-address">{formatAddress(address || '')}</span>
+      <div className="wallet-info">
+        <span className="wallet-address">{formatAddress(address || '')}</span>
+        <span className="wallet-balance">{formatBalance(balance)} MNT</span>
+      </div>
     </div>
   );
 };

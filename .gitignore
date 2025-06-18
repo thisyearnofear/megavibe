@@ -28,7 +28,6 @@ dist-ssr
 .env.*.local
 .env.test
 .env.test.local
-.env.development
 
 # Deployment
 .vercel
