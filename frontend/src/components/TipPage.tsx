@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { VenuePicker } from './LiveMusic/VenuePicker';
 import { TippingModal } from './LiveMusic/TippingModal';
+import { BountyModal } from './LiveMusic/BountyModal';
+import { LiveTipFeed } from './LiveMusic/LiveTipFeed';
 import { HeaderWalletStatus } from './WalletConnection/HeaderWalletStatus';
 import { useWallet } from '../contexts/WalletContext';
+import { useLiveTipFeed } from '../hooks/useLiveTipFeed';
+import { useBountiesForEvent } from '../hooks/useBountiesForEvent';
 import { api } from '../services/api';
 import '../styles/TipPage.css';
 
@@ -53,6 +57,7 @@ export const TipPage: React.FC = () => {
   const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
   const [showVenuePicker, setShowVenuePicker] = useState(false);
   const [showTippingModal, setShowTippingModal] = useState(false);
+  const [showBountyModal, setShowBountyModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -179,6 +184,27 @@ export const TipPage: React.FC = () => {
 
   const handleTipSuccess = () => {
     setShowTippingModal(false);
+    setSelectedSpeaker(null);
+    // Show success message or update UI
+  };
+
+  const handleSpeakerBounty = (speaker: Speaker) => {
+    if (!isConnected) {
+      setError('Please connect your wallet to create bounties');
+      return;
+    }
+
+    if (!isCorrectNetwork) {
+      setError('Please switch to Mantle Sepolia network to create bounties');
+      return;
+    }
+
+    setSelectedSpeaker(speaker);
+    setShowBountyModal(true);
+  };
+
+  const handleBountySuccess = () => {
+    setShowBountyModal(false);
     setSelectedSpeaker(null);
     // Show success message or update UI
   };
@@ -373,44 +399,68 @@ export const TipPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="speakers-section">
-                  <h4>🎤 Speakers You Can Tip</h4>
-                  <div className="speakers-grid">
-                    {selectedEvent.speakers.map(speaker => (
-                      <div
-                        key={speaker.id}
-                        className={`speaker-card ${speaker.isLive ? 'live' : ''}`}
-                      >
-                        <div className="speaker-info">
-                          <div className="speaker-header">
-                            <h5>{speaker.name}</h5>
-                            {speaker.isLive && (
-                              <span className="live-indicator">🔴 LIVE NOW</span>
+                {/* Live Features Section */}
+                <div className="live-features-grid">
+                  <div className="speakers-section">
+                    <h4>🎤 Speakers You Can Tip</h4>
+                    <div className="speakers-grid">
+                      {selectedEvent.speakers.map(speaker => (
+                        <div
+                          key={speaker.id}
+                          className={`speaker-card ${speaker.isLive ? 'live' : ''}`}
+                        >
+                          <div className="speaker-info">
+                            <div className="speaker-header">
+                              <h5>{speaker.name}</h5>
+                              {speaker.isLive && (
+                                <span className="live-indicator">🔴 LIVE NOW</span>
+                              )}
+                            </div>
+                            <p className="speaker-bio">{speaker.bio}</p>
+                            {speaker.currentTalk && (
+                              <p className="current-talk">
+                                <strong>Current Talk:</strong> {speaker.currentTalk}
+                              </p>
                             )}
                           </div>
-                          <p className="speaker-bio">{speaker.bio}</p>
-                          {speaker.currentTalk && (
-                            <p className="current-talk">
-                              <strong>Current Talk:</strong> {speaker.currentTalk}
-                            </p>
-                          )}
+                          <div className="speaker-actions">
+                            <button
+                              className={`btn ${speaker.isLive ? 'btn-primary' : 'btn-outline'} ${!isConnected || !isCorrectNetwork ? 'btn-disabled' : ''}`}
+                              onClick={() => handleSpeakerTip(speaker)}
+                              disabled={!isConnected || !isCorrectNetwork}
+                              title={
+                                !isConnected
+                                  ? 'Connect wallet to tip'
+                                  : !isCorrectNetwork
+                                  ? 'Switch to Mantle Sepolia to tip'
+                                  : ''
+                              }
+                            >
+                              💰 Tip {speaker.isLive ? 'Now' : 'Speaker'}
+                            </button>
+                            <button
+                              className={`btn btn-secondary ${!isConnected || !isCorrectNetwork ? 'btn-disabled' : ''}`}
+                              onClick={() => handleSpeakerBounty(speaker)}
+                              disabled={!isConnected || !isCorrectNetwork}
+                              title={
+                                !isConnected
+                                  ? 'Connect wallet to create bounty'
+                                  : !isCorrectNetwork
+                                  ? 'Switch to Mantle Sepolia to create bounty'
+                                  : 'Create content bounty'
+                              }
+                            >
+                              🎯 Bounty
+                            </button>
+                          </div>
                         </div>
-                        <button
-                          className={`btn ${speaker.isLive ? 'btn-primary' : 'btn-outline'} ${!isConnected || !isCorrectNetwork ? 'btn-disabled' : ''}`}
-                          onClick={() => handleSpeakerTip(speaker)}
-                          disabled={!isConnected || !isCorrectNetwork}
-                          title={
-                            !isConnected
-                              ? 'Connect wallet to tip'
-                              : !isCorrectNetwork
-                              ? 'Switch to Mantle Sepolia to tip'
-                              : ''
-                          }
-                        >
-                          💰 Tip {speaker.isLive ? 'Now' : 'Speaker'}
-                        </button>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Live Tip Feed */}
+                  <div className="live-feed-section">
+                    <LiveTipFeed eventId={selectedEvent.id} />
                   </div>
                 </div>
               </div>
@@ -457,14 +507,27 @@ export const TipPage: React.FC = () => {
             name: selectedSpeaker.name,
             title: selectedSpeaker.title,
             avatar: selectedSpeaker.avatar,
-            walletAddress: selectedSpeaker.walletAddress
+            walletAddress: selectedSpeaker.walletAddress,
+            currentTalk: selectedSpeaker.currentTalk
           }}
           event={{
             id: selectedEvent.id,
             name: selectedEvent.name
           }}
+          isOpen={showTippingModal}
           onClose={() => setShowTippingModal(false)}
           onSuccess={handleTipSuccess}
+        />
+      )}
+
+      {showBountyModal && selectedSpeaker && selectedEvent && (
+        <BountyModal
+          eventId={selectedEvent.id}
+          speakerId={selectedSpeaker.id}
+          speakerName={selectedSpeaker.name}
+          isOpen={showBountyModal}
+          onClose={() => setShowBountyModal(false)}
+          onSuccess={handleBountySuccess}
         />
       )}
     </div>

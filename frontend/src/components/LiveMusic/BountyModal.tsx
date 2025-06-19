@@ -1,356 +1,172 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
+import { Modal } from '../common/Modal';
+import { StepWizard } from '../common/StepWizard';
+import { AmountSelector } from '../common/AmountSelector';
+import { MessageComposer } from '../common/MessageComposer';
+import { TransactionPreview } from '../common/TransactionPreview';
+import { useWallet } from '../../contexts/WalletContext';
 import { api } from '../../services/api';
-import '../../styles/BountyModal.css';
+import { walletService } from '../../services/walletService';
 
 interface BountyModalProps {
-  venueId: string;
-  currentArtistId?: string;
+  eventId: string;
+  speakerId: string;
+  speakerName: string;
   onClose: () => void;
   onSuccess: () => void;
+  isOpen: boolean;
 }
 
-interface SongOption {
-  id: string;
-  title: string;
-  artist: string;
-  artistId: string;
-  isAvailable: boolean;
-  popularityScore: number;
-}
+const STEPS = [
+  { key: 'amount', label: 'Reward', icon: '💰' },
+  { key: 'details', label: 'Details', icon: '📝' },
+  { key: 'confirm', label: 'Confirm', icon: '✅' },
+  { key: 'success', label: 'Created', icon: '🎉' }
+];
 
 export const BountyModal: React.FC<BountyModalProps> = ({
-  venueId,
-  currentArtistId,
+  eventId,
+  speakerId,
+  speakerName,
   onClose,
   onSuccess,
+  isOpen
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [songOptions, setSongOptions] = useState<SongOption[]>([]);
-  const [selectedSong, setSelectedSong] = useState<SongOption | null>(null);
-  const [bountyAmount, setBountyAmount] = useState(10);
-  const [customAmount, setCustomAmount] = useState('');
-  const [useCustom, setUseCustom] = useState(false);
-  const [deadline, setDeadline] = useState('tonight');
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadingSongs, setLoadingSongs] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [step, setStep] = useState<'amount' | 'details' | 'confirm' | 'success'>('amount');
+  const [amount, setAmount] = useState<number>(50);
+  const [description, setDescription] = useState<string>('');
+  const [deadline, setDeadline] = useState<string>('');
+  const [isSubmitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const { isWalletReady } = useWallet();
 
-  const PRESET_BOUNTIES = [5, 10, 20, 50];
+  const handleNext = () => {
+    if (step === 'amount') setStep('details');
+    else if (step === 'details') setStep('confirm');
+  };
 
-  const loadArtistSongs = useCallback(async () => {
-    if (!currentArtistId) return;
+  const handleBack = () => {
+    if (step === 'confirm') setStep('details');
+    else if (step === 'details') setStep('amount');
+  };
 
-    try {
-      setLoadingSongs(true);
-      // This would typically fetch from an API
-      // const songs = await api.get(`/artists/${currentArtistId}/songs`);
-      // setArtistSongs(songs.data);
-    } catch (error) {
-      console.error('Error loading artist songs:', error);
-    } finally {
-      setLoadingSongs(false);
+  const handleCreate = async () => {
+    if (!isWalletReady()) {
+      setError('Wallet not ready');
+      return;
     }
-  }, [currentArtistId]);
 
-  useEffect(() => {
-    if (currentArtistId) {
-      loadArtistSongs();
-    }
-  }, [currentArtistId, loadArtistSongs]);
-
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
-
-    setIsLoading(true);
+    setSubmitting(true);
     setError(null);
 
     try {
-      const response = await api.get('/songs/search', {
-        params: {
-          q: searchQuery,
-          venueId,
-          limit: 10,
-        },
+      // Convert deadline to timestamp
+      const deadlineTs = Math.floor(new Date(deadline).getTime() / 1000);
+      
+      // Create bounty on-chain
+      const tx = await walletService.createBounty(
+        eventId,
+        speakerId,
+        description,
+        deadlineTs,
+        amount
+      );
+      
+      await tx.wait();
+
+      // Save to backend
+      await api.post('/api/bounties/create', {
+        contractBountyId: tx.logs[0].args.bountyId.toNumber(),
+        eventId,
+        speakerId,
+        description,
+        deadline
       });
-      setSongOptions(response.data);
-    } catch (error) {
-      setError('Failed to search songs');
+
+      setStep('success');
+      setTimeout(() => {
+        onSuccess();
+        onClose();
+      }, 2000);
+
+    } catch (e: any) {
+      setError(e.message || 'Failed to create bounty');
     } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAmountSelect = (amount: number) => {
-    setBountyAmount(amount);
-    setUseCustom(false);
-    setCustomAmount('');
-  };
-
-  const handleCustomAmount = (value: string) => {
-    setCustomAmount(value);
-    setUseCustom(true);
-    if (value && !isNaN(Number(value))) {
-      setBountyAmount(Number(value));
-    }
-  };
-
-  const validateBounty = (): boolean => {
-    if (!selectedSong) {
-      setError('Please select a song');
-      return false;
-    }
-
-    const amount = useCustom ? Number(customAmount) : bountyAmount;
-
-    if (isNaN(amount) || amount <= 0) {
-      setError('Please enter a valid bounty amount');
-      return false;
-    }
-
-    if (amount < 5) {
-      setError('Minimum bounty is $5');
-      return false;
-    }
-
-    if (amount > 500) {
-      setError('Maximum bounty is $500');
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleSubmit = async () => {
-    if (!validateBounty()) return;
-
-    setIsSubmitting(true);
-    setError(null);
-
-    try {
-      const amount = useCustom ? Number(customAmount) : bountyAmount;
-
-      await api.post('/bounties', {
-        songId: selectedSong!.id,
-        venueId,
-        amount,
-        deadline,
-        message: message.trim(),
-        requestedArtistId: selectedSong!.artistId,
-      });
-
-      // Send real-time notification (commented out until implemented)
-      // realtimeService would need sendBounty method
-      console.log('Bounty sent:', {
-        songId: selectedSong!.id,
-        amount,
-        message: message.trim(),
-        venueId,
-      });
-
-      onSuccess();
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create bounty';
-      setError(errorMessage);
-    } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="bounty-modal" onClick={e => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>Request a Song</h2>
-          <button className="close-button" onClick={onClose}>
-            ×
+    <Modal
+      isOpen={isOpen}
+      title="Create Content Bounty"
+      onClose={onClose}
+      size="medium"
+    >
+      <StepWizard steps={STEPS} activeKey={step} />
+      
+      {step === 'amount' && (
+        <div>
+          <h3>Set Reward Amount</h3>
+          <AmountSelector
+            presets={[25, 50, 100, 200]}
+            selected={amount}
+            onSelect={setAmount}
+            currency="$"
+          />
+          <button onClick={handleNext}>Next</button>
+        </div>
+      )}
+
+      {step === 'details' && (
+        <div>
+          <h3>Bounty Details</h3>
+          <MessageComposer
+            message={description}
+            onChange={setDescription}
+            placeholder="Describe what content you want created..."
+            maxLength={500}
+          />
+          <div>
+            <label>Deadline:</label>
+            <input
+              type="datetime-local"
+              value={deadline}
+              onChange={e => setDeadline(e.target.value)}
+            />
+          </div>
+          <button onClick={handleBack}>Back</button>
+          <button onClick={handleNext}>Next</button>
+        </div>
+      )}
+
+      {step === 'confirm' && (
+        <div>
+          <h3>Confirm Bounty</h3>
+          <TransactionPreview
+            amountUSD={amount}
+            platformFeePct={5}
+            gasEstimateUSD={0.01}
+          />
+          <p>Description: {description}</p>
+          <p>Deadline: {new Date(deadline).toLocaleString()}</p>
+          {error && <div className="error">{error}</div>}
+          <button onClick={handleBack}>Back</button>
+          <button onClick={handleCreate} disabled={isSubmitting}>
+            {isSubmitting ? 'Creating...' : 'Create Bounty'}
           </button>
         </div>
+      )}
 
-        <div className="bounty-description">
-          <p>
-            Set a bounty to request a specific song. Artists at this venue will
-            see your request!
-          </p>
+      {step === 'success' && (
+        <div>
+          <h3>✅ Bounty Created!</h3>
+          <p>Your bounty is now live and ready for submissions.</p>
         </div>
-
-        <div className="song-search-section">
-          <h3>Find a Song</h3>
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Search by song title or artist..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && handleSearch()}
-            />
-            <button onClick={handleSearch} disabled={isLoading}>
-              Search
-            </button>
-          </div>
-
-          {isLoading && (
-            <div className="loading">
-              <div className="spinner"></div>
-              <p>Searching songs...</p>
-            </div>
-          )}
-
-          {songOptions.length > 0 && (
-            <div className="song-options">
-              {songOptions.map(song => (
-                <div
-                  key={song.id}
-                  className={`song-option ${selectedSong?.id === song.id ? 'selected' : ''} ${
-                    !song.isAvailable ? 'unavailable' : ''
-                  }`}
-                  onClick={() => song.isAvailable && setSelectedSong(song)}
-                >
-                  <div className="song-details">
-                    <p className="song-title">{song.title}</p>
-                    <p className="song-artist">by {song.artist}</p>
-                  </div>
-                  {!song.isAvailable && (
-                    <span className="unavailable-badge">Not in repertoire</span>
-                  )}
-                  {song.popularityScore > 0.8 && (
-                    <span className="popular-badge">🔥 Popular</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {selectedSong && (
-          <div className="selected-song-display">
-            <h4>Selected Song:</h4>
-            <p>
-              {selectedSong.title} - {selectedSong.artist}
-            </p>
-          </div>
-        )}
-
-        <div className="bounty-amount-section">
-          <h3>Set Bounty Amount</h3>
-          <div className="preset-amounts">
-            {PRESET_BOUNTIES.map(amount => (
-              <button
-                key={amount}
-                className={`amount-button ${bountyAmount === amount && !useCustom ? 'selected' : ''}`}
-                onClick={() => handleAmountSelect(amount)}
-              >
-                ${amount}
-              </button>
-            ))}
-          </div>
-
-          <div className="custom-amount">
-            <label>Custom Amount</label>
-            <div className="input-wrapper">
-              <span className="currency">$</span>
-              <input
-                type="number"
-                placeholder="0.00"
-                value={customAmount}
-                onChange={e => handleCustomAmount(e.target.value)}
-                min="5"
-                max="500"
-                step="5"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="deadline-section">
-          <h3>When do you want to hear it?</h3>
-          <div className="deadline-options">
-            <label>
-              <input
-                type="radio"
-                value="tonight"
-                checked={deadline === 'tonight'}
-                onChange={e => setDeadline(e.target.value)}
-              />
-              Tonight
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="this_week"
-                checked={deadline === 'this_week'}
-                onChange={e => setDeadline(e.target.value)}
-              />
-              This Week
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="anytime"
-                checked={deadline === 'anytime'}
-                onChange={e => setDeadline(e.target.value)}
-              />
-              Anytime
-            </label>
-          </div>
-        </div>
-
-        <div className="message-section">
-          <label>Add a message (optional)</label>
-          <textarea
-            placeholder="It's my birthday! Would love to hear this song 🎂"
-            value={message}
-            onChange={e => setMessage(e.target.value)}
-            maxLength={200}
-            rows={3}
-          />
-          <span className="char-count">{message.length}/200</span>
-        </div>
-
-        {error && <div className="error-message">{error}</div>}
-
-        <div className="modal-footer">
-          <div className="bounty-summary">
-            <span>Bounty Amount:</span>
-            <span className="total-amount">
-              $
-              {(useCustom ? Number(customAmount) || 0 : bountyAmount).toFixed(
-                2
-              )}
-            </span>
-          </div>
-
-          <div className="action-buttons">
-            <button
-              className="cancel-button"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </button>
-            <button
-              className="submit-button"
-              onClick={handleSubmit}
-              disabled={isSubmitting || !selectedSong}
-            >
-              {isSubmitting ? (
-                <>
-                  <span className="spinner"></span>
-                  Creating Bounty...
-                </>
-              ) : (
-                `Create Bounty $${(useCustom ? Number(customAmount) || 0 : bountyAmount).toFixed(2)}`
-              )}
-            </button>
-          </div>
-        </div>
-
-        <div className="bounty-info">
-          <p>💡 Artists will be notified of your bounty</p>
-          <p>🎵 You'll only be charged if the song is played</p>
-        </div>
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 };
+
+export default BountyModal;

@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http } from 'viem';
 import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
 import { WalletProvider } from '../contexts/WalletContext';
+import { EventProvider } from '../contexts/EventContext';
 
 // Simple Mantle Sepolia configuration
 const mantleSepolia = {
@@ -86,7 +87,9 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
         <QueryClientProvider client={queryClient}>
           <DynamicWagmiConnector>
             <WalletProvider>
-              {children}
+              <EventProvider>
+                {children}
+              </EventProvider>
             </WalletProvider>
           </DynamicWagmiConnector>
         </QueryClientProvider>

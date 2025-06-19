@@ -1,363 +1,352 @@
-// server/controllers/bountyController.cjs
-const Bounty = require("../models/bountyModel.cjs");
-const { createIntent } = require("../services/stripe.cjs");
-const {
-  validatePayment,
-  validationMiddleware,
-} = require("../middleware/validationMiddleware.cjs");
+const express = require('express');
+const router = express.Router();
+const mongoose = require('mongoose');
+const Bounty = require('../models/bountyModel.cjs');
+const User = require('../models/userModel.cjs');
+const Event = require('../models/eventModel.cjs');
+const { validateUserSession } = require('../middleware/validationMiddleware.cjs');
 
+// Create a new bounty
+router.post('/create', validateUserSession, createBounty);
+
+// Get bounties for an event
+router.get('/event/:eventId', getBountiesForEvent);
+
+// Get bounties for a speaker
+router.get('/speaker/:speakerId', getBountiesForSpeaker);
+
+// Get user's created bounties
+router.get('/my-bounties', validateUserSession, getUserBounties);
+
+// Claim a bounty
+router.post('/:bountyId/claim', validateUserSession, claimBounty);
+
+// Get bounty details
+router.get('/:bountyId', getBountyDetails);
+
+// Update bounty status (admin/automated)
+router.put('/:bountyId/status', validateUserSession, updateBountyStatus);
+
+/**
+ * Create a new bounty
+ */
 async function createBounty(req, res, next) {
   try {
     const {
-      title,
-      description,
-      bountyAmount,
-      venueId,
+      contractBountyId,
       eventId,
-      topic,
+      speakerId,
+      description,
+      rewardAmount,
       deadline,
+      txHash,
+      blockNumber,
+      contentType,
+      requirements,
+      tags
     } = req.body;
-    const userId = req.user ? req.user._id : null; // Assuming user is authenticated
 
-    if (!userId) {
-      return res
-        .status(401)
-        .json({ message: "Authentication required to create a bounty" });
-    }
-
-    if (!title || !bountyAmount) {
-      return res
-        .status(400)
-        .json({ message: "Title and amount are required fields" });
-    }
-
-    const bounty = await Bounty.create({
-      title,
-      description,
-      bountyAmount,
-      venueId,
-      eventId,
-      topic,
-      userId,
-      deadline: deadline || null,
-    });
-
-    // Use Mantle blockchain for bounty creation instead of Stripe
-    const mantleService = require("../services/mantleService.cjs");
-    // Note: fromPrivateKey should be securely obtained from the user's session or frontend
-    // This is a placeholder for demonstration; in a real implementation, handle private key securely
-    const fromPrivateKey = req.body.fromPrivateKey || "placeholder_private_key";
-    const result = await mantleService.createBounty(
-      bounty._id.toString(),
-      bountyAmount,
-      fromPrivateKey
-    );
-
-    if (!result.success) {
-      throw new Error(result.error || "Failed to create bounty on blockchain");
-    }
-
-    // Add the blockchain transaction ID to the bounty
-    bounty.blockchainTransactionId = result.bountyId;
-    await bounty.save();
-
-    // Broadcast the new bounty to the relevant venue for real-time display
-    const websocketService = require("../services/websocket.cjs");
-    if (venueId) {
-      websocketService.broadcastToVenue(venueId, {
-        type: "NEW_BOUNTY",
-        bountyId: bounty._id,
-        title: bounty.title,
-        amount: bounty.bountyAmount,
-        message: `A new bounty "${bounty.title}" worth ${bounty.bountyAmount} USDC has been created!`,
+    // Validate required fields
+    if (!contractBountyId || !eventId || !speakerId || !description || !rewardAmount || !deadline || !txHash) {
+      return res.status(400).json({
+        error: 'Missing required fields'
       });
     }
 
-    res.status(201).json({ message: "Bounty created successfully", bounty });
+    // Validate event exists
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // Validate speaker exists
+    const speaker = await User.findById(speakerId);
+    if (!speaker) {
+      return res.status(404).json({ error: 'Speaker not found' });
+    }
+
+    // Validate deadline is in the future
+    const deadlineDate = new Date(deadline);
+    if (deadlineDate <= new Date()) {
+      return res.status(400).json({ error: 'Deadline must be in the future' });
+    }
+
+    // Create bounty record
+    const bounty = new Bounty({
+      contractBountyId,
+      sponsor: req.user.userId,
+      event: eventId,
+      speaker: speakerId,
+      description,
+      rewardAmount,
+      deadline: deadlineDate,
+      txHash,
+      blockNumber,
+      contentType: contentType || 'video',
+      requirements: requirements || {},
+      tags: tags || []
+    });
+
+    await bounty.save();
+
+    // Populate for response
+    await bounty.populate([
+      { path: 'sponsor', select: 'username avatar' },
+      { path: 'speaker', select: 'username avatar' },
+      { path: 'event', select: 'name' }
+    ]);
+
+    // Emit real-time update if socket.io is available
+    if (req.app.get('socketio')) {
+      req.app.get('socketio').emit('bountyCreated', {
+        bountyId: bounty._id,
+        eventId: bounty.event._id,
+        speakerId: bounty.speaker._id,
+        rewardAmount: bounty.rewardAmount,
+        description: bounty.description,
+        sponsor: bounty.sponsor.username
+      });
+    }
+
+    res.status(201).json({
+      success: true,
+      bounty
+    });
+
   } catch (error) {
-    next(error); // Pass the error to the next middleware
+    console.error('Create bounty error:', error);
+    next(error);
   }
 }
 
-async function getBounties(req, res, next) {
+/**
+ * Get bounties for an event
+ */
+async function getBountiesForEvent(req, res, next) {
   try {
-    const {
-      venueId,
-      eventId,
-      topic,
-      status = "active",
-      sortBy,
-      limit = 20,
-      page = 1,
-    } = req.query;
-    let query = {};
+    const { eventId } = req.params;
+    const { status = 'active', limit = 20, offset = 0 } = req.query;
 
-    // Apply filters if provided
-    if (venueId) {
-      query.venueId = venueId;
-    }
-    if (eventId) {
-      query.eventId = eventId;
-    }
-    if (topic) {
-      query.topic = { $regex: topic, $options: "i" }; // Case-insensitive search
-    }
-    if (status) {
+    const query = { event: eventId };
+    if (status !== 'all') {
       query.status = status;
     }
 
-    // Apply sorting if provided
-    let sort = { createdAt: -1 }; // Default: newest first
-    if (sortBy === "amount") {
-      sort = { bountyAmount: -1 }; // Highest amount first
-    } else if (sortBy === "deadline") {
-      sort = { deadline: 1 }; // Earliest deadline first
-    } else if (sortBy === "popularity") {
-      sort = { votesFor: -1 }; // Most popular first based on votes
-    }
+    const bounties = await Bounty.find(query)
+      .populate('sponsor', 'username avatar')
+      .populate('speaker', 'username avatar')
+      .populate('claimant', 'username avatar')
+      .sort({ createdAt: -1 })
+      .skip(parseInt(offset))
+      .limit(parseInt(limit));
 
-    // Apply pagination
-    const skip = (page - 1) * limit;
+    // Get event statistics
+    const stats = await Bounty.getEventStats(eventId);
+
+    res.json({
+      bounties,
+      stats: stats[0] || {
+        totalBounties: 0,
+        totalReward: 0,
+        activeBounties: 0,
+        claimedBounties: 0
+      },
+      total: bounties.length
+    });
+
+  } catch (error) {
+    console.error('Get event bounties error:', error);
+    next(error);
+  }
+}
+
+/**
+ * Get bounties for a speaker
+ */
+async function getBountiesForSpeaker(req, res, next) {
+  try {
+    const { speakerId } = req.params;
+    const { status = 'active', timeframe = '30d' } = req.query;
+
+    const query = { speaker: speakerId };
+    if (status !== 'all') {
+      query.status = status;
+    }
 
     const bounties = await Bounty.find(query)
-      .sort(sort)
-      .skip(skip)
-      .limit(parseInt(limit));
-    const total = await Bounty.countDocuments(query);
+      .populate('sponsor', 'username avatar')
+      .populate('event', 'name')
+      .populate('claimant', 'username avatar')
+      .sort({ createdAt: -1 })
+      .limit(50);
 
-    res.status(200).json({
+    // Get speaker earnings
+    const earnings = await Bounty.getSpeakerEarnings(speakerId, timeframe);
+
+    res.json({
       bounties,
-      pagination: {
-        total,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        pages: Math.ceil(total / limit),
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-async function getLiveBountiesForVenue(req, res, next) {
-  try {
-    const { venueId } = req.params;
-    const { limit = 5 } = req.query;
-
-    if (!venueId) {
-      return res.status(400).json({ message: "Venue ID is required" });
-    }
-
-    const bounties = await Bounty.find({
-      venueId: venueId,
-      status: "active",
-    })
-      .sort({ bountyAmount: -1, createdAt: -1 }) // Sort by amount (highest first) and creation date (newest first)
-      .limit(parseInt(limit));
-
-    // Broadcast to performers in real-time if there are active bounties
-    if (bounties.length > 0) {
-      const websocketService = require("../services/websocket.cjs");
-      websocketService.broadcastToVenue(venueId, {
-        type: "LIVE_BOUNTIES_UPDATE",
-        bounties: bounties.map((bounty) => ({
-          id: bounty._id,
-          title: bounty.title,
-          amount: bounty.bountyAmount,
-        })),
-        message: `Active bounties available at this venue! Highest: ${bounties[0].title} for ${bounties[0].bountyAmount} USDC.`,
-      });
-    }
-
-    res.status(200).json({
-      message: "Live bounties retrieved successfully",
-      bounties,
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-async function submitEvidence(req, res, next) {
-  try {
-    const { bountyId, evidenceUrl } = req.body;
-    const bounty = await Bounty.findById(bountyId);
-
-    if (!bounty) {
-      return res.status(404).json({ message: "Bounty not found" });
-    }
-
-    if (bounty.status !== "active" && bounty.status !== "claimed") {
-      return res.status(400).json({
-        message: "Bounty is not in a valid state for evidence submission",
-      });
-    }
-
-    bounty.evidenceUrl = evidenceUrl;
-    bounty.status = "claimed";
-    await bounty.save();
-
-    // Broadcast evidence submission to the venue for community review
-    const websocketService = require("../services/websocket.cjs");
-    websocketService.broadcastToVenue(bounty.venueId, {
-      type: "BOUNTY_EVIDENCE_SUBMITTED",
-      bountyId: bounty._id,
-      evidenceUrl: evidenceUrl,
-      message:
-        "Evidence submitted for bounty fulfillment. Community review requested.",
-    });
-
-    res
-      .status(200)
-      .json({ message: "Evidence submitted successfully", bounty });
-  } catch (error) {
-    next(error);
-  }
-}
-
-async function voteOnBounty(req, res, next) {
-  try {
-    const { bountyId, vote } = req.body; // vote should be 'for' or 'against'
-    const userId = req.user ? req.user._id : null; // Assuming user is authenticated
-
-    if (!userId) {
-      return res
-        .status(401)
-        .json({ message: "Authentication required to vote on a bounty" });
-    }
-
-    const bounty = await Bounty.findById(bountyId);
-
-    if (!bounty) {
-      return res.status(404).json({ message: "Bounty not found" });
-    }
-
-    if (bounty.status !== "claimed") {
-      return res
-        .status(400)
-        .json({ message: "Bounty is not in a state for voting" });
-    }
-
-    // Prevent duplicate voting (assuming a simple check for userId in votedUsers array)
-    if (bounty.votedUsers && bounty.votedUsers.includes(userId.toString())) {
-      return res
-        .status(400)
-        .json({ message: "You have already voted on this bounty" });
-    }
-
-    if (vote === "for") {
-      bounty.votesFor += 1;
-    } else if (vote === "against") {
-      bounty.votesAgainst += 1;
-    } else {
-      return res.status(400).json({ message: "Invalid vote value" });
-    }
-
-    // Record the user who voted to prevent duplicates
-    if (!bounty.votedUsers) {
-      bounty.votedUsers = [];
-    }
-    bounty.votedUsers.push(userId.toString());
-
-    // Simple threshold for verification: if votesFor reach a certain number or ratio, mark as verified
-    const voteThreshold = 10; // Example threshold
-    const voteRatio = bounty.votesFor / (bounty.votesFor + bounty.votesAgainst);
-    if (bounty.votesFor >= voteThreshold && voteRatio >= 0.7) {
-      bounty.isVerified = true;
-      bounty.status = "completed";
-      // Trigger payout via smart contract if verified
-      const mantleService = require("../services/mantleService.cjs");
-      const payoutResult = await mantleService.releaseBountyFunds(
-        bounty.blockchainTransactionId,
-        bounty.bountyAmount
-      );
-      if (payoutResult.success) {
-        bounty.payoutTransactionId = payoutResult.transactionId;
-        console.log(
-          `Bounty ${bountyId} verified by community vote. Payout successful: ${payoutResult.transactionId}`
-        );
-      } else {
-        console.error(
-          `Bounty ${bountyId} payout failed: ${payoutResult.error}`
-        );
-        // Optionally, handle failed payout (e.g., notify admin, retry logic)
+      earnings: earnings[0] || {
+        totalEarnings: 0,
+        bountyCount: 0,
+        avgBounty: 0
       }
-    }
-
-    await bounty.save();
-
-    // Broadcast voting update to the venue
-    const websocketService = require("../services/websocket.cjs");
-    websocketService.broadcastToVenue(bounty.venueId, {
-      type: "BOUNTY_VOTE_UPDATE",
-      bountyId: bounty._id,
-      votesFor: bounty.votesFor,
-      votesAgainst: bounty.votesAgainst,
-      isVerified: bounty.isVerified,
-      message: bounty.isVerified
-        ? "Bounty verified by community!"
-        : "Community voting updated for bounty.",
     });
 
-    res.status(200).json({ message: "Vote recorded successfully", bounty });
   } catch (error) {
+    console.error('Get speaker bounties error:', error);
     next(error);
   }
 }
 
-async function submitPoidhEvidence(req, res, next) {
+/**
+ * Get user's created bounties
+ */
+async function getUserBounties(req, res, next) {
   try {
-    const { bountyId, evidenceUrl, evidenceHash } = req.body;
-    const userId = req.user ? req.user._id : null; // Assuming user is authenticated
+    const { status = 'all' } = req.query;
 
-    if (!userId) {
-      return res
-        .status(401)
-        .json({ message: "Authentication required to submit evidence" });
+    const query = { sponsor: req.user.userId };
+    if (status !== 'all') {
+      query.status = status;
+    }
+
+    const bounties = await Bounty.find(query)
+      .populate('speaker', 'username avatar')
+      .populate('event', 'name')
+      .populate('claimant', 'username avatar')
+      .sort({ createdAt: -1 });
+
+    res.json({ bounties });
+
+  } catch (error) {
+    console.error('Get user bounties error:', error);
+    next(error);
+  }
+}
+
+/**
+ * Claim a bounty
+ */
+async function claimBounty(req, res, next) {
+  try {
+    const { bountyId } = req.params;
+    const { submissionHash, submissionUrl } = req.body;
+
+    if (!submissionHash) {
+      return res.status(400).json({ error: 'Submission hash required' });
     }
 
     const bounty = await Bounty.findById(bountyId);
-
     if (!bounty) {
-      return res.status(404).json({ message: "Bounty not found" });
+      return res.status(404).json({ error: 'Bounty not found' });
     }
 
-    if (bounty.status !== "active" && bounty.status !== "claimed") {
-      return res.status(400).json({
-        message: "Bounty is not in a valid state for evidence submission",
+    // Validate bounty can be claimed
+    if (!bounty.canBeClaimed()) {
+      return res.status(400).json({ 
+        error: bounty.status === 'claimed' ? 'Bounty already claimed' : 'Bounty expired or inactive'
       });
     }
 
-    // POIDH (Proof Or It Didn't Happen) Integration: Store evidence hash for verification
-    bounty.evidenceUrl = evidenceUrl;
-    bounty.evidenceHash = evidenceHash || "pending_hash_verification"; // Placeholder if hash not provided
-    bounty.status = "claimed";
-    bounty.claimedBy = userId;
-    await bounty.save();
+    // Prevent self-claiming
+    if (bounty.sponsor.toString() === req.user.userId) {
+      return res.status(400).json({ error: 'Cannot claim your own bounty' });
+    }
 
-    // Broadcast evidence submission to the venue for community review
-    const websocketService = require("../services/websocket.cjs");
-    websocketService.broadcastToVenue(bounty.venueId, {
-      type: "BOUNTY_EVIDENCE_SUBMITTED",
-      bountyId: bounty._id,
-      evidenceUrl: evidenceUrl,
-      message:
-        "Evidence submitted for bounty fulfillment. Community review requested.",
+    // Mark as claimed
+    await bounty.markAsClaimed(req.user.userId, submissionHash);
+
+    // Populate for response
+    await bounty.populate([
+      { path: 'sponsor', select: 'username avatar' },
+      { path: 'speaker', select: 'username avatar' },
+      { path: 'claimant', select: 'username avatar' }
+    ]);
+
+    // Emit real-time update
+    if (req.app.get('socketio')) {
+      req.app.get('socketio').emit('bountyClaimed', {
+        bountyId: bounty._id,
+        eventId: bounty.event,
+        claimant: bounty.claimant.username,
+        rewardAmount: bounty.rewardAmount,
+        submissionHash
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Bounty claimed successfully',
+      bounty
     });
 
-    res
-      .status(200)
-      .json({ message: "Evidence submitted successfully with POIDH", bounty });
   } catch (error) {
+    console.error('Claim bounty error:', error);
     next(error);
   }
 }
 
-module.exports = {
-  createBounty: [validatePayment, validationMiddleware, createBounty],
-  getBounties,
-  getLiveBountiesForVenue,
-  submitEvidence,
-  submitPoidhEvidence,
-  voteOnBounty,
-};
+/**
+ * Get bounty details
+ */
+async function getBountyDetails(req, res, next) {
+  try {
+    const { bountyId } = req.params;
+
+    const bounty = await Bounty.findById(bountyId)
+      .populate('sponsor', 'username avatar')
+      .populate('speaker', 'username avatar')
+      .populate('event', 'name description')
+      .populate('claimant', 'username avatar');
+
+    if (!bounty) {
+      return res.status(404).json({ error: 'Bounty not found' });
+    }
+
+    res.json({ bounty });
+
+  } catch (error) {
+    console.error('Get bounty details error:', error);
+    next(error);
+  }
+}
+
+/**
+ * Update bounty status (for admin or automated processes)
+ */
+async function updateBountyStatus(req, res, next) {
+  try {
+    const { bountyId } = req.params;
+    const { status, reason } = req.body;
+
+    const bounty = await Bounty.findById(bountyId);
+    if (!bounty) {
+      return res.status(404).json({ error: 'Bounty not found' });
+    }
+
+    // Only sponsor or admin can update status
+    if (bounty.sponsor.toString() !== req.user.userId && !req.user.isAdmin) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    const validStatuses = ['active', 'claimed', 'expired', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Invalid status' });
+    }
+
+    bounty.status = status;
+    await bounty.save();
+
+    res.json({
+      success: true,
+      message: `Bounty status updated to ${status}`,
+      bounty
+    });
+
+  } catch (error) {
+    console.error('Update bounty status error:', error);
+    next(error);
+  }
+}
+
+module.exports = router;

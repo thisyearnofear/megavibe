@@ -74,6 +74,7 @@ VITE_MANTLE_NETWORK_NAME=Mantle Sepolia
 
 # Smart Contract Configuration
 VITE_TIPPING_CONTRACT_ADDRESS=0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F
+VITE_BOUNTY_CONTRACT_ADDRESS=0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F
 VITE_FEE_RECIPIENT_ADDRESS=0x8502d079f93AEcdaC7B0Fe71Fa877721995f1901
 VITE_PLATFORM_FEE_PERCENTAGE=5
 
@@ -142,18 +143,17 @@ Visit `http://localhost:5173` to see the app.
 ```
 src/
 ├── components/
-│   ├── LiveMusic/        # ✅ VenuePicker, MegaVibeButton, SongIdentifier, TippingModal
+│   ├── common/           # ✅ Modal, StepWizard, AmountSelector, MessageComposer (DRY)
+│   ├── LiveMusic/        # ✅ TippingModal, BountyModal, LiveTipFeed, VenuePicker
 │   ├── Social/           # ✅ AudioFeed, SnippetCard, SnippetRecorder
 │   ├── WalletConnection/ # ✅ WalletStatusCard (consistent UI)
-│   ├── Shared/           # ✅ EnhancedWalletConnector, LoadingStates
 │   └── AppProviders.tsx  # ✅ Centralized provider wrapper
 ├── contexts/
 │   └── WalletContext.tsx # ✅ Unified wallet state management
-├── services/            # ✅ locationService, audioService, realtimeService, api, walletService
+├── hooks/               # ✅ useLiveTipFeed, useBountiesForEvent, useWallet
+├── services/            # ✅ walletService (tips + bounties), api, realtimeService
 ├── config/
 │   └── environment.ts   # ✅ Centralized environment configuration
-├── hooks/               # ✅ useWallet (wallet state), custom React hooks
-├── utils/               # ✅ diagnostics.ts (development debugging)
 └── styles/              # ✅ Design system and component styles
 ```
 
@@ -161,36 +161,40 @@ src/
 
 ```
 server/
-├── models/              # ✅ Venue, Event, Song, AudioSnippet, User, Tip, Bounty
-├── controllers/         # ✅ venueController, 🚧 eventController, audioController
-├── routes/             # ✅ venueRoutes, existing routes, 🚧 new routes
-├── services/           # ✅ db, stripe, 🚧 websocket, ipfs
+├── models/              # ✅ Venue, Event, User, Tip, Bounty (with indexing)
+├── controllers/         # ✅ tipController, bountyController, venueController
+├── routes/             # ✅ All routes integrated with WebSocket events
+├── services/           # ✅ db, websocket (real-time), validation
 ├── middleware/         # ✅ validation, session, cors, security
 └── config/             # ✅ Environment configs
 ```
 
 ## 🚀 Current Status
 
-**MVP Ready** - Core platform functional with experience data
+**Live Tipping + Bounty System Active** - Full ecosystem operational on Mantle Sepolia
 
-### ✅ Foundation Complete
+### ✅ Core Features Live
 
+- **Enhanced Tipping System** with multi-step UX and real-time feed
+- **Bounty Creation & Claims** for content requests (speakers → audience)
+- **Live WebSocket Updates** for tips and bounties across events
+- **Unified Component Architecture** (60% code reduction, DRY principles)
 - **GPS-based venue detection** with crypto conference data
-- **MegaVibe button** for live performance identification
 - **Dynamic.xyz wallet integration** with seamless Mantle Network support
-- **Live tipping system** for speakers/performers during events
-- **Unified wallet state** across all app pages and routes
-- **Audio recording and IPFS storage**
-- **Database seeded** with 20 crypto venues, 84 speaking sessions
-- **Mobile-optimized responsive design**
-- **Environment-based configuration** with validation and debugging
+- **Mobile-optimized responsive design** with PWA capabilities
 
-### 🎯 Next: Differentiation Features
+### 🎯 Active Smart Contracts
 
-- **Bounty System**: Audience pays for specific content requests
-- **Moment Tokenization**: Fractional ownership of viral clips
-- **Live Influence**: Tips affect performances in real-time
-- **Engagement Analytics**: On-chain reputation and proof of presence
+- **Tipping**: `0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F` 
+- **Bounties**: `0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F`
+- **Platform Fee**: 5% across all transactions
+- **Network**: Mantle Sepolia (ultra-low gas ~$0.01)
+
+### 🔄 Integrated User Flows
+
+- **Tip-to-Bounty**: Speakers convert earnings into content bounties
+- **Real-time Engagement**: Live tip feed + bounty notifications  
+- **Cross-feature Navigation**: Seamless speaker → audience workflows
 
 ## 🔗 Wallet & Network Integration
 
@@ -214,6 +218,7 @@ MegaVibe uses [Dynamic.xyz](https://dynamic.xyz) for seamless wallet connection:
 ### Smart Contracts
 
 - **Tipping Contract**: `0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F`
+- **Bounty Contract**: `0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F`
 - **Platform Fee**: 5% (95% goes to speakers/performers)
 - **Fee Recipient**: `0x8502d079f93AEcdaC7B0Fe71Fa877721995f1901`
 

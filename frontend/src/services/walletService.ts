@@ -351,6 +351,129 @@ class WalletService {
     return `${MANTLE_SEPOLIA_CONFIG.blockExplorerUrls[0]}/address/${address}`;
   }
 
+  // Create bounty transaction
+  async createBounty(
+    eventId: string,
+    speakerId: string,
+    description: string,
+    deadlineTimestamp: number,
+    amountUSD: number
+  ): Promise<any> {
+    try {
+      if (!this.contract || !this.signer) {
+        throw new Error('Contract or signer not initialized');
+      }
+
+      // Convert USD to MNT
+      const amountMNT = await this.convertUSDToMNT(amountUSD);
+      const valueInWei = ethers.parseEther(amountMNT);
+
+      // Send transaction to bounty contract
+      const tx = await this.contract.createBounty(
+        eventId,
+        speakerId,
+        description,
+        deadlineTimestamp,
+        {
+          value: valueInWei,
+          gasLimit: 200000, // Conservative gas limit for bounty creation
+        }
+      );
+
+      console.log('Bounty transaction sent:', tx.hash);
+
+      // Wait for confirmation
+      const receipt = await tx.wait();
+
+      return {
+        txHash: tx.hash,
+        blockNumber: receipt.blockNumber,
+        gasUsed: receipt.gasUsed.toString(),
+        success: true,
+        logs: receipt.logs
+      };
+    } catch (error) {
+      console.error('Failed to create bounty:', error);
+      throw error;
+    }
+  }
+
+  // Claim bounty transaction
+  async claimBounty(
+    bountyId: number,
+    submissionHash: string
+  ): Promise<any> {
+    try {
+      if (!this.contract || !this.signer) {
+        throw new Error('Contract or signer not initialized');
+      }
+
+      // Send claim transaction
+      const tx = await this.contract.claimBounty(
+        bountyId,
+        submissionHash,
+        {
+          gasLimit: 150000,
+        }
+      );
+
+      console.log('Bounty claim transaction sent:', tx.hash);
+
+      // Wait for confirmation
+      const receipt = await tx.wait();
+
+      return {
+        txHash: tx.hash,
+        blockNumber: receipt.blockNumber,
+        gasUsed: receipt.gasUsed.toString(),
+        success: true,
+      };
+    } catch (error) {
+      console.error('Failed to claim bounty:', error);
+      throw error;
+    }
+  }
+
+  // Get bounty events from contract
+  async getBountyEvents(eventId?: string): Promise<Array<{
+    bountyId: number;
+    sponsor: string;
+    reward: string;
+    eventId: string;
+    speakerId: string;
+    description: string;
+    deadline: bigint;
+    txHash: string;
+    blockNumber: number;
+  }>> {
+    try {
+      if (!this.contract) {
+        throw new Error('Contract not initialized');
+      }
+
+      const filter = this.contract.filters.BountyCreated();
+      const events = await this.contract.queryFilter(filter, -1000); // Last 1000 blocks
+
+      return events
+        .filter((event): event is ethers.EventLog => 'args' in event)
+        .filter(event => !eventId || event.args?.eventId === eventId)
+        .map(event => ({
+          bountyId: Number(event.args?.bountyId || 0),
+          sponsor: event.args?.sponsor || '',
+          reward: ethers.formatEther(event.args?.reward || '0'),
+          eventId: event.args?.eventId || '',
+          speakerId: event.args?.speakerId || '',
+          description: event.args?.description || '',
+          deadline: event.args?.deadline || BigInt(0),
+          txHash: event.transactionHash,
+          blockNumber: event.blockNumber,
+        }));
+    } catch (error) {
+      console.error('Failed to get bounty events:', error);
+      return [];
+    }
+  }
+
   // Cleanup
   disconnect(): void {
     this.provider = null;

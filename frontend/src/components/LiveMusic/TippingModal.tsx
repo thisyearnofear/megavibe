@@ -1,133 +1,172 @@
 import React, { useState, useEffect } from 'react';
+import { Modal } from '../common/Modal';
+import { StepWizard } from '../common/StepWizard';
+import { AmountSelector } from '../common/AmountSelector';
+import { MessageComposer } from '../common/MessageComposer';
+import { TransactionPreview } from '../common/TransactionPreview';
 import { useWallet } from '../../contexts/WalletContext';
 import { api } from '../../services/api';
-
 import { walletService } from '../../services/walletService';
-import '../../styles/TippingModal.css';
+import './TippingModal.css';
 
-interface TippingModalProps {
-  speaker: {
-    id: string;
-    name: string;
-    title?: string;
-    avatar?: string;
-    walletAddress?: string;
-  };
-  event: {
-    id: string;
-    name: string;
-  };
-  onClose: () => void;
-  onSuccess: () => void;
+interface Speaker {
+  id: string;
+  name: string;
+  title?: string;
+  avatar?: string;
+  walletAddress?: string;
+  currentTalk?: string;
+  todayEarnings?: number;
+  tipCount?: number;
 }
 
-const PRESET_AMOUNTS = [5, 10, 25, 50];
+interface Event {
+  id: string;
+  name: string;
+}
+
+interface TippingModalProps {
+  speaker: Speaker;
+  event: Event;
+  onClose: () => void;
+  onSuccess: () => void;
+  isOpen: boolean;
+}
+
+const PRESET_AMOUNTS = [5, 10, 25, 50, 100];
+const MESSAGE_SUGGESTIONS = [
+  "Great insights! 🎯",
+  "Thanks for the knowledge! 🧠", 
+  "Loved your presentation! 👏",
+  "Keep up the great work! 🚀",
+  "Inspiring talk! ✨",
+  "Amazing content! 🔥"
+];
+
+const STEPS = [
+  { key: 'amount', label: 'Amount', icon: '💰' },
+  { key: 'message', label: 'Message', icon: '💬' },
+  { key: 'confirm', label: 'Confirm', icon: '✅' },
+  { key: 'processing', label: 'Processing', icon: '⏳' },
+  { key: 'success', label: 'Success', icon: '🎉' }
+];
 
 export const TippingModal: React.FC<TippingModalProps> = ({
   speaker,
   event,
   onClose,
   onSuccess,
+  isOpen
 }) => {
+  const [step, setStep] = useState<'amount' | 'message' | 'confirm' | 'processing' | 'success'>('amount');
   const [amount, setAmount] = useState<number>(10);
-  const [customAmount, setCustomAmount] = useState<string>('');
   const [message, setMessage] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [useCustom, setUseCustom] = useState(false);
-  const [walletBalance, setWalletBalance] = useState<string>('0');
   const [txHash, setTxHash] = useState<string>('');
-  const [step, setStep] = useState<'setup' | 'confirming' | 'success'>('setup');
+  const [walletBalance, setWalletBalance] = useState<string>('0');
 
-  const { isConnected, isWalletReady } = useWallet();
+  const { isConnected, isWalletReady, formatBalance } = useWallet();
 
-  const handleAmountSelect = (value: number) => {
-    setAmount(value);
-    setUseCustom(false);
-    setCustomAmount('');
-    setError(null);
-  };
-
-  const handleCustomAmountChange = (value: string) => {
-    setCustomAmount(value);
-    setUseCustom(true);
-    if (value && !isNaN(Number(value))) {
-      setAmount(Number(value));
-      setError(null);
-    }
-  };
-
-  const validateAmount = (): boolean => {
-    const tipAmount = useCustom ? Number(customAmount) : amount;
-
-    if (isNaN(tipAmount) || tipAmount <= 0) {
-      setError('Please enter a valid amount');
-      return false;
-    }
-
-    if (tipAmount < 1) {
-      setError('Minimum tip amount is $1');
-      return false;
-    }
-
-    if (tipAmount > 500) {
-      setError('Maximum tip amount is $500');
-      return false;
-    }
-
-    return true;
-  };
-
-  // Initialize wallet service
+  // Load wallet balance
   useEffect(() => {
-    const initWallet = async () => {
+    const loadBalance = async () => {
       if (isConnected) {
         try {
           const balance = await walletService.getBalance();
           setWalletBalance(balance);
         } catch (error) {
           console.error('Failed to get balance:', error);
-          setError('Failed to get wallet balance');
         }
       }
     };
 
-    initWallet();
+    loadBalance();
   }, [isConnected]);
 
+  // Reset state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setStep('amount');
+      setAmount(10);
+      setMessage('');
+      setError(null);
+      setTxHash('');
+      setIsProcessing(false);
+    }
+  }, [isOpen]);
+
+  const validateStep = (currentStep: string): boolean => {
+    setError(null);
+
+    switch (currentStep) {
+      case 'amount':
+        if (amount <= 0) {
+          setError('Please select a valid amount');
+          return false;
+        }
+        if (amount > 500) {
+          setError('Maximum tip amount is $500');
+          return false;
+        }
+        break;
+      case 'message':
+        // Message is optional, always valid
+        break;
+      case 'confirm':
+        if (!isConnected || !isWalletReady()) {
+          setError('Please connect your wallet to continue');
+          return false;
+        }
+        if (!speaker.walletAddress) {
+          setError('Speaker wallet address not found');
+          return false;
+        }
+        break;
+    }
+
+    return true;
+  };
+
+  const handleNext = () => {
+    if (!validateStep(step)) return;
+
+    setStep(prev => {
+      if (prev === 'amount') return 'message';
+      if (prev === 'message') return 'confirm';
+      return prev;
+    });
+  };
+
+  const handleBack = () => {
+    setError(null);
+    setStep(prev => {
+      if (prev === 'confirm') return 'message';
+      if (prev === 'message') return 'amount';
+      return prev;
+    });
+  };
+
   const handleSubmit = async () => {
-    if (!validateAmount()) return;
+    if (!validateStep('confirm')) return;
 
     setIsProcessing(true);
+    setStep('processing');
     setError(null);
-    setStep('confirming');
 
     try {
-      const tipAmount = useCustom ? Number(customAmount) : amount;
-
-      // Check wallet connection
-      if (!isConnected || !isWalletReady()) {
-        setError('Please connect your wallet to send tips.');
-        return;
-      }
-
-      if (!speaker.walletAddress) {
-        setError('Speaker wallet address not found.');
-        return;
-      }
-
       // Create tip record in backend
       const createResponse = await api.post('/api/tips/create', {
         speakerId: speaker.id,
         eventId: event.id,
-        amountUSD: tipAmount,
+        amountUSD: amount,
         message: message.trim(),
       });
 
       const { tipId, speakerWallet } = createResponse.data;
 
       // Convert USD to MNT
-      const amountMNT = await walletService.convertUSDToMNT(tipAmount);
+      const amountMNT = await walletService.convertUSDToMNT(amount);
 
       // Send transaction
       const txResult = await walletService.sendTip(
@@ -168,103 +207,221 @@ export const TippingModal: React.FC<TippingModalProps> = ({
         (err as Error)?.message ||
         'Failed to process tip. Please try again.'
       );
-      setStep('setup');
+      setStep('confirm');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="tipping-modal" onClick={e => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>
-            {step === 'setup' && 'Tip Speaker'}
-            {step === 'confirming' && 'Confirming Transaction...'}
-            {step === 'success' && 'Tip Sent Successfully!'}
-          </h2>
-          <button className="close-button" onClick={onClose} disabled={isProcessing}>
-            ×
+  const getModalTitle = () => {
+    switch (step) {
+      case 'amount': return 'Select Tip Amount';
+      case 'message': return 'Add a Message';
+      case 'confirm': return 'Confirm Your Tip';
+      case 'processing': return 'Sending Tip...';
+      case 'success': return 'Tip Sent Successfully!';
+      default: return 'Tip Speaker';
+    }
+  };
+
+  const getFooterButtons = () => {
+    switch (step) {
+      case 'amount':
+        return (
+          <button 
+            className="btn btn-primary"
+            onClick={handleNext}
+            disabled={amount <= 0}
+          >
+            Next: Add Message
           </button>
-        </div>
-
-        <div className="speaker-info">
-          {speaker.avatar && (
-            <img src={speaker.avatar} alt={speaker.name} className="speaker-avatar" />
-          )}
-          <div className="speaker-details">
-            <p className="speaker-name">{speaker.name}</p>
-            {speaker.title && <p className="speaker-title">{speaker.title}</p>}
-            <p className="event-name">at {event.name}</p>
-          </div>
-        </div>
-
-        {step === 'setup' && (
+        );
+      case 'message':
+        return (
           <>
-            <div className="amount-section">
-              <h3>Select Amount</h3>
-              <div className="preset-amounts">
-                {PRESET_AMOUNTS.map(preset => (
-                  <button
-                    key={preset}
-                    className={`amount-button ${amount === preset && !useCustom ? 'selected' : ''}`}
-                    onClick={() => handleAmountSelect(preset)}
-                  >
-                    ${preset}
-                  </button>
-                ))}
-              </div>
+            <button className="btn btn-outline" onClick={handleBack}>
+              Back
+            </button>
+            <button className="btn btn-primary" onClick={handleNext}>
+              Next: Review
+            </button>
+          </>
+        );
+      case 'confirm':
+        return (
+          <>
+            <button 
+              className="btn btn-outline" 
+              onClick={handleBack}
+              disabled={isProcessing}
+            >
+              Back
+            </button>
+            <button 
+              className="btn btn-primary"
+              onClick={handleSubmit}
+              disabled={isProcessing || !isWalletReady()}
+            >
+              {isProcessing ? 'Processing...' : `Send $${amount} Tip`}
+            </button>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
 
-              <div className="custom-amount">
-                <label>Custom Amount</label>
-                <div className="input-wrapper">
-                  <span className="currency">$</span>
-                  <input
-                    type="number"
-                    placeholder="0.00"
-                    value={customAmount}
-                    onChange={e => handleCustomAmountChange(e.target.value)}
-                    min="1"
-                    max="500"
-                    step="1"
-                  />
+  const completedSteps = () => {
+    const completed = [];
+    if (step !== 'amount') completed.push('amount');
+    if (!['amount', 'message'].includes(step)) completed.push('message');
+    if (['processing', 'success'].includes(step)) completed.push('confirm');
+    if (step === 'success') completed.push('processing');
+    return completed;
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      title={getModalTitle()}
+      onClose={onClose}
+      footer={getFooterButtons()}
+      size="medium"
+      className="tipping-modal"
+    >
+      {/* Step Progress */}
+      <StepWizard 
+        steps={STEPS.filter(s => s.key !== 'processing' || step === 'processing')}
+        activeKey={step}
+        completedKeys={completedSteps()}
+      />
+
+      {/* Speaker Spotlight */}
+      <div className="speaker-spotlight">
+        <div className="speaker-avatar">
+          {speaker.avatar ? (
+            <img src={speaker.avatar} alt={speaker.name} />
+          ) : (
+            <div className="avatar-placeholder">
+              {speaker.name.charAt(0).toUpperCase()}
+            </div>
+          )}
+        </div>
+        <div className="speaker-info">
+          <h3 className="speaker-name">{speaker.name}</h3>
+          {speaker.title && <p className="speaker-title">{speaker.title}</p>}
+          {speaker.currentTalk && (
+            <p className="current-talk">
+              <span className="live-dot"></span>
+              {speaker.currentTalk}
+            </p>
+          )}
+          <p className="event-name">at {event.name}</p>
+        </div>
+        {(speaker.todayEarnings !== undefined || speaker.tipCount !== undefined) && (
+          <div className="speaker-stats">
+            {speaker.todayEarnings !== undefined && (
+              <div className="stat">
+                <span className="stat-value">${speaker.todayEarnings}</span>
+                <span className="stat-label">earned today</span>
+              </div>
+            )}
+            {speaker.tipCount !== undefined && (
+              <div className="stat">
+                <span className="stat-value">{speaker.tipCount}</span>
+                <span className="stat-label">tips received</span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Step Content */}
+      <div className="step-content">
+        {step === 'amount' && (
+          <div className="amount-step">
+            <AmountSelector
+              presets={PRESET_AMOUNTS}
+              selected={amount}
+              onSelect={setAmount}
+              currency="$"
+              showCustomInput={true}
+              customPlaceholder="Enter custom amount"
+              min={1}
+              max={500}
+            />
+            
+            {isConnected && (
+              <div className="wallet-info">
+                <div className="balance-display">
+                  <span className="balance-label">Your Balance:</span>
+                  <span className="balance-value">
+                    {formatBalance(walletBalance)} MNT
+                  </span>
                 </div>
               </div>
-            </div>
-
-            <div className="message-section">
-              <label>Add a message (optional)</label>
-              <textarea
-                placeholder="Great talk! Thanks for the insights... 🎤"
-                value={message}
-                onChange={e => setMessage(e.target.value)}
-                maxLength={200}
-                rows={3}
-              />
-              <span className="char-count">{message.length}/200</span>
-            </div>
-          </>
+            )}
+          </div>
         )}
 
-        {step === 'confirming' && (
-          <div className="confirming-section">
-            <div className="loading-spinner"></div>
-            <p>Sending your tip to {speaker.name}...</p>
+        {step === 'message' && (
+          <div className="message-step">
+            <MessageComposer
+              message={message}
+              onChange={setMessage}
+              maxLength={200}
+              placeholder="Add a personal message to your tip..."
+              suggestions={MESSAGE_SUGGESTIONS}
+              showCharCount={true}
+            />
+          </div>
+        )}
+
+        {step === 'confirm' && (
+          <div className="confirm-step">
+            <TransactionPreview
+              amountUSD={amount}
+              platformFeePct={5}
+              gasEstimateUSD={0.01}
+              networkName="Mantle Sepolia"
+              showBreakdown={true}
+            />
+            
+            {message && (
+              <div className="message-preview">
+                <h4>Your Message:</h4>
+                <p>"{message}"</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {step === 'processing' && (
+          <div className="processing-step">
+            <div className="processing-animation">
+              <div className="spinner"></div>
+            </div>
+            <h3>Sending your tip to {speaker.name}...</h3>
             <p>Please confirm the transaction in your wallet.</p>
-            <div className="tip-details">
-              <div>Amount: ${(useCustom ? Number(customAmount) || 0 : amount).toFixed(2)}</div>
+            <div className="processing-details">
+              <div>Amount: ${amount.toFixed(2)}</div>
               {message && <div>Message: "{message}"</div>}
             </div>
           </div>
         )}
 
         {step === 'success' && (
-          <div className="success-section">
-            <div className="success-icon">✅</div>
+          <div className="success-step">
+            <div className="success-animation">
+              <div className="success-icon">✅</div>
+            </div>
             <h3>Tip Sent Successfully!</h3>
-            <p>Your ${(useCustom ? Number(customAmount) || 0 : amount).toFixed(2)} tip to {speaker.name} has been confirmed on Mantle Network.</p>
+            <p>
+              Your ${amount.toFixed(2)} tip to {speaker.name} has been confirmed 
+              on Mantle Network.
+            </p>
             {txHash && (
-              <div className="tx-info">
+              <div className="transaction-info">
                 <p>Transaction: {walletService.formatTxHash(txHash)}</p>
                 <a
                   href={walletService.getTxExplorerUrl(txHash)}
@@ -278,72 +435,41 @@ export const TippingModal: React.FC<TippingModalProps> = ({
             )}
           </div>
         )}
+      </div>
 
+      {/* Error Display */}
+      {error && (
+        <div className="error-banner">
+          <span className="error-icon">⚠️</span>
+          <span className="error-text">{error}</span>
+          <button 
+            className="error-dismiss"
+            onClick={() => setError(null)}
+          >
+            ×
+          </button>
+        </div>
+      )}
 
-
-        {error && <div className="error-message">{error}</div>}
-
-        {step === 'setup' && (
-          <div className="modal-footer">
-          <div className="wallet-info">
-            <div className="wallet-balance">
-              Balance: {parseFloat(walletBalance).toFixed(3)} MNT
-            </div>
+      {/* Payment Info */}
+      {step === 'amount' && (
+        <div className="payment-info">
+          <div className="info-item">
+            <span className="info-icon">💡</span>
+            <span>Tips are sent via Mantle Sepolia with ultra-low fees</span>
           </div>
-
-          <div className="tip-summary">
-            <div className="summary-row">
-              <span>Amount:</span>
-              <span>${(useCustom ? Number(customAmount) || 0 : amount).toFixed(2)} USD</span>
-            </div>
-            <div className="summary-row">
-              <span>Platform Fee (5%):</span>
-              <span>${((useCustom ? Number(customAmount) || 0 : amount) * 0.05).toFixed(2)}</span>
-            </div>
-            <div className="summary-row">
-              <span>Speaker Receives:</span>
-              <span>${((useCustom ? Number(customAmount) || 0 : amount) * 0.95).toFixed(2)}</span>
-            </div>
-            <div className="summary-row total">
-              <span>Gas Fee:</span>
-              <span>~$0.01 💚</span>
-            </div>
+          <div className="info-item">
+            <span className="info-icon">🔒</span>
+            <span>Secure transaction powered by smart contracts</span>
           </div>
-
-          <div className="action-buttons">
-            <button
-              className="cancel-button"
-              onClick={onClose}
-              disabled={isProcessing}
-            >
-              Cancel
-            </button>
-            <button
-              className="submit-button"
-              onClick={handleSubmit}
-              disabled={isProcessing || !validateAmount() || !isConnected || !isWalletReady()}
-            >
-              {isProcessing ? (
-                <>
-                  <span className="spinner"></span>
-                  Processing...
-                </>
-              ) : (
-                `💰 Send $${(useCustom ? Number(customAmount) || 0 : amount).toFixed(2)} Tip`
-              )}
-            </button>
+          <div className="info-item">
+            <span className="info-icon">⚡</span>
+            <span>Speaker receives tips instantly</span>
           </div>
         </div>
-        )}
-
-        {step === 'setup' && (
-          <div className="payment-info">
-            <p>💡 Tips are sent via Mantle Sepolia with ultra-low fees</p>
-            <p>🔒 Secure transaction powered by smart contracts</p>
-            <p>⚡ Speaker receives tips instantly</p>
-          </div>
-        )}
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 };
+
+export default TippingModal;
