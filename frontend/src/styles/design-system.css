@@ -679,3 +679,21 @@ body {
   .text-5xl { font-size: var(--font-size-3xl); }
   .text-4xl { font-size: var(--font-size-2xl); }
 }
+
+.orange-black-gradient {
+  background: linear-gradient(90deg, #ff5722 0%, #0f0a08 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  font-weight: 800;
+}
+
+.orange-black-gradient-sub {
+  background: linear-gradient(90deg, #0f0a08 0%, #ff5722 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  font-weight: 700;
+}

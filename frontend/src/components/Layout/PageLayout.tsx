@@ -13,8 +13,8 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ title, subtitle, childre
       <main className="page-main container">
         <div className="page-container">
           <header className="page-header">
-            <h1 className="page-title heading-1">{title}</h1>
-            {subtitle && <p className="page-subtitle heading-2">{subtitle}</p>}
+            <h1 className="page-title heading-1 orange-black-gradient">{title}</h1>
+            {subtitle && <p className="page-subtitle heading-2 orange-black-gradient-sub">{subtitle}</p>}
           </header>
           <div className="page-content">
             {children}

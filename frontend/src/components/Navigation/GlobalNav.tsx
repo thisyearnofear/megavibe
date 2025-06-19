@@ -13,7 +13,7 @@ export const GlobalNav: React.FC<GlobalNavProps> = ({ currentPage }) => {
     <nav className="global-nav">
       <div className="nav-container container">
         <Link to="/" className="nav-logo">
-          <h1>MEGA<span className="brand-accent">VIBE</span></h1>
+          <h1><span className="mega-white">MEGA</span><span className="brand-accent">VIBE</span></h1>
         </Link>
         <div className="nav-links">
           <NavLink to="/tip" className={({ isActive }) => isActive || currentPage === 'tip' ? 'active' : ''}>

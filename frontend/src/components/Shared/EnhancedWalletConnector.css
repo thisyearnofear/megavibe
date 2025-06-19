@@ -7,7 +7,7 @@
 
 .balance-label {
   font-size: 0.85rem;
-  color: var(--neutral-500);
+  color: var(--gold);
   font-weight: 500;
   margin-bottom: 0.1rem;
 }
@@ -26,4 +26,96 @@
   .balance-value {
     font-size: 0.95rem;
   }
+}
+
+.enhanced-wallet-container, .wallet-connected, .wallet-header, .wallet-details, .wallet-address-row, .chain-info, .balance-display, .balance-row, .user-info {
+  color: var(--secondary);
+}
+
+.wallet-header {
+  background: linear-gradient(90deg, var(--primary) 60%, var(--accent) 100%);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.5rem 1rem 1rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.10);
+}
+
+.wallet-avatar {
+  background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink));
+  color: #fff;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-right: 1rem;
+  box-shadow: 0 0 0 2px var(--accent), 0 2px 8px 0 rgba(0,0,0,0.10);
+}
+
+.wallet-address {
+  font-family: 'WorkSans', monospace;
+  font-size: 1.1rem;
+  color: var(--neon-blue);
+  background: rgba(0,0,0,0.10);
+  border-radius: var(--radius-md);
+  padding: 0.1rem 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.chain-info {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: var(--neon-pink);
+  margin-top: 0.2rem;
+}
+
+.chain-icon {
+  margin-right: 0.3rem;
+  font-size: 1.1rem;
+}
+
+.balance-display {
+  margin-top: 0.5rem;
+  background: rgba(0,0,0,0.10);
+  border-radius: var(--radius-md);
+  padding: 0.3rem 0.7rem;
+  display: flex;
+  align-items: center;
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.balance-label, .balance-amount {
+  color: var(--gold);
+}
+
+.user-info {
+  margin-top: 0.5rem;
+  color: var(--secondary);
+  font-size: 0.95rem;
+}
+
+.status-text {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.disconnect-button {
+  background: var(--accent);
+  color: var(--secondary);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.4rem 1.2rem;
+  margin-top: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.disconnect-button:hover {
+  background: var(--accent-dark);
 }

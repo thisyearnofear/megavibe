@@ -49,6 +49,10 @@
   color: var(--secondary);
 }
 
+.mega-white {
+  color: #fff !important;
+}
+
 @media (max-width: 768px) {
   .nav-container {
     flex-direction: column;
