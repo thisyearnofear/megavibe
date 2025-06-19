@@ -1,5 +1,9 @@
 import React from 'react';
 import styles from '../../styles/VenueContentMarketplace.module.css';
+import '../../styles/design-system.css';
+import { PageLayout } from '../Layout/PageLayout';
+import { Card } from '../UI/Card';
+import { SkeletonCard } from '../Loading/SkeletonCard';
 
 interface VenueContent {
   id: string;
@@ -49,15 +53,15 @@ const VenueContentMarketplace: React.FC<VenueContentMarketplaceProps> = ({
   const contentList = dummyContent;
 
   return (
-    <div className={styles['venue-content-marketplace']}>
-      <h2>Venue Content Marketplace</h2>
-      <p>
-        Browse highlights and exclusive content from live events at this venue.
-      </p>
-      <div className={styles['content-grid']}>
+    <PageLayout
+      title="Venue Content Marketplace"
+      subtitle="Browse highlights and exclusive content from live events at this venue."
+      
+    >
+      <div className="content-grid grid">
         {contentList.length > 0 ? (
           contentList.map(content => (
-            <div key={content.id} className={`${styles['content-card']} card`}>
+            <Card key={content.id} hoverable className="content-card">
               <div className={styles['content-thumbnail']}>
                 <img src={content.thumbnail} alt={content.title} />
                 {content.isPremium && (
@@ -79,17 +83,17 @@ const VenueContentMarketplace: React.FC<VenueContentMarketplaceProps> = ({
                   {content.isPremium ? 'Unlock Now' : 'Watch Free'}
                 </button>
               </div>
-            </div>
+            </Card>
           ))
         ) : (
-          <div className={styles['empty-state']}>
-            <div className={styles['empty-state-icon']}>📹</div>
-            <p>No content available for this venue yet.</p>
-            <p>Check back after live events!</p>
-          </div>
+          <>
+            {[...Array(3)].map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </>
         )}
       </div>
-    </div>
+    </PageLayout>
   );
 };
 

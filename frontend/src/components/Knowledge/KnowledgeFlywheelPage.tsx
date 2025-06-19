@@ -8,6 +8,9 @@ import { FlywheelVisualization } from './FlywheelVisualization';
 import { KnowledgeEconomyStats } from './KnowledgeEconomyStats';
 import { FlywheelSteps } from './FlywheelSteps';
 import './KnowledgeFlywheelPage.css';
+import { PageLayout } from '../Layout/PageLayout';
+import { Button } from '../UI/Button';
+import { CrossNavigation } from '../Navigation/CrossNavigation';
 
 interface KnowledgeFlywheelPageProps {
   onBack?: () => void;
@@ -68,34 +71,15 @@ export const KnowledgeFlywheelPage: React.FC<KnowledgeFlywheelPageProps> = ({ on
     // Success feedback could be added here
   };
 
-  if (isLoading) {
-    return (
-      <div className="knowledge-flywheel-page loading">
-        <div className="loading-spinner"></div>
-        <p>Loading Knowledge Economy...</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="knowledge-flywheel-page">
-      {/* Header */}
-      <header className="flywheel-header">
-        <button className="back-button" onClick={() => window.location.href = '/'}>
-          ← Back to Features
-        </button>
-        <div className="header-content">
-          <h1>🧠 Knowledge Economy Flywheel</h1>
-          <p className="header-subtitle">
-            Watch how tips become bounties, content creation scales, and knowledge workers earn thousands per talk
-          </p>
-        </div>
-      </header>
-
-      {/* Main Content Grid */}
-      <div className="flywheel-content">
-        {/* Left Column: Flywheel Visualization */}
-        <div className="flywheel-section">
+    <PageLayout
+      title="Knowledge Economy"
+      subtitle="See how the flywheel creates value and drives the ecosystem."
+      
+    >
+      <div className="flywheel-content grid">
+        {/* Flywheel visualization and steps */}
+        <div className="flywheel-container">
           <div className="section-header">
             <h2>The Flywheel in Action</h2>
             <p>See how value flows through the knowledge economy</p>
@@ -106,28 +90,22 @@ export const KnowledgeFlywheelPage: React.FC<KnowledgeFlywheelPageProps> = ({ on
             onStepClick={setActiveFlywheelStep}
           />
 
-          <div className="flywheel-actions">
-            <button
-              className="btn btn-primary btn-lg"
-              onClick={handleStartTipping}
-              disabled={!isConnected}
-            >
-              💰 Start Tipping Speakers
-            </button>
-            <button
-              className="btn btn-secondary btn-lg"
-              onClick={handleCreateBounty}
-              disabled={!isConnected}
-            >
-              🎯 Commission Content
-            </button>
+          <div className="flywheel-steps">
+            <FlywheelSteps activeStep={activeFlywheelStep} />
           </div>
 
-          {!isConnected && (
-            <div className="connection-notice">
-              <p>Connect your wallet to participate in the knowledge economy</p>
-            </div>
+          {/* Example loading state */}
+          {isLoading && (
+            <div className="loading-skeleton" style={{ height: '2rem', width: '100%' }} />
           )}
+          <div style={{ marginTop: 'var(--space-8)' }}>
+            <Button variant="primary" size="lg" onClick={handleStartTipping} style={{ marginRight: 'var(--space-4)' }}>
+              Start Tipping
+            </Button>
+            <Button variant="outline" size="lg" onClick={handleCreateBounty}>
+              Create Bounty
+            </Button>
+          </div>
         </div>
 
         {/* Right Column: Live Activity & Stats */}
@@ -146,11 +124,6 @@ export const KnowledgeFlywheelPage: React.FC<KnowledgeFlywheelPageProps> = ({ on
             </div>
           )}
         </div>
-      </div>
-
-      {/* Flywheel Steps Explanation */}
-      <div className="flywheel-steps-section">
-        <FlywheelSteps activeStep={activeFlywheelStep} />
       </div>
 
       {/* Success Stories Section */}
@@ -185,21 +158,7 @@ export const KnowledgeFlywheelPage: React.FC<KnowledgeFlywheelPageProps> = ({ on
       </div>
 
       {/* Cross-Navigation */}
-      <div className="cross-navigation">
-        <h3>Explore More of MegaVibe</h3>
-        <div className="nav-cards">
-          <div className="nav-card" onClick={() => window.location.href = '/tip'}>
-            <span className="nav-icon">💰</span>
-            <h4>Live Tipping</h4>
-            <p>Tip speakers in real-time</p>
-          </div>
-          <div className="nav-card" onClick={() => window.location.href = '/bounties'}>
-            <span className="nav-icon">🎯</span>
-            <h4>Bounty Marketplace</h4>
-            <p>Browse and create content bounties</p>
-          </div>
-        </div>
-      </div>
+      <CrossNavigation  />
 
       {/* Modals */}
       {showTippingModal && selectedSpeaker && currentEvent && (
@@ -222,6 +181,6 @@ export const KnowledgeFlywheelPage: React.FC<KnowledgeFlywheelPageProps> = ({ on
           isOpen={showBountyModal}
         />
       )}
-    </div>
+    </PageLayout>
   );
 };

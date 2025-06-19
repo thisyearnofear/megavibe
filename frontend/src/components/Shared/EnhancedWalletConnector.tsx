@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDynamicContext, DynamicWidget } from '@dynamic-labs/sdk-react-core';
 import { useAccount, useDisconnect, useBalance } from 'wagmi';
-import '../../styles/EnhancedWalletConnector.css';
+import './EnhancedWalletConnector.css';
 
 interface EnhancedWalletConnectorProps {
   onConnect: (walletAddress: string) => void;

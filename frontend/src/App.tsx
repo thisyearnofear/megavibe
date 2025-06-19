@@ -1,4 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import './styles/design-system.css';
@@ -7,7 +8,25 @@ import { EnhancedWalletConnector as WalletConnector } from './components/Shared/
 import { useWallet } from './contexts/WalletContext';
 import { useEvent, Speaker } from './contexts/EventContext';
 import { Venue } from './services/locationService';
+import { PageLayout } from './components/Layout/PageLayout';
+import { ErrorFallback } from './components/ErrorBoundary/ErrorFallback';
 
+// Custom error boundary implementation
+class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+  render() {
+    if (this.state.error) {
+      return <ErrorFallback error={this.state.error} resetError={() => this.setState({ error: null })} />;
+    }
+    return this.props.children;
+  }
+}
 
 // Lazy load components for performance optimization
 const VenuePicker = lazy(() =>
@@ -64,6 +83,8 @@ const AudioFeed = lazy(() =>
 );
 
 function App() {
+  const navigate = useNavigate();
+  
   // UI State
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
   const [showVenuePicker, setShowVenuePicker] = useState(false);
@@ -156,18 +177,16 @@ function App() {
     console.log('🎯 Feature card clicked:', featureType);
     setSelectedFeatureType(featureType);
     if (featureType === 'demo') {
-      console.log('📱 Opening Performer Dashboard');
-      setShowPerformerDashboard(true);
+      console.log('📱 Navigating to Artists Page');
+      navigate('/artists');
     } else if (featureType === 'connection') {
-      // Knowledge Economy → Navigate to /infonomy
       console.log('🧠 Navigating to Knowledge Economy');
-      window.location.href = '/infonomy';
+      navigate('/infonomy');
     } else if (featureType === 'tokenization') {
-      // Bounty Marketplace → Navigate to /bounties
       console.log('🎯 Navigating to Bounty Marketplace');
-      window.location.href = '/bounties';
+      navigate('/bounties');
     } else {
-      // Other feature cards still show the powerful landing
+      // For other features, show the powerful landing modal
       console.log('🌟 Opening Powerful Landing for:', featureType);
       setShowPowerfulLanding(true);
     }
@@ -219,26 +238,12 @@ function App() {
 
       <div className="features-showcase">
         <div className="showcase-header">
-          <h2>🚀 Experience All Features</h2>
-          <p>Click any feature below to see it in action with real artist profiles</p>
+          <h2>🚀 Choose Your Experience</h2>
+          <p>Select one of our core features to get started</p>
         </div>
 
-        <div className="welcome-features live-features">
-          <div className="feature-card live-feature" onClick={() => handleFeatureCardClick('connection')}>
-            <div className="feature-status">
-              <span className="status-badge live">🔴 LIVE NOW</span>
-            </div>
-            <div className="feature-icon-wrapper">
-              <div className="vinyl-record spinning"></div>
-            </div>
-            <h3>🎯 Knowledge Economy</h3>
-            <p><strong>The Flywheel:</strong> Watch tips become bounties, content creation scale, and knowledge workers earn $1000s per talk.</p>
-            <div className="feature-cta">
-              <span>Explore Flywheel →</span>
-            </div>
-          </div>
-
-          <div className="feature-card implemented featured" onClick={() => window.location.href = '/tip'}>
+        <div className="welcome-features main-features">
+          <div className="feature-card implemented featured" onClick={() => navigate('/tip')}>
             <div className="feature-status">
               <span className="status-badge implemented">✅ LIVE NOW</span>
             </div>
@@ -251,14 +256,28 @@ function App() {
                 <div className="sound-wave-bar"></div>
               </div>
             </div>
-            <h3>💰 Live Event Tipping</h3>
-            <p><strong>Tip Speakers:</strong> Send crypto tips to speakers in real-time during crypto conferences and events.</p>
+            <h3>💰 Live Tipping</h3>
+            <p>Send crypto tips to speakers in real-time during conferences and events</p>
             <div className="feature-cta">
               <span>Start Tipping Now →</span>
             </div>
           </div>
 
-          <div className="feature-card live-feature" onClick={() => handleFeatureCardClick('tokenization')}>
+          <div className="feature-card live-feature" onClick={() => navigate('/infonomy')}>
+            <div className="feature-status">
+              <span className="status-badge live">🔴 LIVE NOW</span>
+            </div>
+            <div className="feature-icon-wrapper">
+              <div className="vinyl-record spinning"></div>
+            </div>
+            <h3>🧠 Knowledge Economy</h3>
+            <p>Watch tips become bounties as content creation scales and knowledge workers earn thousands</p>
+            <div className="feature-cta">
+              <span>Explore Flywheel →</span>
+            </div>
+          </div>
+
+          <div className="feature-card live-feature" onClick={() => navigate('/bounties')}>
             <div className="feature-status">
               <span className="status-badge live">🔴 LIVE NOW</span>
             </div>
@@ -268,45 +287,13 @@ function App() {
               </div>
             </div>
             <h3>🎯 Bounty Marketplace</h3>
-            <p><strong>Commission Content:</strong> Request specific content from speakers. $25-500 bounties with 24-48h delivery.</p>
+            <p>Commission specific content from speakers with $25-500 bounties and 24-48h delivery</p>
             <div className="feature-cta">
               <span>Browse Bounties →</span>
             </div>
           </div>
 
-          <div className="feature-card live-feature" onClick={() => handleFeatureCardClick('influence')}>
-            <div className="feature-status">
-              <span className="status-badge live">🔴 LIVE NOW</span>
-            </div>
-            <div className="feature-icon-wrapper">
-              <div className="status-indicator status-live">
-                <span>⚡</span>
-              </div>
-            </div>
-            <h3>⚡ Live Earnings</h3>
-            <p><strong>Real-Time Income:</strong> Watch speakers earn $500-3000 per talk. See the exact moment tips convert to bounties.</p>
-            <div className="feature-cta">
-              <span>See Live Stats →</span>
-            </div>
-          </div>
-
-          <div className="feature-card live-feature" onClick={() => handleFeatureCardClick('reputation')}>
-            <div className="feature-status">
-              <span className="status-badge live">🔴 LIVE NOW</span>
-            </div>
-            <div className="feature-icon-wrapper">
-              <div className="status-indicator status-live">
-                <span>🏆</span>
-              </div>
-            </div>
-            <h3>🏆 Success Stories</h3>
-            <p><strong>Real Results:</strong> Vitalik earned $12,400 across 4 conferences. Andrew built a $50K knowledge business.</p>
-            <div className="feature-cta">
-              <span>Read Stories →</span>
-            </div>
-          </div>
-
-          <div className="feature-card demo-feature-card featured" onClick={() => handleFeatureCardClick('demo')}>
+          <div className="feature-card demo-feature-card featured" onClick={() => navigate('/artists')}>
             <div className="feature-status">
               <span className="status-badge featured">🎯 FEATURED</span>
             </div>
@@ -319,43 +306,12 @@ function App() {
                 </button>
               </div>
             </div>
-            <h3>🎯 Meet The Artists</h3>
-            <p><strong>Start here!</strong> Explore real artist profiles including Papa, Anatu & Andrew. This is the button that starts it all.</p>
+            <h3>🎭 Meet The Artists</h3>
+            <p>Explore real artist profiles including Papa, Anatu & Andrew with full social integration</p>
             <div className="feature-cta">
-              <span>Begin Journey →</span>
+              <span>Meet Artists →</span>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="welcome-actions">
-        <div className="action-group primary-actions">
-          <button
-            className="btn btn-primary btn-xl featured-btn"
-            onClick={() => handleFeatureCardClick('demo')}
-          >
-            🎯 Start with Artist Profiles
-          </button>
-          <button
-            className="btn btn-secondary btn-xl"
-            onClick={() => setShowVenuePicker(true)}
-          >
-            📍 Explore Live Venues
-          </button>
-        </div>
-        <div className="action-group secondary-actions">
-          <button
-            className="btn btn-outline btn-lg"
-            onClick={() => setActiveView('social')}
-          >
-            📱 Browse Content Feed
-          </button>
-          <button
-            className="btn btn-outline btn-lg"
-            onClick={() => handleFeatureCardClick('connection')}
-          >
-            🧠 See Knowledge Economy
-          </button>
         </div>
       </div>
 
@@ -453,242 +409,194 @@ function App() {
   );
 
   return (
-    <div className="App" ref={appRef}>
-      {/* Navigation */}
-      <nav className="app-nav" ref={navRef}>
-        <div className="nav-container">
-          <div className="nav-brand">
-            <h1>MEGA<span className="brand-accent">VIBE</span></h1>
-            {connectionStatus === 'connected' && (
-              <div className="connection-indicator">
-                <span className="connection-dot"></span>
-                <span>Live</span>
-              </div>
-            )}
-          </div>
-
-          <div className="nav-tabs">
-            <button
-              className={`nav-tab ${activeView === 'live' ? 'active' : ''}`}
-              onClick={() => setActiveView('live')}
-            >
-              🎵 Live Vibes
-            </button>
-            <button
-              className={`nav-tab ${activeView === 'social' ? 'active' : ''}`}
-              onClick={() => setActiveView('social')}
-            >
-              🎙️ Social Feed
-            </button>
-          </div>
-
-          <div className="nav-actions">
-            <button
-              className="venue-selector"
-              onClick={() => setShowVenuePicker(true)}
-            >
-              📍 {selectedVenue ? selectedVenue.name : 'Find Venues'}
-            </button>
-            <div className="wallet-connector-wrapper">
-              <WalletConnector
-                onConnect={() => {}}
-                onDisconnect={() => {}}
-                connectedAddress={address || undefined}
-                compact={true}
-                showBalance={true}
-              />
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <AppErrorBoundary>
       {/* Main Content */}
       <main className="app-content" ref={mainRef}>
-        {error && (
-          <div className="error-banner">
-            <span>⚠️ {error}</span>
-            <button onClick={() => setError(null)}>×</button>
-          </div>
-        )}
-
-        {eventLoading && (
-          <div className="loading-overlay">
-            <div className="loading-spinner"></div>
-            <p>Loading event data...</p>
-          </div>
-        )}
-
-        {/* View Content */}
-        {activeView === 'live' ? renderLiveView() : renderSocialView()}
-      </main>
-
-      {/* Modals */}
-      {/* Modals */}
-      {showVenuePicker && (
-        <Suspense fallback={<div>Loading Venue Picker...</div>}>
-          <VenuePicker
-            onVenueSelect={handleVenueSelection}
-            onClose={() => setShowVenuePicker(false)}
-          />
-        </Suspense>
-      )}
-
-      {showSongIdentifier && currentSong && selectedVenue && (
-        <Suspense fallback={<div>Loading Song Identifier...</div>}>
-          <SongIdentifier
-            currentSong={currentSong}
-            venueId={selectedVenue.id}
-            onClose={handleCloseSongIdentifier}
-          />
-        </Suspense>
-      )}
-
-      {showPerformerDashboard && (
-        <Suspense fallback={<div>Loading Performer Dashboard...</div>}>
-          <PerformerDashboard
-            featureType={selectedFeatureType}
-            onClose={() => setShowPerformerDashboard(false)}
-          />
-        </Suspense>
-      )}
-
-      {showPowerfulLanding && (
-        <Suspense fallback={<div>Loading Powerful Landing...</div>}>
-          <PowerfulLandingPage
-            featureType={selectedFeatureType}
-            onGetStarted={() => {
-              setShowPowerfulLanding(false);
-              if (!isConnected) {
-                // Trigger wallet connection flow
-              }
-            }}
-            onExploreEvents={() => {
-              setShowPowerfulLanding(false);
-              setShowVenuePicker(true);
-            }}
-          />
-        </Suspense>
-      )}
-
-
-
-      {/* Tutorial Overlay */}
-      {showTutorial && (
-        <div className="modal-overlay">
-          <div className="modal" style={{ maxWidth: '520px' }}>
-            <button className="close-btn" onClick={handleSkipTutorial}>×</button>
-            <div className="modal-header">
-              <h2>Welcome to MegaVibe!</h2>
-              <p style={{
-                color: 'var(--gray-600)',
-                fontSize: 'var(--font-size-base)',
-                margin: 'var(--space-sm) 0 0 0',
-                fontWeight: '400'
-              }}>
-                Step {tutorialStep + 1} of 4
-              </p>
+          {error && (
+            <div className="error-banner">
+              <span>⚠️ {error}</span>
+              <button onClick={() => setError(null)}>×</button>
             </div>
-            <div className="modal-body">
-              {tutorialStep === 0 && (
-                <>
-                  <h3>🎵 Explore Venues</h3>
-                  <p>
-                    Use the venue selector to find live performances
-                    near you. Click on "Select Venue" to explore
-                    available locations and discover what's happening now.
-                  </p>
-                </>
-              )}
-              {tutorialStep === 1 && (
-                <>
-                  <h3>🎤 Discover Live Performances</h3>
-                  <p>
-                    In the "Live Music" tab, you can see current events
-                    at your selected venue and interact with the
-                    MegaVibe button to identify songs and performances.
-                  </p>
-                </>
-              )}
-              {tutorialStep === 2 && (
-                <>
-                  <h3>📱 Connect with Social Feed</h3>
-                  <p>
-                    Switch to the "Social Feed" tab to browse audio
-                    snippets, connect with artists, and share your own
-                    content from live performances.
-                  </p>
-                </>
-              )}
-              {tutorialStep === 3 && (
-                <>
-                  <h3>💰 Support Artists</h3>
-                  <p>
-                    Connect your wallet to send tips directly to
-                    performers using cryptocurrency during live events.
-                    Help support the artists you love!
-                  </p>
-                </>
-              )}
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop: 'var(--space-xl)',
-                gap: 'var(--space-md)',
-              }}>
-                <button className="btn btn-outline" onClick={handleSkipTutorial}>
-                  Skip Tutorial
-                </button>
+          )}
+
+          {eventLoading && (
+            <div className="loading-overlay">
+              <div className="loading-spinner"></div>
+              <p>Loading event data...</p>
+            </div>
+          )}
+
+          {/* View Content */}
+          {activeView === 'live' ? renderLiveView() : renderSocialView()}
+        </main>
+
+        {/* Modals */}
+        {/* Modals */}
+        {showVenuePicker && (
+          <Suspense fallback={<div>Loading Venue Picker...</div>}>
+            <VenuePicker
+              onVenueSelect={handleVenueSelection}
+              onClose={() => setShowVenuePicker(false)}
+            />
+          </Suspense>
+        )}
+
+        {showSongIdentifier && currentSong && selectedVenue && (
+          <Suspense fallback={<div>Loading Song Identifier...</div>}>
+            <SongIdentifier
+              currentSong={currentSong}
+              venueId={selectedVenue.id}
+              onClose={handleCloseSongIdentifier}
+            />
+          </Suspense>
+        )}
+
+        {showPerformerDashboard && (
+          <Suspense fallback={<div>Loading Performer Dashboard...</div>}>
+            <PerformerDashboard
+              featureType={selectedFeatureType}
+              onClose={() => setShowPerformerDashboard(false)}
+            />
+          </Suspense>
+        )}
+
+        {showPowerfulLanding && (
+          <Suspense fallback={<div>Loading Powerful Landing...</div>}>
+            <PowerfulLandingPage
+              featureType={selectedFeatureType}
+              onGetStarted={() => {
+                setShowPowerfulLanding(false);
+                if (!isConnected) {
+                  // Trigger wallet connection flow
+                }
+              }}
+              onExploreEvents={() => {
+                setShowPowerfulLanding(false);
+                setShowVenuePicker(true);
+              }}
+            />
+          </Suspense>
+        )}
+
+
+
+        {/* Tutorial Overlay */}
+        {showTutorial && (
+          <div className="modal-overlay">
+            <div className="modal" style={{ maxWidth: '520px' }}>
+              <button className="close-btn" onClick={handleSkipTutorial}>×</button>
+              <div className="modal-header">
+                <h2>Welcome to MegaVibe!</h2>
+                <p style={{
+                  color: 'var(--gray-600)',
+                  fontSize: 'var(--font-size-base)',
+                  margin: 'var(--space-sm) 0 0 0',
+                  fontWeight: '400'
+                }}>
+                  Step {tutorialStep + 1} of 4
+                </p>
+              </div>
+              <div className="modal-body">
+                {tutorialStep === 0 && (
+                  <>
+                    <h3>🎵 Explore Venues</h3>
+                    <p>
+                      Use the venue selector to find live performances
+                      near you. Click on "Select Venue" to explore
+                      available locations and discover what's happening now.
+                    </p>
+                  </>
+                )}
+                {tutorialStep === 1 && (
+                  <>
+                    <h3>🎤 Discover Live Performances</h3>
+                    <p>
+                      In the "Live Music" tab, you can see current events
+                      at your selected venue and interact with the
+                      MegaVibe button to identify songs and performances.
+                    </p>
+                  </>
+                )}
+                {tutorialStep === 2 && (
+                  <>
+                    <h3>📱 Connect with Social Feed</h3>
+                    <p>
+                      Switch to the "Social Feed" tab to browse audio
+                      snippets, connect with artists, and share your own
+                      content from live performances.
+                    </p>
+                  </>
+                )}
+                {tutorialStep === 3 && (
+                  <>
+                    <h3>💰 Support Artists</h3>
+                    <p>
+                      Connect your wallet to send tips directly to
+                      performers using cryptocurrency during live events.
+                      Help support the artists you love!
+                    </p>
+                  </>
+                )}
                 <div style={{
                   display: 'flex',
-                  gap: 'var(--space-xs)',
-                  alignItems: 'center'
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: 'var(--space-xl)',
+                  gap: 'var(--space-md)',
                 }}>
-                  {[0, 1, 2, 3].map((step) => (
-                    <div
-                      key={step}
-                      style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: step <= tutorialStep ? 'var(--accent)' : 'var(--gray-300)',
-                        transition: 'all var(--transition-fast)',
-                      }}
-                    />
-                  ))}
+                  <button className="btn btn-outline" onClick={handleSkipTutorial}>
+                    Skip Tutorial
+                  </button>
+                  <div style={{
+                    display: 'flex',
+                    gap: 'var(--space-xs)',
+                    alignItems: 'center'
+                  }}>
+                    {[0, 1, 2, 3].map((step) => (
+                      <div
+                        key={step}
+                        style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          backgroundColor: step <= tutorialStep ? 'var(--accent)' : 'var(--gray-300)',
+                          transition: 'all var(--transition-fast)',
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      if (tutorialStep < 3) {
+                        handleNextTutorialStep();
+                      } else {
+                        handleSkipTutorial();
+                      }
+                    }}
+                  >
+                    {tutorialStep < 3 ? 'Next' : 'Got It!'}
+                  </button>
                 </div>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => {
-                    if (tutorialStep < 3) {
-                      handleNextTutorialStep();
-                    } else {
-                      handleSkipTutorial();
-                    }
-                  }}
-                >
-                  {tutorialStep < 3 ? 'Next' : 'Got It!'}
-                </button>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Connection Status */}
-      {connectionStatus === 'connecting' && (
-        <div className="connection-status connecting">
-          <span>🔄 Connecting to live feed...</span>
-        </div>
-      )}
+        {/* Connection Status */}
+        {connectionStatus === 'connecting' && (
+          <div className="connection-status connecting">
+            <span>🔄 Connecting to live feed...</span>
+          </div>
+        )}
 
-      {connectionStatus === 'disconnected' && currentEvent && (
-        <div className="connection-status disconnected">
-          <span>⚠️ Connection lost</span>
-          <button onClick={() => loadEvent(currentEventId)}>Reconnect</button>
-        </div>
-      )}
-    </div>
+        {connectionStatus === 'disconnected' && currentEvent && selectedVenue && (
+          <div className="connection-status disconnected">
+            <span>⚠️ Connection lost</span>
+            <button onClick={() => loadEvent(currentEventId)}>Reconnect</button>
+          </div>
+        )}
+    </AppErrorBoundary>
   );
 }
 

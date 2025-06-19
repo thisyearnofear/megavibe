@@ -1,0 +1,59 @@
+/* Artists Page Styles */
+.artists-content {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+.artists-intro {
+  text-align: center;
+  margin-bottom: var(--space-3xl);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.artists-intro h2 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  color: var(--primary);
+  margin-bottom: var(--space-lg);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.artists-intro p {
+  font-size: var(--font-size-lg);
+  color: var(--gray-600);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .artists-content {
+    padding: 0 var(--space-md);
+  }
+
+  .artists-intro {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .artists-intro h2 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .artists-intro p {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .artists-intro h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .artists-intro p {
+    font-size: var(--font-size-sm);
+  }
+}

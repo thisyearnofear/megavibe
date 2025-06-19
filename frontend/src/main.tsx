@@ -6,7 +6,41 @@ import App from './App';
 import { TipPage } from './components/TipPage';
 import { KnowledgeFlywheelPage } from './components/Knowledge/KnowledgeFlywheelPage';
 import { BountyMarketplacePage } from './components/Bounty/BountyMarketplacePage';
+import { ArtistsPage } from './components/Artists/ArtistsPage';
+import { NotFound } from './components/Shared/NotFound';
 import { AppProviders } from './components/AppProviders';
+import { GlobalNav } from './components/Navigation/GlobalNav';
+import { MobileNav } from './components/Navigation/MobileNav';
+import { useLocation } from 'react-router-dom';
+
+// Component to handle navigation with current page detection
+const AppWithNavigation: React.FC = () => {
+  const location = useLocation();
+  
+  const getCurrentPage = (): 'home' | 'tip' | 'infonomy' | 'bounties' | 'artists' => {
+    const path = location.pathname;
+    if (path === '/tip') return 'tip';
+    if (path === '/infonomy') return 'infonomy';
+    if (path === '/bounties') return 'bounties';
+    if (path === '/artists') return 'artists';
+    return 'home';
+  };
+
+  return (
+    <div className="app">
+      <GlobalNav currentPage={getCurrentPage()} />
+      <MobileNav />
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/tip" element={<TipPage />} />
+        <Route path="/infonomy" element={<KnowledgeFlywheelPage />} />
+        <Route path="/bounties" element={<BountyMarketplacePage />} />
+        <Route path="/artists" element={<ArtistsPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </div>
+  );
+};
 import './styles/design-system.css';
 import './styles/global.css';
 
@@ -19,6 +53,11 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+// Clear any cached modules
+if (import.meta.hot) {
+  import.meta.hot.accept();
+}
+
 const container = document.getElementById('root');
 if (container) {
   const root = createRoot(container);
@@ -26,12 +65,7 @@ if (container) {
     <React.StrictMode>
       <AppProviders>
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<App />} />
-            <Route path="/tip" element={<TipPage />} />
-            <Route path="/infonomy" element={<KnowledgeFlywheelPage />} />
-            <Route path="/bounties" element={<BountyMarketplacePage />} />
-          </Routes>
+          <AppWithNavigation />
         </BrowserRouter>
       </AppProviders>
     </React.StrictMode>

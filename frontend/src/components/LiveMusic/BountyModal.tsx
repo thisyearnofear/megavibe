@@ -7,6 +7,7 @@ import { TransactionPreview } from '../common/TransactionPreview';
 import { useWallet } from '../../contexts/WalletContext';
 import { api } from '../../services/api';
 import { walletService } from '../../services/walletService';
+import ModalErrorBanner from '../common/ModalErrorBanner';
 
 interface BountyModalProps {
   eventId: string;
@@ -151,7 +152,9 @@ export const BountyModal: React.FC<BountyModalProps> = ({
           />
           <p>Description: {description}</p>
           <p>Deadline: {new Date(deadline).toLocaleString()}</p>
-          {error && <div className="error">{error}</div>}
+          {error && (
+            <ModalErrorBanner error={error} onDismiss={() => setError(null)} />
+          )}
           <button onClick={handleBack}>Back</button>
           <button onClick={handleCreate} disabled={isSubmitting}>
             {isSubmitting ? 'Creating...' : 'Create Bounty'}

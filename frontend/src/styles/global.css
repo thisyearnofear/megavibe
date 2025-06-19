@@ -8,16 +8,41 @@
 /* Additional legacy component imports for compatibility */
 @import './animations.css';
 
-/* Global overrides and additional styles */
+/* Reset and Base Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 html {
   scroll-behavior: smooth;
+  font-size: 16px;
+  height: 100%;
 }
 
 body {
-  /* Design system handles base styles */
+  font-family: 'WorkSans', system-ui, -apple-system, sans-serif;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--neutral-900);
+  background-color: var(--neutral-100);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  min-height: 100%;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button, input, textarea, select {
+  font: inherit;
+  color: inherit;
 }
 
 /* Legacy compatibility classes */

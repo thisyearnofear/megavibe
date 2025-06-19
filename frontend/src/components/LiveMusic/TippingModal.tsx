@@ -7,6 +7,7 @@ import { TransactionPreview } from '../common/TransactionPreview';
 import { useWallet } from '../../contexts/WalletContext';
 import { api } from '../../services/api';
 import { walletService } from '../../services/walletService';
+import ModalErrorBanner from '../common/ModalErrorBanner';
 import './TippingModal.css';
 
 interface Speaker {
@@ -76,11 +77,10 @@ export const TippingModal: React.FC<TippingModalProps> = ({
           const balance = await walletService.getBalance();
           setWalletBalance(balance);
         } catch (error) {
-          console.error('Failed to get balance:', error);
+          // Error already logged, nothing else needed
         }
       }
     };
-
     loadBalance();
   }, [isConnected]);
 
@@ -130,11 +130,10 @@ export const TippingModal: React.FC<TippingModalProps> = ({
 
   const handleNext = () => {
     if (!validateStep(step)) return;
-
     setStep(prev => {
       if (prev === 'amount') return 'message';
       if (prev === 'message') return 'confirm';
-      return prev;
+      // No further step, so do not return prev (unreachable)
     });
   };
 
@@ -143,7 +142,7 @@ export const TippingModal: React.FC<TippingModalProps> = ({
     setStep(prev => {
       if (prev === 'confirm') return 'message';
       if (prev === 'message') return 'amount';
-      return prev;
+      // No further step, so do not return prev (unreachable)
     });
   };
 
@@ -439,16 +438,7 @@ export const TippingModal: React.FC<TippingModalProps> = ({
 
       {/* Error Display */}
       {error && (
-        <div className="error-banner">
-          <span className="error-icon">⚠️</span>
-          <span className="error-text">{error}</span>
-          <button 
-            className="error-dismiss"
-            onClick={() => setError(null)}
-          >
-            ×
-          </button>
-        </div>
+        <ModalErrorBanner error={error} onDismiss={() => setError(null)} />
       )}
 
       {/* Payment Info */}

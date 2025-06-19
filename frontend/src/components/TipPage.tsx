@@ -9,6 +9,11 @@ import { useLiveTipFeed } from '../hooks/useLiveTipFeed';
 import { useBountiesForEvent } from '../hooks/useBountiesForEvent';
 import { api } from '../services/api';
 import '../styles/TipPage.css';
+import { PageLayout } from './Layout/PageLayout';
+import { Button } from './UI/Button';
+import { Card } from './UI/Card';
+import { CrossNavigation } from './Navigation/CrossNavigation';
+import { SkeletonCard } from './Loading/SkeletonCard';
 
 interface Venue {
   _id: string;
@@ -211,51 +216,29 @@ export const TipPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="tip-page">
-        <header className="tip-header">
-          <div className="header-content">
-            <div className="header-left">
-              <button
-                className="back-btn"
-                onClick={() => window.location.href = '/'}
-              >
-                ← Back
-              </button>
-              <div className="header-title">
-                <h1>💰 Live Tipping</h1>
-              </div>
-            </div>
-            <div className="header-right">
-              <HeaderWalletStatus />
-            </div>
+      <PageLayout
+        title="Live Tipping"
+        subtitle="Tip speakers in real-time and support your favorite events."
+        
+      >
+        <div className="tip-content grid">
+          {/* Example: Venue picker and live tip feed */}
+          <div>
+            <Button variant="primary" size="md" onClick={() => setShowVenuePicker(true)}>
+              Choose Venue
+            </Button>
           </div>
-        </header>
-
-        <main className="tip-main">
-          <div className="venue-selection">
-            <div className="selection-card">
-              <h2>🏢 Choose an Experience Venue</h2>
-              <p>Loading experiences...</p>
-
-              <div className="venues-grid">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="venue-card skeleton">
-                    <div className="skeleton-header">
-                      <div className="skeleton-title"></div>
-                      <div className="skeleton-badge"></div>
-                    </div>
-                    <div className="skeleton-address"></div>
-                    <div className="skeleton-event">
-                      <div className="skeleton-event-name"></div>
-                      <div className="skeleton-event-time"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
+          {/* ...other tip page content, use Card for speaker/event blocks... */}
+          {/* Example loading state */}
+          {venues.length === 0 && (
+            <>
+              {[...Array(3)].map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </>
+          )}
+        </div>
+      </PageLayout>
     );
   }
 
@@ -274,28 +257,12 @@ export const TipPage: React.FC = () => {
   }
 
   return (
-    <div className="tip-page">
-      <header className="tip-header">
-        <div className="header-content">
-          <div className="header-left">
-            <button
-              className="back-btn"
-              onClick={() => window.location.href = '/'}
-            >
-              ← Back
-            </button>
-            <div className="header-title">
-              <h1>💰 Live Tipping</h1>
-            </div>
-          </div>
-
-          <div className="header-right">
-            <HeaderWalletStatus />
-          </div>
-        </div>
-      </header>
-
-      <main className="tip-main">
+    <PageLayout
+      title="Live Tipping"
+      subtitle="Tip speakers in real-time and support your favorite events."
+      
+    >
+      <div className="tip-content grid">
         {!selectedVenue ? (
           <div className="venue-selection">
             <div className="selection-card">
@@ -479,7 +446,7 @@ export const TipPage: React.FC = () => {
             )}
           </div>
         )}
-      </main>
+      </div>
 
       {/* Modals */}
       {showVenuePicker && (
@@ -530,6 +497,9 @@ export const TipPage: React.FC = () => {
           onSuccess={handleBountySuccess}
         />
       )}
-    </div>
+
+      {/* Cross-Navigation */}
+      <CrossNavigation  />
+    </PageLayout>
   );
 };
