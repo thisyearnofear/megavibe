@@ -21,16 +21,7 @@ const { handleError } = require("./utils/errorHandler.cjs");
 // Create Express application instance
 const app = express();
 
-// Configure Express application
-createExpressApp(app);
-
-// Middleware
-const loggerMiddleware = require("./middleware/loggerMiddleware.cjs");
-
-// Static assets
-app.use(express.static("public"));
-
-// CORS Configuration
+// --- CORS CONFIGURATION: Place at the very top, before any routes or static assets ---
 const allowedOrigins =
   process.env.NODE_ENV === "production"
     ? ["https://megavibe.vercel.app", "https://megavibe.onrender.com"]
@@ -40,10 +31,6 @@ const allowedOrigins =
         "https://megavibe.vercel.app",
       ];
 
-// Enable pre-flight requests for all routes
-app.options("*", cors());
-
-// Custom middleware to ensure CORS headers are set
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
@@ -51,17 +38,16 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader(
       "Access-Control-Allow-Methods",
-      "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+      "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS"
     );
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     );
   }
   next();
 });
 
-// Main CORS configuration
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -86,8 +72,18 @@ app.use(
     maxAge: 86400, // 24 hours
     preflightContinue: false,
     optionsSuccessStatus: 204,
-  }),
+  })
 );
+// --- END CORS CONFIGURATION ---
+
+// Configure Express application
+createExpressApp(app);
+
+// Middleware
+const loggerMiddleware = require("./middleware/loggerMiddleware.cjs");
+
+// Static assets
+app.use(express.static("public"));
 
 // Use request logger
 app.use(loggerMiddleware);

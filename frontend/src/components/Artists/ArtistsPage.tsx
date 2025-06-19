@@ -1,135 +1,112 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { PageLayout } from '../Layout/PageLayout';
-
-import PerformerGrid from '../Demo/PerformerGrid';
-import ArtistProfileModal from '../Demo/ArtistProfileModal';
+import { PERFORMERS, Performer } from '../../data/performers';
+import { Button } from '../UI/Button';
+import { Card } from '../UI/Card';
+import { useTalentFilter } from '../../hooks/useTalentFilter';
 import './ArtistsPage.css';
+import {
+  FaSpotify, FaInstagram, FaTwitter, FaYoutube, FaTiktok, FaGlobe, FaTwitch, FaLinkedin
+} from 'react-icons/fa';
+import { IconType } from 'react-icons';
 
-interface Performer {
-  id: string;
-  name: string;
-  avatar: string;
-  genre: string;
-  isLive: boolean;
-  currentSong?: string;
-  tipCount: number;
-  reputation: number;
-  bio: string;
-  socialLinks: {
-    spotify?: string;
-    instagram?: string;
-    twitter?: string;
-    youtube?: string;
-    tiktok?: string;
-    opensea?: string;
-    website?: string;
-    twitch?: string;
-    foundation?: string;
-    linkedin?: string;
-  };
-}
+const typeLabels: Record<Performer['type'], string> = {
+  speaker: '🎤 Speaker',
+  musician: '🎸 Musician',
+  comedian: '🎭 Comedian',
+};
 
-// Featured artists from the demo data
-const FEATURED_ARTISTS: Performer[] = [
-  {
-    id: 'papa-demo',
-    name: 'Papa',
-    avatar: '/images/boom.jpg',
-    genre: 'Indie Rock',
-    isLive: true,
-    currentSong: 'Chupacabra',
-    tipCount: 23,
-    reputation: 4.8,
-    bio: 'Live Experience App creator and indie rock performer',
-    socialLinks: {
-      spotify: 'https://spoti.fi/3FEOjci',
-      instagram: 'https://bit.ly/3FLPDKk',
-      twitter: 'https://bit.ly/3FHRTT5',
-      youtube: 'https://youtube.com/c/papajams'
-    }
-  },
-  {
-    id: 'anatu-demo',
-    name: 'Anatu',
-    avatar: '/images/boom.jpg',
-    genre: 'Afrobeat/Electronic',
-    isLive: false,
-    currentSong: 'Lagos Nights',
-    tipCount: 156,
-    reputation: 4.9,
-    bio: 'Nigerian-born electronic artist blending traditional Afrobeat with modern production',
-    socialLinks: {
-      spotify: 'https://open.spotify.com/artist/anatu',
-      instagram: 'https://instagram.com/anatumusic',
-      twitter: 'https://twitter.com/anatumusic',
-      youtube: 'https://youtube.com/c/anatumusic'
-    }
-  },
-  {
-    id: 'andrew-demo',
-    name: 'Andrew',
-    avatar: '/images/boom.jpg',
-    genre: 'Acoustic/Singer-Songwriter',
-    isLive: true,
-    currentSong: 'City Stories',
-    tipCount: 89,
-    reputation: 4.7,
-    bio: 'Storytelling singer-songwriter with a passion for connecting through music',
-    socialLinks: {
-      spotify: 'https://open.spotify.com/artist/andrewmusic',
-      instagram: 'https://instagram.com/andrewsongs',
-      twitter: 'https://twitter.com/andrewsongs',
-      youtube: 'https://youtube.com/c/andrewsongs'
-    }
-  }
-];
+const SOCIAL_ICONS: Record<string, IconType> = {
+  spotify: FaSpotify,
+  instagram: FaInstagram,
+  twitter: FaTwitter,
+  youtube: FaYoutube,
+  tiktok: FaTiktok,
+  website: FaGlobe,
+  twitch: FaTwitch,
+  linkedin: FaLinkedin,
+};
 
 export const ArtistsPage: React.FC = () => {
-  const [selectedPerformer, setSelectedPerformer] = useState<string | null>(null);
-  const [showArtistProfile, setShowArtistProfile] = useState(false);
-
-  const handlePerformerSelect = (performer: Performer) => {
-    setSelectedPerformer(performer.name);
-    setShowArtistProfile(true);
-  };
-
-  const handleCloseProfile = () => {
-    setShowArtistProfile(false);
-    setSelectedPerformer(null);
-  };
-
-  const handleBackToDashboard = () => {
-    setShowArtistProfile(false);
-    setSelectedPerformer(null);
-  };
+  const talent = PERFORMERS;
+  const {
+    filter, setFilter,
+    search, setSearch,
+    sort, setSort,
+    filtered
+  } = useTalentFilter(talent);
 
   return (
     <PageLayout
-      title="Meet The Artists"
-      subtitle="Explore featured artist profiles with full social integration and tipping capabilities."
+      title="Talent"
+      subtitle="Explore all profiles. Filter, search, and discover talent."
     >
       <div className="artists-content">
         <div className="artists-intro">
-          <h2>🎭 Featured Artists</h2>
-          <p>
-            Discover Papa, Anatu & Andrew - our featured artists showcasing the full MegaVibe experience.
-            Click on any artist to explore their profile, social links, and start tipping!
-          </p>
-        </div>
-
-        <PerformerGrid performers={FEATURED_ARTISTS} onSelect={handlePerformerSelect} />
-
-        {selectedPerformer && (
-          <ArtistProfileModal
-            isOpen={showArtistProfile}
-            featureType="demo"
-            selectedPerformer={selectedPerformer}
-            onClose={handleCloseProfile}
-            onBack={handleBackToDashboard}
+          <h2>🎭 Talent Directory</h2>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+            <Button variant={filter==='all'?'primary':'outline'} onClick={() => setFilter('all')}>All</Button>
+            <Button variant={filter==='speaker'?'primary':'outline'} onClick={() => setFilter('speaker')}>Speakers</Button>
+            <Button variant={filter==='musician'?'primary':'outline'} onClick={() => setFilter('musician')}>Musicians</Button>
+            <Button variant={filter==='comedian'?'primary':'outline'} onClick={() => setFilter('comedian')}>Comedians</Button>
+          </div>
+          <input
+            type="text"
+            placeholder="Search by name or genre..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            style={{ width: '100%', maxWidth: 320, marginBottom: 16 }}
           />
-        )}
+          <div style={{ marginBottom: 12 }}>
+            <span style={{ marginRight: 8 }}>Sort by:</span>
+            <Button variant={sort==='name'?'primary':'outline'} size="sm" onClick={() => setSort('name')}>Name</Button>
+            <Button variant={sort==='reputation'?'primary':'outline'} size="sm" onClick={() => setSort('reputation')}>Reputation</Button>
+            <Button variant={sort==='tips'?'primary':'outline'} size="sm" onClick={() => setSort('tips')}>Most Tipped</Button>
+          </div>
+        </div>
+        <div className="talent-grid">
+          {filtered.length === 0 ? (
+            <div style={{ textAlign: 'center', color: '#888', marginTop: 32 }}>
+              No talent found. Try a different search or filter.
+            </div>
+          ) : (
+            filtered.map(p => (
+              <Card key={p.id} hoverable className="talent-card">
+                {/* LIVE badge at top right of card */}
+                {p.isLive && <span className="live-badge card-live-badge">LIVE</span>}
+                <div className="talent-avatar">
+                  {p.avatar ? <img src={p.avatar} alt={p.name} /> : <span>{p.name[0]}</span>}
+                </div>
+                <div className="talent-info">
+                  <div className="talent-header">
+                    <span className="talent-name">{p.name}</span>
+                    <span className="talent-type">{typeLabels[p.type]}</span>
+                  </div>
+                  <div className="talent-bio">{p.bio}</div>
+                  <div className="talent-actions">
+                    <Button variant="primary" size="sm" className="tip-btn">Tip</Button>
+                    <a href={`/talent/${p.id}`} className="profile-btn btn btn-outline btn-sm" style={{ textDecoration: 'none' }}>View Profile</a>
+                    {p.socialLinks && (
+                      <span className="talent-socials">
+                        {Object.entries(p.socialLinks).map(([key, url]) => {
+                          if (!url) return null;
+                          const Icon = SOCIAL_ICONS[key];
+                          return (
+                            <a key={key} href={url} target="_blank" rel="noopener noreferrer" className="social-icon-btn" title={key} aria-label={key}>
+                              {/* @ts-expect-error: react-icons type issue in monorepo */}
+                              {Icon ? <Icon /> : '🔗'}
+                            </a>
+                          );
+                        })}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            ))
+          )}
+        </div>
       </div>
-
     </PageLayout>
   );
 };

@@ -10,7 +10,6 @@ import { FlywheelSteps } from './FlywheelSteps';
 import './KnowledgeFlywheelPage.css';
 import { PageLayout } from '../Layout/PageLayout';
 import { Button } from '../UI/Button';
-import { CrossNavigation } from '../Navigation/CrossNavigation';
 
 interface KnowledgeFlywheelPageProps {
   onBack?: () => void;
@@ -156,9 +155,6 @@ export const KnowledgeFlywheelPage: React.FC<KnowledgeFlywheelPageProps> = ({ on
           </div>
         </div>
       </div>
-
-      {/* Cross-Navigation */}
-      <CrossNavigation  />
 
       {/* Modals */}
       {showTippingModal && selectedSpeaker && currentEvent && (

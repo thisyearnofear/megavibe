@@ -297,37 +297,23 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
   const loadEvent = useCallback(async (eventId: string): Promise<void> => {
     dispatch({ type: 'SET_LOADING', payload: true });
     dispatch({ type: 'SET_ERROR', payload: null });
-
-    // Always use mock data to avoid backend issues
-    console.log('Using mock data for:', eventId);
     try {
-      // Use mock data immediately
-      const mockEvent = MOCK_EVENTS.find(e => e.id === eventId) || MOCK_EVENTS[0];
-      dispatch({ type: 'SET_EVENT', payload: mockEvent });
-      dispatch({ type: 'SET_SPEAKERS', payload: MOCK_SPEAKERS });
-
-      // Load mock data
-      const mockTips = await mockDataService.getRecentTips(eventId);
-      const mockBounties = await mockDataService.getActiveBounties(eventId);
-      const mockStats = await mockDataService.getLiveStats();
-
-      dispatch({ type: 'SET_TIPS', payload: mockTips });
-      dispatch({ type: 'SET_BOUNTIES', payload: mockBounties });
-      dispatch({
-        type: 'SET_LIVE_STATS',
-        payload: {
-          totalTips: mockStats.liveTips,
-          totalBounties: mockStats.pendingBounties,
-          activeTippers: mockStats.activeSpeakers,
-          tipsPerMinute: Math.floor(mockStats.liveTips / 60),
-          totalEarnings: mockStats.totalEarned,
-        }
-      });
-
+      // Fetch event list from backend
+      const eventListRes = await api.get('/api/events/list');
+      const events = eventListRes.data.events;
+      let event = events.find((e: any) => e._id === eventId) || events[0];
+      if (!event) throw new Error('No events found');
+      // Optionally fetch full event details if available
+      // const eventDetailsRes = await api.get(`/api/events/${event._id}`);
+      // event = eventDetailsRes.data.event;
+      dispatch({ type: 'SET_EVENT', payload: { ...event, id: event._id } });
+      // TODO: Fetch speakers and bounties from backend if endpoints exist
+      dispatch({ type: 'SET_SPEAKERS', payload: [] }); // Placeholder
+      dispatch({ type: 'SET_BOUNTIES', payload: [] }); // Placeholder
       dispatch({ type: 'SET_LOADING', payload: false });
     } catch (error) {
-      console.error('Failed to load mock data:', error);
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to load demo data' });
+      console.error('Failed to load event from backend:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to load event data' });
       dispatch({ type: 'SET_LOADING', payload: false });
     }
   }, []);
@@ -344,9 +330,12 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
   };
 
   const updateSpeakerStats = (speakerId: string, stats: Partial<Speaker>): void => {
+    // Ensure 'name' is always present for Speaker type
+    const speaker = state.speakers.find(s => s.id === speakerId);
+    if (!speaker) return;
     dispatch({
       type: 'UPDATE_SPEAKER',
-      payload: { id: speakerId, ...stats },
+      payload: { ...speaker, ...stats },
     });
   };
 
@@ -392,7 +381,9 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
   const updateTipStatus = (tipId: string, status: Tip['status'], txHash?: string): void => {
     const updates: Partial<Tip> = { id: tipId, status };
     if (txHash) updates.txHash = txHash;
-    dispatch({ type: 'UPDATE_TIP', payload: updates });
+    // Ensure 'id' is always present for UPDATE_TIP
+    if (!updates.id) return;
+    dispatch({ type: 'UPDATE_TIP', payload: updates as Partial<Tip> & { id: string } });
   };
 
   // Bounty actions
@@ -438,7 +429,7 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
   const disconnectFromEvent = useCallback((): void => {
     try {
       if (state.currentEvent) {
-        realtimeService.leaveEvent(state.currentEvent.id);
+        realtimeService.leaveVenue(state.currentEvent.id);
       }
       realtimeService.disconnect();
       dispatch({ type: 'SET_CONNECTION_STATUS', payload: 'disconnected' });

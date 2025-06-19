@@ -3,8 +3,28 @@ import React from 'react';
 interface Performer {
   id: string;
   name: string;
-  genre: string;
-  // ...other fields as needed
+  genre?: string;
+  type: 'speaker' | 'musician' | 'comedian';
+  avatar: string;
+  isLive?: boolean;
+  currentSong?: string;
+  tipCount?: number;
+  reputation?: number;
+  bio: string;
+  socialLinks: {
+    spotify?: string;
+    instagram?: string;
+    twitter?: string;
+    youtube?: string;
+    tiktok?: string;
+    opensea?: string;
+    website?: string;
+    twitch?: string;
+    foundation?: string;
+    linkedin?: string;
+  };
+  wallet?: string;
+  events?: string[];
 }
 
 interface PerformerGridProps {

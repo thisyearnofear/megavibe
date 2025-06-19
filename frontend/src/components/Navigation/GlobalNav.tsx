@@ -25,8 +25,8 @@ export const GlobalNav: React.FC<GlobalNavProps> = ({ currentPage }) => {
           <NavLink to="/bounties" className={({ isActive }) => isActive || currentPage === 'bounties' ? 'active' : ''}>
             🎯 Bounty Marketplace
           </NavLink>
-          <NavLink to="/artists" className={({ isActive }) => isActive || currentPage === 'artists' ? 'active' : ''}>
-            🎭 Meet Artists
+          <NavLink to="/talent" className={({ isActive }) => isActive || currentPage === 'artists' ? 'active' : ''}>
+            🎭 Talent
           </NavLink>
         </div>
         <WalletConnector 

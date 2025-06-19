@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../services/api';
 import { io, Socket } from 'socket.io-client';
+import { MOCK_ACTIVE_BOUNTIES } from '../services/mockDataService';
 
 interface Bounty {
   id: string;
@@ -59,18 +60,30 @@ export const useBountiesForEvent = (eventId: string): UseBountiesForEventReturn 
     try {
       setIsLoading(true);
       setError(null);
-
-      const response = await api.get(`/api/bounties/event/${eventId}`);
-      const { bounties: eventBounties, stats: bountyStats } = response.data;
-
-      setBounties(eventBounties || []);
-      setStats(bountyStats || {
+      let eventBounties = [];
+      let bountyStats = {
         totalBounties: 0,
         totalReward: 0,
         activeBounties: 0,
         claimedBounties: 0
-      });
-
+      };
+      try {
+        const response = await api.get(`/api/bounties/event/${eventId}`);
+        eventBounties = response.data.bounties || [];
+        bountyStats = response.data.stats || bountyStats;
+      } catch (err) {
+        // Fallback to mock data if API fails (network, CORS, 500, etc)
+        console.warn('Falling back to mock bounties due to API error:', err);
+        eventBounties = MOCK_ACTIVE_BOUNTIES;
+        bountyStats = {
+          totalBounties: MOCK_ACTIVE_BOUNTIES.length,
+          totalReward: MOCK_ACTIVE_BOUNTIES.reduce((sum, b) => sum + (b.reward || 0), 0),
+          activeBounties: MOCK_ACTIVE_BOUNTIES.filter(b => b.status === 'active').length,
+          claimedBounties: MOCK_ACTIVE_BOUNTIES.filter(b => b.status === 'claimed').length
+        };
+      }
+      setBounties(eventBounties);
+      setStats(bountyStats);
     } catch (err) {
       console.error('Failed to load bounties:', err);
       setError('Failed to load bounties');

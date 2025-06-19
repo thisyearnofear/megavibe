@@ -6,7 +6,7 @@ import App from './App';
 import { TipPage } from './components/TipPage';
 import { KnowledgeFlywheelPage } from './components/Knowledge/KnowledgeFlywheelPage';
 import { BountyMarketplacePage } from './components/Bounty/BountyMarketplacePage';
-import { ArtistsPage } from './components/Artists/ArtistsPage';
+import { ArtistsPage as TalentPage } from './components/Artists/ArtistsPage';
 import { NotFound } from './components/Shared/NotFound';
 import { AppProviders } from './components/AppProviders';
 import { GlobalNav } from './components/Navigation/GlobalNav';
@@ -22,7 +22,7 @@ const AppWithNavigation: React.FC = () => {
     if (path === '/tip') return 'tip';
     if (path === '/infonomy') return 'infonomy';
     if (path === '/bounties') return 'bounties';
-    if (path === '/artists') return 'artists';
+    if (path === '/talent') return 'artists';
     return 'home';
   };
 
@@ -35,7 +35,7 @@ const AppWithNavigation: React.FC = () => {
         <Route path="/tip" element={<TipPage />} />
         <Route path="/infonomy" element={<KnowledgeFlywheelPage />} />
         <Route path="/bounties" element={<BountyMarketplacePage />} />
-        <Route path="/artists" element={<ArtistsPage />} />
+        <Route path="/talent" element={<TalentPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

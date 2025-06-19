@@ -12,8 +12,8 @@ import '../styles/TipPage.css';
 import { PageLayout } from './Layout/PageLayout';
 import { Button } from './UI/Button';
 import { Card } from './UI/Card';
-import { CrossNavigation } from './Navigation/CrossNavigation';
 import { SkeletonCard } from './Loading/SkeletonCard';
+import { PERFORMERS, Performer } from '../data/performers';
 
 interface Venue {
   _id: string;
@@ -38,20 +38,8 @@ interface Event {
   venue: string;
   startTime: string;
   endTime: string;
-  speakers: Speaker[];
+  speakers: Performer[];
   description: string;
-}
-
-interface Speaker {
-  id: string;
-  name: string;
-  bio: string;
-  profilePicture?: string;
-  currentTalk?: string;
-  isLive: boolean;
-  walletAddress?: string;
-  title?: string;
-  avatar?: string;
 }
 
 export const TipPage: React.FC = () => {
@@ -59,7 +47,7 @@ export const TipPage: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
+  const [selectedSpeaker, setSelectedSpeaker] = useState<Performer | null>(null);
   const [showVenuePicker, setShowVenuePicker] = useState(false);
   const [showTippingModal, setShowTippingModal] = useState(false);
   const [showBountyModal, setShowBountyModal] = useState(false);
@@ -69,33 +57,10 @@ export const TipPage: React.FC = () => {
   // Wallet context
   const { isConnected, isCorrectNetwork } = useWallet();
 
-  const createSpeakersForEvent = (venueName: string, _genres: string[]): Speaker[] => {
-    // Speaker pool that can be expanded for different event types
-    const speakerPool = [
-      // Web3/Blockchain speakers
-      { name: 'Vitalik Buterin', bio: 'Ethereum Co-founder', talks: ['The Future of Ethereum Scaling', 'Ethereum Roadmap 2025'], categories: ['Web3', 'Blockchain', 'Ethereum'], wallet: '0x1234567890123456789012345678901234567890' },
-      { name: 'Hayden Adams', bio: 'Uniswap Founder', talks: ['DeFi Innovation', 'Automated Market Makers'], categories: ['DeFi', 'Web3'], wallet: '0x2345678901234567890123456789012345678901' },
-      { name: 'Changpeng Zhao', bio: 'Former Binance CEO', talks: ['Building Global Infrastructure', 'Exchange Evolution'], categories: ['Web3', 'Global Adoption'], wallet: '0x3456789012345678901234567890123456789012' },
-      { name: 'Brian Armstrong', bio: 'Coinbase CEO', talks: ['Digital Asset Adoption', 'Regulatory Landscape'], categories: ['Global Adoption', 'Innovation'], wallet: '0x4567890123456789012345678901234567890123' },
-      { name: 'Andre Cronje', bio: 'DeFi Architect', talks: ['Yield Farming Revolution', 'Protocol Design'], categories: ['DeFi', 'Developers'], wallet: '0x5678901234567890123456789012345678901234' },
-      { name: 'Stani Kulechov', bio: 'Aave Founder', talks: ['Lending Protocols', 'DeFi Composability'], categories: ['DeFi', 'Innovation'], wallet: '0x6789012345678901234567890123456789012345' },
-      { name: 'Sergey Nazarov', bio: 'Chainlink Co-founder', talks: ['Oracle Networks', 'Smart Contract Connectivity'], categories: ['Developers', 'Innovation'], wallet: '0x7890123456789012345678901234567890123456' },
-      { name: 'Balaji Srinivasan', bio: 'Former Coinbase CTO', talks: ['Network States', 'Digital Cities'], categories: ['Innovation', 'Future Tech'], wallet: '0x8901234567890123456789012345678901234567' }
-    ];
-
-    // Select 2-3 speakers randomly
-    const selectedSpeakers = speakerPool.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 2) + 2);
-
-    return selectedSpeakers.map((speaker, index) => ({
-      id: `${speaker.name.toLowerCase().replace(/\s+/g, '-')}-${venueName}`,
-      name: speaker.name,
-      bio: speaker.bio,
-      isLive: index === 0, // First speaker is live
-      currentTalk: speaker.talks[Math.floor(Math.random() * speaker.talks.length)],
-      walletAddress: speaker.wallet,
-      title: speaker.bio,
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(speaker.name)}&background=6366f1&color=fff&size=128`
-    }));
+  // Helper to get speakers for a venue (for now, just filter by type)
+  const getSpeakersForVenue = (venueName: string): Performer[] => {
+    // In the future, filter by events: p.events.includes(venueName)
+    return PERFORMERS.filter(p => p.type === 'speaker');
   };
 
   const loadExperiences = useCallback(async () => {
@@ -142,7 +107,7 @@ export const TipPage: React.FC = () => {
         startTime: venue.currentEvent.startTime,
         endTime: venue.currentEvent.endTime,
         description: venue.description.split(' - ')[1] || venue.description,
-        speakers: createSpeakersForEvent(venue.name, venue.preferredGenres)
+        speakers: getSpeakersForVenue(venue.name)
       }));
 
       setEvents(detailedEvents);
@@ -171,7 +136,7 @@ export const TipPage: React.FC = () => {
     }
   };
 
-  const handleSpeakerTip = (speaker: Speaker) => {
+  const handleSpeakerTip = (speaker: Performer) => {
     if (!isConnected) {
       // Show wallet connection hint
       setError('Please connect your wallet to send tips');
@@ -193,7 +158,7 @@ export const TipPage: React.FC = () => {
     // Show success message or update UI
   };
 
-  const handleSpeakerBounty = (speaker: Speaker) => {
+  const handleSpeakerBounty = (speaker: Performer) => {
     if (!isConnected) {
       setError('Please connect your wallet to create bounties');
       return;
@@ -384,11 +349,6 @@ export const TipPage: React.FC = () => {
                               )}
                             </div>
                             <p className="speaker-bio">{speaker.bio}</p>
-                            {speaker.currentTalk && (
-                              <p className="current-talk">
-                                <strong>Current Talk:</strong> {speaker.currentTalk}
-                              </p>
-                            )}
                           </div>
                           <div className="speaker-actions">
                             <button
@@ -472,10 +432,9 @@ export const TipPage: React.FC = () => {
           speaker={{
             id: selectedSpeaker.id,
             name: selectedSpeaker.name,
-            title: selectedSpeaker.title,
             avatar: selectedSpeaker.avatar,
-            walletAddress: selectedSpeaker.walletAddress,
-            currentTalk: selectedSpeaker.currentTalk
+            walletAddress: selectedSpeaker.wallet, // map wallet to walletAddress
+            title: selectedSpeaker.bio // use bio as title for now
           }}
           event={{
             id: selectedEvent.id,
@@ -497,9 +456,6 @@ export const TipPage: React.FC = () => {
           onSuccess={handleBountySuccess}
         />
       )}
-
-      {/* Cross-Navigation */}
-      <CrossNavigation  />
     </PageLayout>
   );
 };

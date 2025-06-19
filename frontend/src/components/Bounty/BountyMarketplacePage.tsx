@@ -4,22 +4,17 @@ import { TippingModal } from '../LiveMusic/TippingModal';
 import { useEvent } from '../../contexts/EventContext';
 import { useWallet } from '../../contexts/WalletContext';
 import { useBountiesForEvent } from '../../hooks/useBountiesForEvent';
+import { useBountyFilter } from '../../hooks/useBountyFilter';
 import '../../styles/design-system.css';
 import './BountyMarketplacePage.css';
 import { PageLayout } from '../Layout/PageLayout';
 import { Button } from '../UI/Button';
 import { Card } from '../UI/Card';
 import { SkeletonCard } from '../Loading/SkeletonCard';
+import { MOCK_EVENTS } from '../../services/mockDataService';
 
 interface BountyMarketplacePageProps {
   onBack?: () => void;
-}
-
-interface FilterState {
-  priceRange: [number, number];
-  status: 'all' | 'active' | 'claimed' | 'expired';
-  speakerId: string | null;
-  sortBy: 'newest' | 'highest' | 'ending-soon' | 'most-popular';
 }
 
 export const BountyMarketplacePage: React.FC<BountyMarketplacePageProps> = ({ onBack }) => {
@@ -29,17 +24,31 @@ export const BountyMarketplacePage: React.FC<BountyMarketplacePageProps> = ({ on
   const [showTipping, setShowTipping] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState<any>(null);
   const [hasLoadingTimeout, setHasLoadingTimeout] = useState(false);
-  // const [selectedBounty, setSelectedBounty] = useState<any>(null);
-  const [filters, setFilters] = useState<FilterState>({
-    priceRange: [25, 500],
-    status: 'active',
-    speakerId: null,
-    sortBy: 'newest'
-  });
 
   const { currentEvent, speakers, isLoading } = useEvent();
+
+  // Ensure we always have an event (for demo/mock)
+  useEffect(() => {
+    if (!currentEvent) {
+      // Use the first mock event if none is loaded
+      // @ts-ignore
+      if (MOCK_EVENTS && MOCK_EVENTS[0] && typeof window !== 'undefined') {
+        // @ts-ignore
+        window.__eventContext?.loadEvent?.(MOCK_EVENTS[0].id);
+      }
+    }
+  }, [currentEvent]);
+
+  const eventId = currentEvent?.id || (MOCK_EVENTS[0]?.id ?? '');
   const { isConnected } = useWallet();
-  const { bounties, stats, isLoading: bountiesLoading, refreshBounties } = useBountiesForEvent(currentEvent?.id || '');
+  const { bounties, stats, isLoading: bountiesLoading, refreshBounties } = useBountiesForEvent(eventId);
+  const {
+    status, setStatus,
+    sort, setSort,
+    speakerId, setSpeakerId,
+    priceRange, setPriceRange,
+    filtered: filteredBounties
+  } = useBountyFilter(bounties);
 
   // Add timeout to prevent infinite loading
   useEffect(() => {
@@ -48,40 +57,6 @@ export const BountyMarketplacePage: React.FC<BountyMarketplacePageProps> = ({ on
     }, 3000); // 3 second timeout
     return () => clearTimeout(timer);
   }, []);
-
-  // Filter bounties based on current filters
-  const filteredBounties = bounties.filter(bounty => {
-    // Price range filter
-    if (bounty.rewardAmount < filters.priceRange[0] || bounty.rewardAmount > filters.priceRange[1]) {
-      return false;
-    }
-
-    // Status filter
-    if (filters.status !== 'all' && bounty.status !== filters.status) {
-      return false;
-    }
-
-    // Speaker filter
-    if (filters.speakerId && bounty.speaker.username !== filters.speakerId) {
-      return false;
-    }
-
-    return true;
-  });
-
-  // Sort bounties
-  const sortedBounties = [...filteredBounties].sort((a, b) => {
-    switch (filters.sortBy) {
-      case 'highest':
-        return b.rewardAmount - a.rewardAmount;
-      case 'ending-soon':
-        return a.timeRemaining - b.timeRemaining;
-      case 'most-popular':
-        return b.rewardAmount - a.rewardAmount; // Placeholder for engagement metric
-      default: // newest
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    }
-  });
 
   const handleCreateBounty = () => {
     if (!isConnected) {
@@ -111,10 +86,6 @@ export const BountyMarketplacePage: React.FC<BountyMarketplacePageProps> = ({ on
 
   const handleTipSuccess = () => {
     setShowTipping(false);
-  };
-
-  const handleFilterChange = (newFilters: Partial<FilterState>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
   };
 
   // Don't show loading if we have timeout or have basic data
