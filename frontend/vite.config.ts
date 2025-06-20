@@ -7,45 +7,74 @@ export default defineConfig({
   define: {
     "process.env": {},
     global: "globalThis",
-    // Add these for better web3 compatibility
-    "process.browser": true,
-    "process.version": JSON.stringify("v18.0.0"),
-    // Fix for module initialization errors
-    "__DEV__": false,
   },
   build: {
     outDir: "dist",
-    chunkSizeWarningLimit: 1000, // Increase warning limit to 1MB
-    assetsInlineLimit: 0, // Don't inline assets, keep them as separate files
+    chunkSizeWarningLimit: 800, // More reasonable limit
+    assetsInlineLimit: 4096, // Inline small assets (4KB)
+    sourcemap: false, // Disable sourcemaps for production
     rollupOptions: {
-      input: {
-        main: '/index.html'
-      },
+      external: ["crypto", "vm"],
       output: {
-        // Manual chunk splitting for better caching
+        // More granular chunk splitting for better caching
         manualChunks: (id) => {
-          // Vendor chunks
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+            // React ecosystem
+            if (id.includes('react') && !id.includes('react-icons')) {
               return 'vendor-react';
             }
-            if (id.includes('@dynamic-labs') || id.includes('wagmi') || id.includes('viem') || id.includes('ethers')) {
-              return 'vendor-web3';
+            // React Router
+            if (id.includes('react-router')) {
+              return 'vendor-router';
             }
-            if (id.includes('@tanstack') || id.includes('axios') || id.includes('gsap')) {
-              return 'vendor-ui';
+            // Web3 libraries - split into smaller chunks
+            if (id.includes('@dynamic-labs')) {
+              return 'vendor-dynamic';
+            }
+            if (id.includes('wagmi') || id.includes('@wagmi')) {
+              return 'vendor-wagmi';
+            }
+            if (id.includes('viem')) {
+              return 'vendor-viem';
+            }
+            if (id.includes('ethers')) {
+              return 'vendor-ethers';
+            }
+            // UI libraries
+            if (id.includes('@tanstack/react-query')) {
+              return 'vendor-query';
+            }
+            if (id.includes('gsap')) {
+              return 'vendor-gsap';
             }
             if (id.includes('react-icons')) {
               return 'vendor-icons';
             }
+            if (id.includes('axios')) {
+              return 'vendor-http';
+            }
+            if (id.includes('socket.io')) {
+              return 'vendor-socket';
+            }
+            // Crypto and Node polyfills
+            if (id.includes('crypto-browserify') || id.includes('stream-browserify') || 
+                id.includes('buffer') || id.includes('process')) {
+              return 'vendor-polyfills';
+            }
+            // Everything else
             return 'vendor';
           }
         },
-        // Optimize chunk naming
-        chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
-          return `assets/[name]-[hash].js`;
-        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+      },
+    },
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console.logs in production
+        drop_debugger: true,
       },
     },
   },
@@ -71,11 +100,6 @@ export default defineConfig({
       'react-router-dom',
       'axios',
       'react-icons/fa',
-      'buffer',
-      'crypto-browserify',
-      'stream-browserify',
-      'util',
-      'process/browser',
     ],
     esbuildOptions: {
       // Node.js global to browser globalThis

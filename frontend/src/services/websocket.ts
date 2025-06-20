@@ -1,5 +1,6 @@
 // Enhanced WebSocket client service with automatic reconnection and proper error handling
 
+import React from 'react';
 import { env } from '../config/environment';
 
 // Types

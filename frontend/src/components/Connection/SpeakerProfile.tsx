@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import './SpeakerProfile.css';
 
-interface SpeakerProfile {
+interface SpeakerProfileData {
   id: string;
   userId: string;
   displayName: string;
@@ -89,7 +89,7 @@ export const SpeakerProfile: React.FC<SpeakerProfileProps> = ({
   onBooking,
   showPrivateInfo = false
 }) => {
-  const [speaker, setSpeaker] = useState<SpeakerProfile | null>(null);
+  const [speaker, setSpeaker] = useState<SpeakerProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'experience' | 'social'>('overview');

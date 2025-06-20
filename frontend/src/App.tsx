@@ -36,11 +36,7 @@ const VenuePicker = lazy(() =>
   })).catch(() => ({ default: () => <div>Error loading VenuePicker</div> }))
 );
 
-const LiveTipFeed = lazy(() =>
-  import('./components/LiveMusic/LiveTipFeed').then(module => ({
-    default: module.default,
-  })).catch(() => ({ default: () => <div>Error loading LiveTipFeed</div> }))
-);
+
 
 const TipAndBountyFlow = lazy(() =>
   import('./components/LiveMusic/TipAndBountyFlow').then(module => ({

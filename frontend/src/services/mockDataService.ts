@@ -519,7 +519,7 @@ class MockDataService {
     const randomType = updateTypes[Math.floor(Math.random() * updateTypes.length)] as 'tip' | 'bounty' | 'stats';
 
     switch (randomType) {
-      case 'tip':
+      case 'tip': {
         const randomSpeaker = MOCK_SPEAKERS[Math.floor(Math.random() * MOCK_SPEAKERS.length)];
         const randomAmount = [10, 25, 50, 100][Math.floor(Math.random() * 4)];
         return {
@@ -532,8 +532,9 @@ class MockDataService {
             timestamp: new Date().toISOString()
           }
         };
+      }
 
-      case 'bounty':
+      case 'bounty': {
         const randomBountySpeaker = MOCK_SPEAKERS[Math.floor(Math.random() * MOCK_SPEAKERS.length)];
         return {
           type: 'bounty',
@@ -545,6 +546,7 @@ class MockDataService {
             timestamp: new Date().toISOString()
           }
         };
+      }
 
       case 'stats':
         return {

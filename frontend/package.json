@@ -15,7 +15,10 @@
     "clean": "rm -rf dist node_modules/.vite node_modules/.cache",
     "build:clean": "npm run clean && npm run build",
     "build:production": "NODE_ENV=production npm run build",
-    "deploy": "npm run build:production"
+    "deploy": "npm run build:production",
+    "audit:fix": "npm audit fix",
+    "audit:check": "npm audit --audit-level=moderate",
+    "deps:update": "npm update && npm audit fix"
   },
   "dependencies": {
     "@dynamic-labs/ethereum": "^4.20.1",
@@ -36,8 +39,19 @@
     "react-share": "^4.4.1",
     "react-swipeable-views-react-18-fix": "^0.14.1",
     "socket.io-client": "^4.8.1",
-    "viem": "^2.31.0",
+    "viem": "^2.23.2",
     "wagmi": "^2.15.6"
+  },
+  "overrides": {
+    "react-event-listener": {
+      "react": "$react"
+    },
+    "react-native": {
+      "react": "$react"
+    },
+    "@wagmi/connectors": {
+      "viem": "$viem"
+    }
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",
@@ -66,6 +80,7 @@
     "prettier": "^3.5.3",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
+    "terser": "^5.36.0",
     "typescript": "^5.2.2",
     "util": "^0.12.5",
     "vite": "^4.5.0"
