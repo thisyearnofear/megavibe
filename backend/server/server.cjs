@@ -139,25 +139,12 @@ app.use(handleNotFound);
 // Global error handling middleware
 app.use(globalErrorHandler);
 
-// Create HTTP(S) server and attach WebSocket server
-let server;
-if (process.env.NODE_ENV === "production") {
-  // Use HTTPS in production
-  const https = require("https");
-  const cert = fs.readFileSync(path.join(__dirname, "server-crt.pem"));
-  const key = fs.readFileSync(path.join(__dirname, "server-key.pem"));
-  server = https.createServer({ key, cert }, app);
-  server.listen(port, () => {
-    console.log(`HTTPS server listening on port ${port}`);
-  });
-} else {
-  // Use HTTP in development
-  const http = require("http");
-  server = http.createServer(app);
-  server.listen(port, () => {
-    console.log(`HTTP server listening on port ${port}`);
-  });
-}
+// Create HTTP server and attach WebSocket server (Render handles SSL termination)
+const http = require("http");
+const server = http.createServer(app);
+server.listen(port, () => {
+  console.log(`HTTP server (Render-compatible) listening on port ${port}`);
+});
 
-// Attach WebSocket server to the HTTP(S) server
+// Attach WebSocket server to the HTTP server
 initWebSocketServer(server);
