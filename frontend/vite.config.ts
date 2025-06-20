@@ -76,8 +76,20 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true, // Remove console.logs in production
+        drop_console: process.env.NODE_ENV === 'production',
         drop_debugger: true,
+        // Prevent aggressive optimizations that cause "l is not a function" errors
+        sequences: false,
+        properties: false,
+        dead_code: false,
+        if_return: false,
+        join_vars: false,
+        collapse_vars: false,
+      },
+      mangle: {
+        // Don't mangle critical function names
+        reserved: ['Buffer', 'process', 'global', 'crypto', 'ethereum', 'window'],
+        properties: false, // Don't mangle object properties
       },
     },
   },

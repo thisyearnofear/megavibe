@@ -14,10 +14,12 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css}\"",
     "clean": "rm -rf dist node_modules/.vite node_modules/.cache",
     "build:clean": "npm run clean && npm run build",
+    "prebuild": "node prebuild-check.js",
     "build:production": "NODE_ENV=production npm run build",
     "deploy": "npm run build:production",
     "test:polyfills": "npm run build && npm run preview",
     "test:production": "./test-production-build.sh",
+    "test:build": "./test-build.sh",
     "audit:fix": "npm audit fix",
     "audit:check": "npm audit --audit-level=moderate",
     "deps:update": "npm update && npm audit fix"
