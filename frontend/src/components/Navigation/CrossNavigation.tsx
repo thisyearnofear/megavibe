@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { path: '/tip', title: 'Live Tipping', icon: '💰', description: 'Tip speakers in real-time' },
   { path: '/infonomy', title: 'Knowledge Economy', icon: '🧠', description: 'See how the flywheel creates value' },
   { path: '/bounties', title: 'Bounty Marketplace', icon: '🎯', description: 'Commission content from speakers' },
-  { path: '/artists', title: 'Meet Artists', icon: '🎭', description: 'Explore featured artist profiles' }
+  { path: '/talent', title: 'Meet Talent', icon: '🎭', description: 'Explore featured talent profiles' }
 ];
 
 export const CrossNavigation: React.FC<CrossNavigationProps> = ({ currentPage, title = 'Explore More Features' }) => {

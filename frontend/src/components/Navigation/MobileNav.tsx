@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import '../../styles/design-system.css';
+import './mobile-nav.css';
 
 export const MobileNav: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,8 +24,8 @@ export const MobileNav: React.FC = () => {
         <NavLink to="/bounties" onClick={() => setIsOpen(false)}>
           🎯 Bounty Marketplace
         </NavLink>
-        <NavLink to="/artists" onClick={() => setIsOpen(false)}>
-          🎭 Meet Artists
+        <NavLink to="/talent" onClick={() => setIsOpen(false)}>
+          🎭 Meet Talent
         </NavLink>
       </div>
     </div>

@@ -124,10 +124,14 @@ if (
   console.log("⏭️ Seeding conditions not met, skipping auto-seed");
 }
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  handleError(res, err, { statusCode: 500 });
-});
+// Enhanced error handling middleware
+const { globalErrorHandler, handleNotFound } = require('./middleware/errorHandler.cjs');
+
+// 404 handler for undefined routes
+app.use(handleNotFound);
+
+// Global error handling middleware
+app.use(globalErrorHandler);
 
 // Start server
 app.listen(port, () => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import '../../styles/design-system.css';
+import './PageLayout.css';
 
 interface PageLayoutProps {
   title: string;

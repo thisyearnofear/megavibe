@@ -1,0 +1,240 @@
+/* Enhanced Loading Spinner Component */
+
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+}
+
+.loading-spinner-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-modal);
+}
+
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+.spinner-track {
+  stroke: var(--gray-200);
+  opacity: 0.3;
+}
+
+.spinner-circle {
+  stroke-linecap: round;
+  stroke-dasharray: 31.416;
+  stroke-dashoffset: 31.416;
+  animation: spinner-dash 2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Spinner Sizes */
+.loading-spinner-sm .spinner {
+  width: 20px;
+  height: 20px;
+}
+
+.loading-spinner-md .spinner {
+  width: 32px;
+  height: 32px;
+}
+
+.loading-spinner-lg .spinner {
+  width: 48px;
+  height: 48px;
+}
+
+.loading-spinner-xl .spinner {
+  width: 64px;
+  height: 64px;
+}
+
+/* Spinner Variants */
+.loading-spinner-primary .spinner-circle {
+  stroke: var(--accent);
+}
+
+.loading-spinner-secondary .spinner-circle {
+  stroke: var(--primary);
+}
+
+.loading-spinner-white .spinner-circle {
+  stroke: var(--white);
+}
+
+.loading-spinner-white .spinner-track {
+  stroke: rgba(255, 255, 255, 0.3);
+}
+
+/* Spinner Text */
+.spinner-text {
+  font-size: var(--font-size-sm);
+  color: var(--gray-600);
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+}
+
+.loading-spinner-white .spinner-text {
+  color: var(--white);
+}
+
+/* Inline Spinner */
+.inline-spinner {
+  animation: spin 1s linear infinite;
+  flex-shrink: 0;
+}
+
+.inline-spinner-xs {
+  width: 12px;
+  height: 12px;
+}
+
+.inline-spinner-sm {
+  width: 16px;
+  height: 16px;
+}
+
+.inline-spinner-md {
+  width: 20px;
+  height: 20px;
+}
+
+.inline-spinner .spinner-circle {
+  stroke-linecap: round;
+  stroke-dasharray: 31.416;
+  stroke-dashoffset: 31.416;
+  animation: spinner-dash 2s ease-in-out infinite;
+}
+
+.inline-spinner-primary .spinner-circle {
+  stroke: var(--accent);
+}
+
+.inline-spinner-secondary .spinner-circle {
+  stroke: var(--primary);
+}
+
+.inline-spinner-white .spinner-circle {
+  stroke: var(--white);
+}
+
+/* Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinner-dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+/* Pulse animation for fullscreen loader */
+.loading-spinner-fullscreen .spinner-container {
+  animation: pulse-scale 2s ease-in-out infinite;
+}
+
+@keyframes pulse-scale {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .loading-spinner-lg .spinner {
+    width: 40px;
+    height: 40px;
+  }
+
+  .loading-spinner-xl .spinner {
+    width: 48px;
+    height: 48px;
+  }
+
+  .spinner-text {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .spinner-track {
+    opacity: 0.6;
+  }
+
+  .loading-spinner-fullscreen {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: none;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .spinner,
+  .inline-spinner {
+    animation: none;
+  }
+
+  .spinner-circle,
+  .inline-spinner .spinner-circle {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    stroke-opacity: 0.8;
+  }
+
+  .loading-spinner-fullscreen .spinner-container {
+    animation: none;
+  }
+
+  /* Show a static indicator instead */
+  .spinner::after {
+    content: '⏳';
+    position: absolute;
+    font-size: inherit;
+    animation: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .loading-spinner-fullscreen {
+    display: none;
+  }
+
+  .loading-spinner {
+    display: none;
+  }
+}

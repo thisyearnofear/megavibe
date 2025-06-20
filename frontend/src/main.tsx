@@ -17,12 +17,12 @@ import { useLocation } from 'react-router-dom';
 const AppWithNavigation: React.FC = () => {
   const location = useLocation();
   
-  const getCurrentPage = (): 'home' | 'tip' | 'infonomy' | 'bounties' | 'artists' => {
+  const getCurrentPage = (): 'home' | 'tip' | 'infonomy' | 'bounties' | 'talent' => {
     const path = location.pathname;
     if (path === '/tip') return 'tip';
     if (path === '/infonomy') return 'infonomy';
     if (path === '/bounties') return 'bounties';
-    if (path === '/talent') return 'artists';
+    if (path === '/talent') return 'talent';
     return 'home';
   };
 

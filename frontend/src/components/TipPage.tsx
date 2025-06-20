@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { VenuePicker } from './LiveMusic/VenuePicker';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { TippingModal } from './LiveMusic/TippingModal';
 import { BountyModal } from './LiveMusic/BountyModal';
 import { LiveTipFeed } from './LiveMusic/LiveTipFeed';
@@ -12,8 +11,17 @@ import '../styles/TipPage.css';
 import { PageLayout } from './Layout/PageLayout';
 import { Button } from './UI/Button';
 import { Card } from './UI/Card';
-import { SkeletonCard } from './Loading/SkeletonCard';
+import { SkeletonCard, SkeletonGrid } from './Loading/SkeletonCard';
 import { PERFORMERS, Performer } from '../data/performers';
+import { useToast } from '../contexts/ToastContext';
+import { LoadingSpinner } from './Loading/LoadingSpinner';
+
+// Lazy load VenuePicker to avoid static import conflict
+const VenuePicker = lazy(() => 
+  import('./LiveMusic/VenuePicker').then(module => ({
+    default: module.VenuePicker,
+  }))
+);
 
 interface Venue {
   _id: string;
@@ -56,6 +64,9 @@ export const TipPage: React.FC = () => {
 
   // Wallet context
   const { isConnected, isCorrectNetwork } = useWallet();
+  
+  // Toast notifications
+  const { showSuccess, showError, showWarning } = useToast();
 
   // Helper to get speakers for a venue (for now, just filter by type)
   const getSpeakersForVenue = (venueName: string): Performer[] => {
@@ -112,7 +123,9 @@ export const TipPage: React.FC = () => {
 
       setEvents(detailedEvents);
     } catch (err) {
-      setError('Failed to load experiences');
+      const errorMessage = 'Failed to load experiences';
+      setError(errorMessage);
+      showError('Loading Error', errorMessage);
       console.error('Error loading experiences:', err);
     } finally {
       setLoading(false);
@@ -138,13 +151,12 @@ export const TipPage: React.FC = () => {
 
   const handleSpeakerTip = (speaker: Performer) => {
     if (!isConnected) {
-      // Show wallet connection hint
-      setError('Please connect your wallet to send tips');
+      showWarning('Wallet Required', 'Please connect your wallet to send tips');
       return;
     }
 
     if (!isCorrectNetwork) {
-      setError('Please switch to Mantle Sepolia network to send tips');
+      showWarning('Wrong Network', 'Please switch to Mantle Sepolia network to send tips');
       return;
     }
 
@@ -155,17 +167,17 @@ export const TipPage: React.FC = () => {
   const handleTipSuccess = () => {
     setShowTippingModal(false);
     setSelectedSpeaker(null);
-    // Show success message or update UI
+    showSuccess('Tip Sent!', 'Your tip has been successfully sent to the speaker');
   };
 
   const handleSpeakerBounty = (speaker: Performer) => {
     if (!isConnected) {
-      setError('Please connect your wallet to create bounties');
+      showWarning('Wallet Required', 'Please connect your wallet to create bounties');
       return;
     }
 
     if (!isCorrectNetwork) {
-      setError('Please switch to Mantle Sepolia network to create bounties');
+      showWarning('Wrong Network', 'Please switch to Mantle Sepolia network to create bounties');
       return;
     }
 
@@ -176,7 +188,7 @@ export const TipPage: React.FC = () => {
   const handleBountySuccess = () => {
     setShowBountyModal(false);
     setSelectedSpeaker(null);
-    // Show success message or update UI
+    showSuccess('Bounty Created!', 'Your bounty has been successfully created');
   };
 
   if (loading) {
@@ -194,14 +206,7 @@ export const TipPage: React.FC = () => {
             </Button>
           </div>
           {/* ...other tip page content, use Card for speaker/event blocks... */}
-          {/* Example loading state */}
-          {venues.length === 0 && (
-            <>
-              {[...Array(3)].map((_, i) => (
-                <SkeletonCard key={i} />
-              ))}
-            </>
-          )}
+          <SkeletonGrid count={6} variant="venue" />
         </div>
       </PageLayout>
     );
@@ -410,21 +415,23 @@ export const TipPage: React.FC = () => {
 
       {/* Modals */}
       {showVenuePicker && (
-        <VenuePicker
-          onVenueSelect={(pickedVenue) => {
-            const venue: Venue = {
-              _id: pickedVenue.id,
-              name: pickedVenue.name,
-              address: pickedVenue.address,
-              description: '',
-              isActive: pickedVenue.isActive,
-              capacity: 1000,
-              preferredGenres: ['conference']
-            };
-            handleVenueSelect(venue);
-          }}
-          onClose={() => setShowVenuePicker(false)}
-        />
+        <Suspense fallback={<LoadingSpinner fullScreen text="Loading Venue Picker..." />}>
+          <VenuePicker
+            onVenueSelect={(pickedVenue) => {
+              const venue: Venue = {
+                _id: pickedVenue.id,
+                name: pickedVenue.name,
+                address: pickedVenue.address,
+                description: '',
+                isActive: pickedVenue.isActive,
+                capacity: 1000,
+                preferredGenres: ['conference']
+              };
+              handleVenueSelect(venue);
+            }}
+            onClose={() => setShowVenuePicker(false)}
+          />
+        </Suspense>
       )}
 
       {showTippingModal && selectedSpeaker && selectedEvent && (

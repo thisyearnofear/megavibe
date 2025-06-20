@@ -5,7 +5,7 @@ import '../../styles/design-system.css';
 import './global-nav.css';
 
 interface GlobalNavProps {
-  currentPage: 'home' | 'tip' | 'infonomy' | 'bounties' | 'artists';
+  currentPage: 'home' | 'tip' | 'infonomy' | 'bounties' | 'talent';
 }
 
 export const GlobalNav: React.FC<GlobalNavProps> = ({ currentPage }) => {
@@ -25,7 +25,7 @@ export const GlobalNav: React.FC<GlobalNavProps> = ({ currentPage }) => {
           <NavLink to="/bounties" className={({ isActive }) => isActive || currentPage === 'bounties' ? 'active' : ''}>
             🎯 Bounty Marketplace
           </NavLink>
-          <NavLink to="/talent" className={({ isActive }) => isActive || currentPage === 'artists' ? 'active' : ''}>
+          <NavLink to="/talent" className={({ isActive }) => isActive || currentPage === 'talent' ? 'active' : ''}>
             🎭 Talent
           </NavLink>
         </div>

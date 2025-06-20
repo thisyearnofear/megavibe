@@ -10,6 +10,7 @@ import { useEvent, Speaker } from './contexts/EventContext';
 import { Venue } from './services/locationService';
 import { PageLayout } from './components/Layout/PageLayout';
 import { ErrorFallback } from './components/ErrorBoundary/ErrorFallback';
+import { LoadingSpinner } from './components/Loading/LoadingSpinner';
 
 // Custom error boundary implementation
 class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { error: Error | null }> {
@@ -28,58 +29,65 @@ class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { 
   }
 }
 
-// Lazy load components for performance optimization
+// Lazy load components for performance optimization with better error handling
 const VenuePicker = lazy(() =>
   import('./components/LiveMusic/VenuePicker').then(module => ({
     default: module.VenuePicker,
-  }))
+  })).catch(() => ({ default: () => <div>Error loading VenuePicker</div> }))
 );
-
 
 const LiveTipFeed = lazy(() =>
   import('./components/LiveMusic/LiveTipFeed').then(module => ({
     default: module.default,
-  }))
+  })).catch(() => ({ default: () => <div>Error loading LiveTipFeed</div> }))
 );
+
 const TipAndBountyFlow = lazy(() =>
   import('./components/LiveMusic/TipAndBountyFlow').then(module => ({
     default: module.TipAndBountyFlow,
-  }))
+  })).catch(() => ({ default: () => <div>Error loading TipAndBountyFlow</div> }))
 );
+
 const PowerfulLandingPage = lazy(() =>
   import('./components/Landing/PowerfulLandingPage').then(module => ({
     default: module.PowerfulLandingPage,
-  }))
+  })).catch(() => ({ default: () => <div>Error loading PowerfulLandingPage</div> }))
 );
+
 const PerformerDashboard = lazy(() =>
   import('./components/Demo/PerformerDashboard').then(module => ({
     default: module.PerformerDashboard,
-  }))
+  })).catch(() => ({ default: () => <div>Error loading PerformerDashboard</div> }))
 );
+
 const ArtistSupport = lazy(() =>
   import('./components/LiveMusic/ArtistSupport').then(module => ({
     default: module.default,
-  }))
+  })).catch(() => ({ default: () => <div>Error loading ArtistSupport</div> }))
 );
+
 const VenueContentMarketplace = lazy(() =>
   import('./components/LiveMusic/VenueContentMarketplace').then(module => ({
     default: module.default,
-  }))
+  })).catch(() => ({ default: () => <div>Error loading VenueContentMarketplace</div> }))
 );
+
 const MegaVibeButton = lazy(() =>
   import('./components/LiveMusic/EnhancedMegaVibeButton').then(module => ({
     default: module.EnhancedMegaVibeButton,
-  }))
+  })).catch(() => ({ default: () => <div>Error loading MegaVibeButton</div> }))
 );
+
 const SongIdentifier = lazy(() =>
   import('./components/LiveMusic/SongIdentifier').then(module => ({
     default: module.SongIdentifier,
-  }))
+  })).catch(() => ({ default: () => <div>Error loading SongIdentifier</div> }))
 );
+
 const AudioFeed = lazy(() =>
   import('./components/Social/AudioFeed').then(module => ({
     default: module.AudioFeed,
-  }))
+  })).catch(() => ({ default: () => <div>Error loading AudioFeed</div> }))
 );
 
 function App() {
@@ -177,8 +185,8 @@ function App() {
     console.log('🎯 Feature card clicked:', featureType);
     setSelectedFeatureType(featureType);
     if (featureType === 'demo') {
-      console.log('📱 Navigating to Artists Page');
-      navigate('/artists');
+      console.log('📱 Navigating to Talent Page');
+      navigate('/talent');
     } else if (featureType === 'connection') {
       console.log('🧠 Navigating to Knowledge Economy');
       navigate('/infonomy');
@@ -293,7 +301,7 @@ function App() {
             </div>
           </div>
 
-          <div className="feature-card demo-feature-card featured" onClick={() => navigate('/artists')}>
+          <div className="feature-card demo-feature-card featured" onClick={() => navigate('/talent')}>
             <div className="feature-status">
               <span className="status-badge featured">🎯 FEATURED</span>
             </div>
@@ -306,10 +314,10 @@ function App() {
                 </button>
               </div>
             </div>
-            <h3>🎭 Meet The Artists</h3>
-            <p>Explore real artist profiles including Papa, Anatu & Andrew with full social integration</p>
+            <h3>🎭 Meet The Talent</h3>
+            <p>Explore real talent profiles including Papa, Anatu & Andrew with full social integration</p>
             <div className="feature-cta">
-              <span>Meet Artists →</span>
+              <span>Meet Talent →</span>
             </div>
           </div>
         </div>
@@ -359,11 +367,11 @@ function App() {
           </div>
 
           <div className="megavibe-section">
-            <Suspense fallback={<div>Loading MegaVibe Button...</div>}>
-              <MegaVibeButton
-                venueId={selectedVenue.id}
-                onSongIdentified={handleSongIdentified}
-              />
+            <Suspense fallback={<LoadingSpinner size="md" text="Loading MegaVibe Button..." />}>
+            <MegaVibeButton
+            venueId={selectedVenue.id}
+            onSongIdentified={handleSongIdentified}
+            />
             </Suspense>
           </div>
 
@@ -376,7 +384,7 @@ function App() {
           )}
 
           {selectedVenue.currentEvent && (
-            <Suspense fallback={<div>Loading Artist Support...</div>}>
+            <Suspense fallback={<LoadingSpinner size="md" text="Loading Artist Support..." />}>
               <ArtistSupport
                 artistName={
                   selectedVenue.currentEvent.artists?.[0] ||
@@ -390,7 +398,7 @@ function App() {
             </Suspense>
           )}
 
-          <Suspense fallback={<div>Loading Venue Content...</div>}>
+          <Suspense fallback={<LoadingSpinner size="md" text="Loading Venue Content..." />}>
             <VenueContentMarketplace venueId={selectedVenue.id} />
           </Suspense>
         </>
@@ -402,7 +410,7 @@ function App() {
 
   const renderSocialView = () => (
     <div className="social-view">
-      <Suspense fallback={<div>Loading Audio Feed...</div>}>
+      <Suspense fallback={<LoadingSpinner size="lg" text="Loading Audio Feed..." />}>
         <AudioFeed />
       </Suspense>
     </div>
@@ -431,9 +439,8 @@ function App() {
         </main>
 
         {/* Modals */}
-        {/* Modals */}
         {showVenuePicker && (
-          <Suspense fallback={<div>Loading Venue Picker...</div>}>
+          <Suspense fallback={<LoadingSpinner fullScreen text="Loading Venue Picker..." />}>
             <VenuePicker
               onVenueSelect={handleVenueSelection}
               onClose={() => setShowVenuePicker(false)}
@@ -442,7 +449,7 @@ function App() {
         )}
 
         {showSongIdentifier && currentSong && selectedVenue && (
-          <Suspense fallback={<div>Loading Song Identifier...</div>}>
+          <Suspense fallback={<LoadingSpinner fullScreen text="Loading Song Identifier..." />}>
             <SongIdentifier
               currentSong={currentSong}
               venueId={selectedVenue.id}
@@ -452,7 +459,7 @@ function App() {
         )}
 
         {showPerformerDashboard && (
-          <Suspense fallback={<div>Loading Performer Dashboard...</div>}>
+          <Suspense fallback={<LoadingSpinner fullScreen text="Loading Performer Dashboard..." />}>
             <PerformerDashboard
               featureType={selectedFeatureType}
               onClose={() => setShowPerformerDashboard(false)}
@@ -461,7 +468,7 @@ function App() {
         )}
 
         {showPowerfulLanding && (
-          <Suspense fallback={<div>Loading Powerful Landing...</div>}>
+          <Suspense fallback={<LoadingSpinner fullScreen text="Loading Powerful Landing..." />}>
             <PowerfulLandingPage
               featureType={selectedFeatureType}
               onGetStarted={() => {

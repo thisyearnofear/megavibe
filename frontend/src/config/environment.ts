@@ -17,6 +17,7 @@ export interface EnvironmentConfig {
 
   // Smart Contract Configuration
   tippingContractAddress: string;
+  bountyContractAddress: string;
   tippingContractNetwork: string;
 
   // Fee Configuration
@@ -56,6 +57,7 @@ class Environment {
 
       // Smart Contract Configuration
       tippingContractAddress: import.meta.env.VITE_TIPPING_CONTRACT_ADDRESS || '0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F',
+      bountyContractAddress: import.meta.env.VITE_BOUNTY_CONTRACT_ADDRESS || '0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F',
       tippingContractNetwork: import.meta.env.VITE_TIPPING_CONTRACT_NETWORK || 'mantleSepolia',
 
       // Fee Configuration
@@ -77,7 +79,8 @@ class Environment {
     console.log('Mantle Chain ID:', this.config.mantleChainId);
     console.log('Mantle RPC URL:', this.config.mantleRpcUrl);
     console.log('Network Name:', this.config.mantleNetworkName);
-    console.log('Contract Address:', this.config.tippingContractAddress);
+    console.log('Tipping Contract:', this.config.tippingContractAddress);
+    console.log('Bounty Contract:', this.config.bountyContractAddress);
     console.log('Fee Recipient:', this.config.feeRecipientAddress);
     console.log('Platform Fee:', `${this.config.platformFeePercentage}%`);
     console.log('Debug Mode:', this.config.debugMode);
@@ -113,6 +116,10 @@ class Environment {
         address: this.config.tippingContractAddress,
         network: this.config.tippingContractNetwork,
       },
+      bounty: {
+        address: this.config.bountyContractAddress,
+        network: this.config.tippingContractNetwork,
+      },
     };
   }
 
@@ -143,6 +150,10 @@ class Environment {
 
     if (!this.config.tippingContractAddress || !this.config.tippingContractAddress.startsWith('0x')) {
       errors.push('VITE_TIPPING_CONTRACT_ADDRESS must be a valid Ethereum address');
+    }
+
+    if (!this.config.bountyContractAddress || !this.config.bountyContractAddress.startsWith('0x')) {
+      errors.push('VITE_BOUNTY_CONTRACT_ADDRESS must be a valid Ethereum address');
     }
 
     if (!this.config.feeRecipientAddress || !this.config.feeRecipientAddress.startsWith('0x')) {

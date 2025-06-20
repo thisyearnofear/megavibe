@@ -1,16 +1,18 @@
 .flywheel-visualization {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 100%;
   margin: 0 auto;
+  overflow: hidden;
 }
 
 .flywheel-container {
   position: relative;
   width: 100%;
-  height: 500px;
+  height: 400px;
+  max-height: 50vh;
   background: radial-gradient(circle at center, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
@@ -385,16 +387,17 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .flywheel-container {
-    height: 400px;
+    height: 350px;
+    max-height: 40vh;
   }
 
   .flywheel-center {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
   }
 
   .center-icon {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base);
   }
 
   .center-label {
@@ -402,16 +405,16 @@
   }
 
   .flywheel-step {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
   }
 
   .step-icon {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base);
   }
 
   .step-title {
-    font-size: 10px;
+    font-size: 9px;
   }
 
   .step-metrics {
@@ -424,12 +427,6 @@
     justify-content: center;
     margin-top: var(--space-md);
   }
-}
-
-@media (max-width: 480px) {
-  .flywheel-container {
-    height: 350px;
-  }
 
   .active-step-description {
     padding: var(--space-md);
@@ -439,5 +436,34 @@
     flex-direction: column;
     text-align: center;
     gap: var(--space-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .flywheel-container {
+    height: 300px;
+    max-height: 35vh;
+  }
+
+  .flywheel-center {
+    width: 60px;
+    height: 60px;
+  }
+
+  .center-icon {
+    font-size: var(--font-size-sm);
+  }
+
+  .flywheel-step {
+    width: 50px;
+    height: 50px;
+  }
+
+  .step-icon {
+    font-size: var(--font-size-sm);
+  }
+
+  .step-title {
+    font-size: 8px;
   }
 }

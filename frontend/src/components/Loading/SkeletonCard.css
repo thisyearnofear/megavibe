@@ -1,0 +1,361 @@
+/* Skeleton Loading Components */
+
+.skeleton-card {
+  background: var(--white);
+  border: var(--border-width) solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Base skeleton animation */
+.skeleton-text,
+.skeleton-avatar,
+.skeleton-button,
+.skeleton-badge,
+.skeleton-reward,
+.skeleton-deadline,
+.skeleton-timestamp,
+.skeleton-text-inline {
+  background: linear-gradient(
+    90deg,
+    var(--gray-200) 0%,
+    var(--gray-300) 50%,
+    var(--gray-200) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Default Card Skeleton */
+.skeleton-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.skeleton-avatar.small {
+  width: 32px;
+  height: 32px;
+}
+
+.skeleton-avatar.large {
+  width: 64px;
+  height: 64px;
+}
+
+.skeleton-text-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.skeleton-text {
+  height: 1em;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-title {
+  width: 70%;
+  height: 1.2em;
+}
+
+.skeleton-subtitle {
+  width: 50%;
+  height: 1em;
+}
+
+.skeleton-line {
+  width: 100%;
+  height: 1em;
+  margin-bottom: var(--space-xs);
+}
+
+.skeleton-line.short {
+  width: 60%;
+}
+
+.skeleton-body {
+  margin-bottom: var(--space-lg);
+}
+
+.skeleton-footer {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.skeleton-button {
+  height: 40px;
+  border-radius: var(--radius-lg);
+  flex: 1;
+}
+
+.skeleton-button.secondary {
+  opacity: 0.7;
+}
+
+.skeleton-button.primary {
+  opacity: 0.9;
+}
+
+.skeleton-button.claim {
+  width: 120px;
+}
+
+/* Speaker Card Skeleton */
+.speaker-skeleton {
+  text-align: center;
+}
+
+.skeleton-speaker-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  position: relative;
+}
+
+.skeleton-badge {
+  width: 80px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.skeleton-badge.live {
+  width: 60px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 87, 34, 0.3) 0%,
+    rgba(255, 87, 34, 0.5) 50%,
+    rgba(255, 87, 34, 0.3) 100%
+  );
+}
+
+.skeleton-speaker-info {
+  margin-bottom: var(--space-lg);
+}
+
+.skeleton-name {
+  width: 80%;
+  height: 1.5em;
+  margin: 0 auto var(--space-sm);
+}
+
+.skeleton-bio {
+  width: 100%;
+  height: 1em;
+  margin: 0 auto var(--space-xs);
+}
+
+.skeleton-speaker-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* Venue Card Skeleton */
+.venue-skeleton {
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.venue-skeleton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.skeleton-venue-header {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.skeleton-venue-name {
+  width: 70%;
+  height: 1.3em;
+}
+
+.skeleton-venue-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.skeleton-address {
+  width: 90%;
+  height: 1em;
+}
+
+.skeleton-event {
+  width: 80%;
+  height: 1.1em;
+}
+
+.skeleton-time {
+  width: 50%;
+  height: 0.9em;
+}
+
+/* Tip Card Skeleton */
+.tip-skeleton {
+  border-left: 3px solid var(--accent);
+}
+
+.skeleton-tip-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.skeleton-tipper {
+  width: 100px;
+  height: 1em;
+}
+
+.skeleton-amount {
+  width: 80px;
+  height: 1.2em;
+}
+
+.skeleton-timestamp {
+  width: 60px;
+  height: 0.9em;
+  margin-left: auto;
+}
+
+.skeleton-tip-message {
+  padding-left: calc(32px + var(--space-sm));
+}
+
+/* Bounty Card Skeleton */
+.bounty-skeleton {
+  border: 2px solid var(--warning);
+  border-radius: var(--radius-lg);
+}
+
+.skeleton-bounty-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.skeleton-bounty-title {
+  width: 60%;
+  height: 1.3em;
+}
+
+.skeleton-reward {
+  width: 80px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 152, 0, 0.3) 0%,
+    rgba(255, 152, 0, 0.5) 50%,
+    rgba(255, 152, 0, 0.3) 100%
+  );
+}
+
+.skeleton-bounty-info {
+  margin-bottom: var(--space-lg);
+}
+
+.skeleton-bounty-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.skeleton-deadline {
+  width: 100px;
+  height: 1em;
+}
+
+/* Grid Layout */
+.skeleton-grid {
+  display: grid;
+  gap: var(--space-lg);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* Inline Text Skeleton */
+.skeleton-text-inline {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .skeleton-card {
+    padding: var(--space-md);
+  }
+
+  .skeleton-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .skeleton-speaker-actions,
+  .skeleton-footer {
+    flex-direction: column;
+  }
+
+  .skeleton-button {
+    width: 100%;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-text,
+  .skeleton-avatar,
+  .skeleton-button,
+  .skeleton-badge,
+  .skeleton-reward,
+  .skeleton-deadline,
+  .skeleton-timestamp,
+  .skeleton-text-inline {
+    animation: none;
+    background: var(--gray-300);
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .skeleton-text,
+  .skeleton-avatar,
+  .skeleton-button,
+  .skeleton-badge,
+  .skeleton-reward,
+  .skeleton-deadline,
+  .skeleton-timestamp,
+  .skeleton-text-inline {
+    background: var(--gray-400);
+    border: 1px solid var(--gray-600);
+  }
+}
