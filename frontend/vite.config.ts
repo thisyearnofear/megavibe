@@ -5,7 +5,8 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   define: {
-    "process.env": process.env,
+    "process.env": {},
+    global: "globalThis",
   },
   build: {
     outDir: "dist",
@@ -49,8 +50,12 @@ export default defineConfig({
   resolve: {
     dedupe: ["react", "react-dom"],
     alias: {
-      // Polyfill Node.js crypto for browser
+      // Polyfill Node.js modules for browser
       crypto: "crypto-browserify",
+      stream: "stream-browserify",
+      buffer: "buffer",
+      process: "process/browser",
+      util: "util",
     },
   },
   optimizeDeps: {

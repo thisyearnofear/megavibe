@@ -10,6 +10,7 @@ import { useWallet } from '../../contexts/WalletContext';
 import { useToast } from '../../contexts/ToastContext';
 import contractService from '../../services/contractService';
 import { web3SocialService } from '../../services/web3SocialService';
+import { hybridSpeakerService } from '../../services/hybridSpeakerService';
 import './TalentPage.css';
 
 // Known speaker addresses with verified Farcaster profiles
@@ -129,8 +130,8 @@ export const TalentPage: React.FC<TalentPageProps> = ({
     
     setLoading(true);
     try {
-      // Search for speakers using Farcaster API
-      const searchResults = await web3SocialService.searchSpeakers(searchQuery);
+      // Search for speakers using hybrid system (Farcaster + curated)
+      const searchResults = await hybridSpeakerService.searchSpeakers(searchQuery);
       
       if (searchResults.length > 0) {
         // Extract addresses from search results
@@ -151,7 +152,7 @@ export const TalentPage: React.FC<TalentPageProps> = ({
   if (loading) {
     return (
       <PageLayout
-        title="Web3 Talent Network"
+        title="Talent Network"
         subtitle="Discover speakers, creators, and thought leaders with verified Web3 identities"
       >
         <div className="talent-page">
@@ -170,7 +171,7 @@ export const TalentPage: React.FC<TalentPageProps> = ({
 
   return (
     <PageLayout
-      title="Web3 Talent Network"
+      title="Talent Network"
       subtitle="Discover speakers, creators, and thought leaders with verified Web3 identities"
     >
       <div className="talent-page">

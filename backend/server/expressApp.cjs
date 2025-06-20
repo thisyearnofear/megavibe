@@ -17,6 +17,7 @@ const contentPoolRoutes = require("./routes/contentPoolRoutes.cjs");
 const reputationRoutes = require("./routes/reputationRoutes.cjs");
 const connectionRoutes = require("./routes/connectionRoutes.cjs");
 const eventRoutes = require("./routes/eventRoutes.cjs");
+const adminRoutes = require("./routes/adminRoutes.cjs");
 
 function configureMiddleware(app) {
   // CORS configuration is handled in server.cjs
@@ -41,6 +42,7 @@ function createExpressApp(app) {
   app.use("/api/reputation", reputationRoutes);
   app.use("/api/connection", connectionRoutes);
   app.use("/api/events", eventRoutes);
+  app.use("/api/admin", adminRoutes);
 
   // Define the /waitlist route
   app.post("/waitlist", (req, res) => {
@@ -75,6 +77,7 @@ function createExpressApp(app) {
         reputation: "/api/reputation",
         connection: "/api/connection",
         events: "/api/events",
+        admin: "/api/admin",
       },
     });
   });
