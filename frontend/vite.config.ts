@@ -89,6 +89,7 @@ export default defineConfig({
       process: "process/browser",
       util: "util",
       events: "events",
+      inherits: require.resolve('inherits'), // Ensure inherits is resolved
     },
   },
   optimizeDeps: {
@@ -103,6 +104,7 @@ export default defineConfig({
       'stream-browserify',
       'process/browser',
       'events',
+      'inherits', // Ensure inherits is included in optimized dependencies
     ],
     esbuildOptions: {
       // Node.js global to browser globalThis
