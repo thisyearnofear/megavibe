@@ -19,9 +19,17 @@ import crypto from 'crypto-browserify';
   }
 
   // Polyfill global crypto for web3 libraries
-  if (typeof window !== 'undefined' && (typeof window.crypto === 'undefined' || !window.crypto.subtle)) {
-    // @ts-ignore
-    window.crypto = crypto;
+  if (typeof window !== 'undefined') {
+    // Use native crypto if available, otherwise use polyfill
+    if (!window.crypto || !window.crypto.subtle) {
+      // @ts-ignore
+      window.crypto = crypto;
+    }
+    
+    // Ensure global crypto is available for modules that import it directly
+    if (typeof globalThis !== 'undefined' && !globalThis.crypto) {
+      globalThis.crypto = window.crypto;
+    }
   }
 })();
 

@@ -7,6 +7,8 @@ export default defineConfig({
   define: {
     "process.env": {},
     global: "globalThis",
+    // Ensure crypto is available globally if needed
+    __DEV__: JSON.stringify(process.env.NODE_ENV !== 'production'),
   },
   build: {
     outDir: "dist",
@@ -14,7 +16,7 @@ export default defineConfig({
     assetsInlineLimit: 4096, // Inline small assets (4KB)
     sourcemap: false, // Disable sourcemaps for production
     rollupOptions: {
-      external: ["crypto", "vm"],
+      external: ["vm"], // Only exclude vm, not crypto - crypto should be polyfilled
       output: {
         // More granular chunk splitting for better caching
         manualChunks: (id) => {
@@ -58,7 +60,7 @@ export default defineConfig({
             }
             // Crypto and Node polyfills
             if (id.includes('crypto-browserify') || id.includes('stream-browserify') || 
-                id.includes('buffer') || id.includes('process')) {
+                id.includes('buffer') || id.includes('process') || id.includes('ethereum-cryptography')) {
               return 'vendor-polyfills';
             }
             // Everything else
@@ -100,6 +102,10 @@ export default defineConfig({
       'react-router-dom',
       'axios',
       'react-icons/fa',
+      'buffer',
+      'crypto-browserify',
+      'stream-browserify',
+      'process/browser',
     ],
     esbuildOptions: {
       // Node.js global to browser globalThis
