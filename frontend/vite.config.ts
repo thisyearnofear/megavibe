@@ -7,14 +7,15 @@ export default defineConfig({
   define: {
     "process.env": {},
     global: "globalThis",
+    // Add these for better web3 compatibility
+    "process.browser": true,
+    "process.version": JSON.stringify("v18.0.0"),
   },
   build: {
     outDir: "dist",
     chunkSizeWarningLimit: 1000, // Increase warning limit to 1MB
     assetsInlineLimit: 0, // Don't inline assets, keep them as separate files
     rollupOptions: {
-      // External packages that should not be bundled
-      external: ["crypto"],
       output: {
         // Manual chunk splitting for better caching
         manualChunks: (id) => {
@@ -65,6 +66,11 @@ export default defineConfig({
       'react-router-dom',
       'axios',
       'react-icons/fa',
+      'buffer',
+      'crypto-browserify',
+      'stream-browserify',
+      'util',
+      'process/browser',
     ],
     esbuildOptions: {
       // Node.js global to browser globalThis

@@ -6,13 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "start": "vite preview",
+    "start": "vite preview", 
     "preview": "vite preview",
     "test": "echo \"No tests specified\"",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css}\"",
-    "build:production": "NODE_ENV=production vite build",
+    "clean": "rm -rf dist node_modules/.vite node_modules/.cache",
+    "build:clean": "npm run clean && npm install && vite build",
+    "build:production": "NODE_ENV=production npm run build:clean",
     "deploy": "npm run build:production"
   },
   "dependencies": {
