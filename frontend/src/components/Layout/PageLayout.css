@@ -4,6 +4,7 @@
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .page-main {
@@ -11,6 +12,7 @@
   max-width: 100vw;
   padding: 0;
   margin: 0;
+  overflow: visible;
 }
 
 .page-container {
@@ -19,6 +21,7 @@
   margin: 0 auto;
   padding: var(--space-lg);
   box-sizing: border-box;
+  overflow: visible;
 }
 
 .page-header {

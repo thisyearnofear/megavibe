@@ -13,6 +13,7 @@ interface ApiError {
 interface RetryConfig {
   retries: number;
   retryDelay: number;
+  retryCount?: number;
   retryCondition?: (error: AxiosError) => boolean;
 }
 

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { walletService } from '../services/walletService';
+import contractService from '../services/contractService';
 
 interface NetworkInfo {
   chainId: bigint;
@@ -101,6 +102,9 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       if (!initialized) {
         throw new Error('Failed to initialize wallet service');
       }
+
+      // Also initialize contract service
+      await contractService.initialize(walletClient);
 
       // Get wallet information
       const address = primaryWallet.address;

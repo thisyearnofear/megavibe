@@ -10,6 +10,7 @@ export default defineConfig({
   build: {
     outDir: "dist",
     chunkSizeWarningLimit: 1000, // Increase warning limit to 1MB
+    assetsInlineLimit: 0, // Don't inline assets, keep them as separate files
     rollupOptions: {
       // External packages that should not be bundled
       external: ["crypto"],

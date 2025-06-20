@@ -10,7 +10,11 @@
     "seed": "node server/data/cryptoEventsSeed.cjs",
     "seed:experiences": "node server/data/cryptoEventsSeed.cjs",
     "seed:crypto": "node server/data/cryptoEventsSeed.cjs",
-    "seed:production": "NODE_ENV=production FORCE_SEED=true node server/data/productionSeed.cjs"
+    "seed:production": "NODE_ENV=production FORCE_SEED=true node server/data/productionSeed.cjs",
+    "scrape": "node server/scripts/runScraping.cjs",
+    "scrape:test": "node server/scripts/testScraping.cjs",
+    "scrape:debug": "node server/scripts/debugScraping.cjs",
+    "seed:web3": "node server/scripts/seedScrapedEvents.cjs"
   },
   "dependencies": {
     "@stripe/stripe-js": "^2.1.7",
@@ -34,6 +38,7 @@
     "mongodb": "^6.1.0",
     "mongoose": "^7.6.1",
     "mongoose-uuid": "^0.0.2",
+    "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
     "redis": "^4.6.10",
     "stripe": "^13.9.0",

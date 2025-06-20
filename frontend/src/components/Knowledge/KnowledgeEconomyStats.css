@@ -299,7 +299,14 @@
 
 .insights-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.bounty-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-lg);
 }
 

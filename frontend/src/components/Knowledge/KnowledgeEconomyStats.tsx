@@ -199,6 +199,10 @@ export const KnowledgeEconomyStats: React.FC = () => {
             <span className="insight-metric">{formatCurrency(liveStats.avgEarningsPerTalk)}</span>
             <span className="insight-label">Avg per Talk</span>
           </div>
+        </div>
+        
+        {/* Separate section for bounty info */}
+        <div className="bounty-info">
           <div className="insight-item">
             <span className="insight-metric">24-48h</span>
             <span className="insight-label">Bounty Delivery</span>

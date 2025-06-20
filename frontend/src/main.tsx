@@ -6,7 +6,8 @@ import App from './App';
 import { TipPage } from './components/TipPage';
 import { KnowledgeFlywheelPage } from './components/Knowledge/KnowledgeFlywheelPage';
 import { BountyMarketplacePage } from './components/Bounty/BountyMarketplacePage';
-import { ArtistsPage as TalentPage } from './components/Artists/ArtistsPage';
+import { TalentPage } from './components/Talent/TalentPage';
+import { FarcasterTest } from './components/Test/FarcasterTest';
 import { NotFound } from './components/Shared/NotFound';
 import { AppProviders } from './components/AppProviders';
 import { GlobalNav } from './components/Navigation/GlobalNav';
@@ -36,6 +37,7 @@ const AppWithNavigation: React.FC = () => {
         <Route path="/infonomy" element={<KnowledgeFlywheelPage />} />
         <Route path="/bounties" element={<BountyMarketplacePage />} />
         <Route path="/talent" element={<TalentPage />} />
+        <Route path="/test-farcaster" element={<FarcasterTest />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

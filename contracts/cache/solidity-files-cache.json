@@ -149,6 +149,45 @@
       "artifacts": [
         "Context"
       ]
+    },
+    "/Users/udingethe/Desktop/gpt-engineer/MANTLE/megavibe/contracts/contracts/MegaVibeBounties.sol": {
+      "lastModificationDate": 1750333222869,
+      "contentHash": "277202845e1cc2186ce63a27cf66c580",
+      "sourceName": "contracts/MegaVibeBounties.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "MegaVibeBounties"
+      ]
     }
   }
 }

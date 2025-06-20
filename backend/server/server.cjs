@@ -42,7 +42,7 @@ app.use((req, res, next) => {
     );
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Request-ID"
     );
   }
   next();
@@ -67,6 +67,7 @@ app.use(
       "Origin",
       "Access-Control-Request-Method",
       "Access-Control-Request-Headers",
+      "X-Request-ID",
     ],
     exposedHeaders: ["Content-Range", "X-Content-Range"],
     maxAge: 86400, // 24 hours

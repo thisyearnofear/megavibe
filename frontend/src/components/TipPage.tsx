@@ -84,9 +84,9 @@ export const TipPage: React.FC = () => {
 
       // Create realistic events based on venue descriptions and add dates
       const venuesWithEvents = rawVenues.map((venue: any, index: number) => {
-        // Extract event name from description
-        const eventMatch = venue.description.match(/hosting (.+?) -/);
-        const eventName = eventMatch ? eventMatch[1] : `${venue.preferredGenres[0]} Conference`;
+        // Extract event name from description safely
+        const eventMatch = venue.description && venue.description.match ? venue.description.match(/hosting (.+?) -/) : null;
+        const eventName = eventMatch ? eventMatch[1] : `${venue.preferredGenres?.[0] || 'Tech'} Conference`;
 
         // Create realistic dates - some events are happening now, some upcoming
         const isLive = index < 3; // First 3 venues have live events
@@ -117,7 +117,7 @@ export const TipPage: React.FC = () => {
         venue: venue.name,
         startTime: venue.currentEvent.startTime,
         endTime: venue.currentEvent.endTime,
-        description: venue.description.split(' - ')[1] || venue.description,
+        description: venue.description && venue.description.split ? (venue.description.split(' - ')[1] || venue.description) : 'Conference event',
         speakers: getSpeakersForVenue(venue.name)
       }));
 
@@ -195,7 +195,7 @@ export const TipPage: React.FC = () => {
     return (
       <PageLayout
         title="Live Tipping"
-        subtitle="Tip speakers in real-time and support your favorite events."
+        subtitle="Tip in real-time, shape your experience, support incredible talent."
         
       >
         <div className="tip-content grid">
@@ -229,7 +229,7 @@ export const TipPage: React.FC = () => {
   return (
     <PageLayout
       title="Live Tipping"
-      subtitle="Tip speakers in real-time and support your favorite events."
+      subtitle="Tip in real-time, shape your experience, support incredible talent."
       
     >
       <div className="tip-content grid">

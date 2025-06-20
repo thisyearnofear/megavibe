@@ -1,7 +1,6 @@
-import { ethers } from 'ethers';
-import { getAccount, getNetwork, readContract, writeContract, waitForTransaction } from '@wagmi/core';
-import TippingContractABI from '../contracts/abis/TippingContract.json';
-import BountyContractABI from '../contracts/abis/BountyContract.json';
+import { ethers, Contract, JsonRpcProvider, BrowserProvider, formatEther, parseEther, isAddress } from 'ethers';
+import MegaVibeTippingABI from '../contracts/MegaVibeTipping.json';
+import MegaVibeBountiesABI from '../contracts/MegaVibeBounties.json';
 
 // Add these interfaces at the top of the file
 interface Tip {
@@ -40,18 +39,41 @@ const MANTLE_SEPOLIA = {
 };
 
 class ContractService {
+  private provider: JsonRpcProvider | BrowserProvider | null = null;
+  private signer: any | null = null;
+
+  /**
+   * Initialize the contract service with a provider and signer
+   */
+  async initialize(walletClient?: any): Promise<boolean> {
+    try {
+      // Use the wallet client if provided, otherwise use the RPC provider
+      if (walletClient) {
+        this.provider = new BrowserProvider(walletClient);
+        this.signer = await this.provider.getSigner();
+      } else {
+        this.provider = new JsonRpcProvider(MANTLE_SEPOLIA.rpcUrl);
+      }
+      return true;
+    } catch (error) {
+      console.error('Failed to initialize contract service:', error);
+      return false;
+    }
+  }
+
   /**
    * Ensures the user is connected to Mantle Sepolia network
    */
-  async ensureMantleNetwork(): Promise&lt;boolean&gt; {
+  async ensureMantleNetwork(): Promise<boolean> {
     try {
-      const network = await getNetwork();
-      if (network.chain?.id !== MANTLE_SEPOLIA.id) {
-        const ethereum = window.ethereum;
-        if (!ethereum) throw new Error('No Ethereum provider found');
-        
+      if (!window.ethereum) throw new Error('No Ethereum provider found');
+      
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      const currentChainId = parseInt(chainId, 16);
+      
+      if (currentChainId !== MANTLE_SEPOLIA.id) {
         try {
-          await ethereum.request({
+          await window.ethereum.request({
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: `0x${MANTLE_SEPOLIA.id.toString(16)}` }],
           });
@@ -59,7 +81,7 @@ class ContractService {
         } catch (switchError: any) {
           // Chain hasn't been added to MetaMask
           if (switchError.code === 4902) {
-            await ethereum.request({
+            await window.ethereum.request({
               method: 'wallet_addEthereumChain',
               params: [
                 {
@@ -90,7 +112,13 @@ class ContractService {
   /**
    * Send a tip to a speaker/performer
    */
-  async sendTip(recipientAddress: string, amount: string, message: string = ''): Promise&lt;string&gt; {
+  async sendTip(
+    recipientAddress: string, 
+    amount: string, 
+    message: string = '',
+    eventId: string = 'current-event',
+    speakerId: string = 'current-speaker'
+  ): Promise<string> {
     // Validate inputs
     if (!this.validateAddress(recipientAddress)) {
       throw new Error('Invalid recipient address');
@@ -103,18 +131,23 @@ class ContractService {
     await this.ensureMantleNetwork();
     
     try {
-      const account = getAccount();
-      if (!account.address) throw new Error('No wallet connected');
+      if (!this.signer) throw new Error('No signer available');
       
-      const tx = await writeContract({
-        address: TIPPING_CONTRACT_ADDRESS as `0x${string}`,
-        abi: TippingContractABI,
-        functionName: 'sendTip',
-        args: [recipientAddress, message],
-        value: ethers.utils.parseEther(amount),
-      });
+      const contract = new Contract(
+        TIPPING_CONTRACT_ADDRESS, 
+        MegaVibeTippingABI.abi, 
+        this.signer
+      );
       
-      const receipt = await waitForTransaction({ hash: tx.hash });
+      const tx = await contract.tipSpeaker(
+        recipientAddress, 
+        message, 
+        eventId, 
+        speakerId,
+        { value: parseEther(amount) }
+      );
+      
+      await tx.wait();
       return tx.hash;
     } catch (error) {
       console.error('Error sending tip:', error);
@@ -126,11 +159,12 @@ class ContractService {
    * Create a bounty for content
    */
   async createBounty(
-    title: string, 
+    eventId: string,
+    speakerId: string,
     description: string, 
     amount: string, 
     deadline: number
-  ): Promise&lt;string&gt; {
+  ): Promise<string> {
     // Validate inputs
     if (!this.validateAmount(amount)) {
       throw new Error('Invalid amount');
@@ -139,18 +173,23 @@ class ContractService {
     await this.ensureMantleNetwork();
     
     try {
-      const account = getAccount();
-      if (!account.address) throw new Error('No wallet connected');
+      if (!this.signer) throw new Error('No signer available');
       
-      const tx = await writeContract({
-        address: BOUNTY_CONTRACT_ADDRESS as `0x${string}`,
-        abi: BountyContractABI,
-        functionName: 'createBounty',
-        args: [title, description, deadline],
-        value: ethers.utils.parseEther(amount),
-      });
+      const contract = new Contract(
+        BOUNTY_CONTRACT_ADDRESS, 
+        MegaVibeBountiesABI.abi, 
+        this.signer
+      );
       
-      const receipt = await waitForTransaction({ hash: tx.hash });
+      const tx = await contract.createBounty(
+        eventId, 
+        speakerId, 
+        description, 
+        deadline,
+        { value: parseEther(amount) }
+      );
+      
+      await tx.wait();
       return tx.hash;
     } catch (error) {
       console.error('Error creating bounty:', error);
@@ -161,18 +200,20 @@ class ContractService {
   /**
    * Claim a bounty (for content creators)
    */
-  async claimBounty(bountyId: string, contentUrl: string): Promise&lt;string&gt; {
+  async claimBounty(bountyId: number, submissionHash: string): Promise<string> {
     await this.ensureMantleNetwork();
     
     try {
-      const tx = await writeContract({
-        address: BOUNTY_CONTRACT_ADDRESS as `0x${string}`,
-        abi: BountyContractABI,
-        functionName: 'claimBounty',
-        args: [bountyId, contentUrl],
-      });
+      if (!this.signer) throw new Error('No signer available');
       
-      const receipt = await waitForTransaction({ hash: tx.hash });
+      const contract = new Contract(
+        BOUNTY_CONTRACT_ADDRESS, 
+        MegaVibeBountiesABI.abi, 
+        this.signer
+      );
+      
+      const tx = await contract.claimBounty(bountyId, submissionHash);
+      await tx.wait();
       return tx.hash;
     } catch (error) {
       console.error('Error claiming bounty:', error);
@@ -183,26 +224,31 @@ class ContractService {
   /**
    * Get all bounties for an event
    */
-  async getBountiesForEvent(eventId: string): Promise&lt;Bounty[]&gt; {
+  async getBountiesForEvent(eventId: string): Promise<Bounty[]> {
     try {
-      const data = await readContract({
-        address: BOUNTY_CONTRACT_ADDRESS as `0x${string}`,
-        abi: BountyContractABI,
-        functionName: 'getBountiesForEvent',
-        args: [eventId],
-      });
+      if (!this.provider) {
+        await this.initialize();
+      }
+      
+      const contract = new Contract(
+        BOUNTY_CONTRACT_ADDRESS, 
+        MegaVibeBountiesABI.abi, 
+        this.provider
+      );
+      
+      const data = await contract.getActiveBountiesForEvent(eventId);
       
       // Transform the raw data into our typed interface
-      return (data as any[]).map(item => ({
-        id: item.id.toString(),
-        creator: item.creator,
-        title: item.title,
+      return (data as any[]).map((item, index) => ({
+        id: index.toString(),
+        creator: item.sponsor,
+        title: '', // No title field in contract
         description: item.description,
-        amount: ethers.utils.formatEther(item.amount),
+        amount: formatEther(item.reward),
         deadline: item.deadline.toNumber(),
         status: this.getBountyStatus(item),
-        claimer: item.claimer !== ethers.constants.AddressZero ? item.claimer : undefined,
-        contentUrl: item.contentUrl || undefined
+        claimer: item.claimed && item.claimant !== '0x0000000000000000000000000000000000000000' ? item.claimant : undefined,
+        contentUrl: item.submissionHash || undefined
       }));
     } catch (error) {
       console.error('Error fetching bounties:', error);
@@ -211,20 +257,24 @@ class ContractService {
   }
 
   /**
-   * Get tips for a specific recipient
+   * Get recent tips for an event
    */
-  async getTipsForRecipient(recipientAddress: string): Promise&lt;any[]&gt; {
+  async getRecentTipsForEvent(eventId: string, limit: number = 10): Promise<any[]> {
     try {
-      const data = await readContract({
-        address: TIPPING_CONTRACT_ADDRESS as `0x${string}`,
-        abi: TippingContractABI,
-        functionName: 'getTipsForRecipient',
-        args: [recipientAddress],
-      });
+      if (!this.provider) {
+        await this.initialize();
+      }
       
+      const contract = new Contract(
+        TIPPING_CONTRACT_ADDRESS, 
+        MegaVibeTippingABI.abi, 
+        this.provider
+      );
+      
+      const data = await contract.getRecentEventTips(eventId, limit);
       return data as any[];
     } catch (error) {
-      console.error('Error fetching tips:', error);
+      console.error('Error fetching recent tips:', error);
       return [];
     }
   }
@@ -233,15 +283,15 @@ class ContractService {
    * Calculate platform fee for a given amount
    */
   calculatePlatformFee(amount: string): string {
-    const amountBN = ethers.utils.parseEther(amount);
+    const amountBN = parseEther(amount);
     const feePercentage = PLATFORM_FEE_PERCENTAGE;
-    const feeBN = amountBN.mul(feePercentage).div(100);
-    return ethers.utils.formatEther(feeBN);
+    const feeBN = (amountBN * BigInt(feePercentage)) / BigInt(100);
+    return formatEther(feeBN);
   }
 
   // Add a helper method to determine bounty status
   private getBountyStatus(bounty: any): 'open' | 'claimed' | 'expired' {
-    if (bounty.claimer !== ethers.constants.AddressZero) {
+    if (bounty.claimed) {
       return 'claimed';
     }
     
@@ -255,13 +305,13 @@ class ContractService {
 
   // Add validation methods
   private validateAddress(address: string): boolean {
-    return ethers.utils.isAddress(address);
+    return isAddress(address);
   }
 
   private validateAmount(amount: string): boolean {
     try {
-      const amountBN = ethers.utils.parseEther(amount);
-      return amountBN.gt(0);
+      const amountBN = parseEther(amount);
+      return amountBN > 0n;
     } catch (error) {
       return false;
     }
