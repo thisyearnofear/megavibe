@@ -2,59 +2,87 @@
 
 **The Live Performance Economy Platform**
 
-Transform any live event into a collaborative content creation and monetization ecosystem using web3 primitives.
+Transform any live event into a collaborative content creation and monetization ecosystem
 
-> **Development Status**: 🟢 MVP Ready | [View Implementation Plan](./IMPLEMENTATION_PLAN.md) | [Track Progress](#-current-status) | [Roadmap](./ROADMAP.md)
-
-## 🎯 Vision
-
-**Turn every live moment into valuable assets for everyone involved**
-
-MegaVibe solves the core friction in live events: creators struggle with content marketing, audiences can't find or curate the best moments, and great performances often go unrecorded and unshared.
-
-**Our Solution**: Web3-powered incentives that align everyone's interests through tokenization, tipping, bounties, and fractional ownership.
-
-## 🚀 Key Differentiators
-
-1. **Ease Of Connection Protocol**: GPS venue detection for Shazam-like live experience - instantly know who is there and what they are about
-2. **Bounty-Driven Content**: Audience incentivises performers/creators to perform/discuss specific topics or songs (e.g. bounty for funniest ZK proofs talk, POIDH-style)
-3. **Moment Tokenization**: Incentivise everyone to capture their perspective - pay to contribute content to pools, get paid when content is used, viral clips become tradeable assets
-4. **Live Influence Economy**: Tips and bounties affect performances in real-time; venues/organisers use this for analytics and sentiment gauging
-5. **Engagement Reputation**: On-chain proof of expertise and taste across events
+---
 
 ## 🚀 Quick Start
 
-### Prerequisites
+**Prerequisites:**
 
-- Node.js 18+
-- MongoDB
-- Web3 wallet (MetaMask, Coinbase Wallet, etc.)
-- Mantle Sepolia testnet tokens for testing
+- Node.js 18+, MongoDB, Web3 wallet (MetaMask), Mantle Sepolia testnet tokens
 
-### Installation
+**Install & Run:**
 
 ```bash
-# Clone the repository
 git clone [repository-url]
 cd megavibe
-
-# Install dependencies
 npm install
 
-# Backend setup
+# Backend
 cd backend
-cp .env.example .env
-# Edit .env with your MongoDB URI and other secrets
+cp .env.example .env  # Edit with your MongoDB URI
 npm install
 
-# Frontend setup
+# Frontend
 cd ../frontend
-cp .env.example .env
-# Edit .env with your configuration (see Environment Setup below)
+cp .env.example .env  # Edit with your config
 npm install
 ```
 
-### Environment Setup
+**Start:**
+
+```bash
+# Start MongoDB if not running
+mongod
+
+# Terminal 1: Backend
+cd backend && npm run dev
+
+# Terminal 2: Frontend
+cd frontend && npm run dev
+```
+
+Visit `http://localhost:5173`
+
+---
+
+## 🌐 Wallet & Network
+
+- Add Mantle Sepolia to your wallet:
+  - RPC: https://rpc.sepolia.mantle.xyz, Chain ID: 5003, Symbol: MNT
+- Get testnet MNT: [Mantle faucet](https://faucet.sepolia.mantle.xyz/)
+- Connect wallet in app, switch to Mantle Sepolia
+
+---
+
+## 🎯 Features
+
+- **Audience:** GPS auto-detect, proof of presence, bounties, moment capture, on-chain engagement
+- **Creators:** Live tips/bounties, analytics, instant monetization, reputation
+- **Venues:** Content from attendees, engagement analytics, revenue sharing
+
+---
+
+## 🏗️ Architecture
+
+**Frontend:** React + TypeScript
+
+- `src/components/` (UI, LiveMusic, Social, Wallet, AppProviders)
+- `src/contexts/` (WalletContext)
+- `src/hooks/` (useLiveTipFeed, useBountiesForEvent, useWallet)
+- `src/services/` (walletService, api, realtimeService)
+- `src/config/` (environment.ts)
+- `src/styles/` (design system)
+
+**Backend:** Node.js + Express
+
+- `server/models/` (Venue, Event, User, Tip, Bounty)
+- `server/controllers/`, `routes/`, `services/`, `middleware/`, `config/`
+
+---
+
+## ⚙️ Environment Setup
 
 The frontend uses environment variables for wallet and network configuration:
 
@@ -82,110 +110,11 @@ VITE_PLATFORM_FEE_PERCENTAGE=5
 VITE_DEBUG_MODE=true
 ```
 
-### Running the Application
+---
 
-```bash
-# Start MongoDB (if not running)
-mongod
+## 🎯 Active Smart Contracts
 
-# Terminal 1: Start backend
-cd backend
-npm run dev
-
-# Terminal 2: Start frontend
-cd frontend
-npm run dev
-```
-
-Visit `http://localhost:5173` to see the app.
-
-### Wallet Setup
-
-1. Install a Web3 wallet extension (MetaMask recommended)
-2. Add Mantle Sepolia testnet to your wallet:
-   - Network Name: Mantle Sepolia
-   - RPC URL: https://rpc.sepolia.mantle.xyz
-   - Chain ID: 5003
-   - Currency Symbol: MNT
-   - Block Explorer: https://explorer.sepolia.mantle.xyz
-3. Get testnet MNT tokens from the [Mantle faucet](https://faucet.sepolia.mantle.xyz/)
-4. Connect your wallet in the app and switch to Mantle Sepolia network
-
-## � Core Features
-
-### For Audiences
-
-- **GPS Auto-Detection**: Walk into any venue and instantly see live performances
-- **Proof of Presence**: Crypto-verified attendance at events builds reputation
-- **Bounty Requests**: Pay performers to cover specific topics/songs
-- **Moment Capture**: Record clips and earn fractional ownership of viral content
-- **Engagement Proof**: On-chain history shows your expertise and taste
-
-### For Creators/Speakers/Performers
-
-- **Live Influence**: Audience tips and bounties affect your performance in real-time
-- **Automated Content**: Audience creates and shares your content for you
-- **Direct Analytics**: See who's engaged through tip data and wallet addresses
-- **Instant Monetization**: Receive tips and bounty rewards during performances
-- **Reputation Building**: Build verified audience across venues and events
-
-### For Venues
-
-- **Content Multiplication**: Every attendee becomes a potential content creator
-- **Engagement Analytics**: Real-time data on audience reactions and preferences
-- **Revenue Sharing**: Participate in tip and content monetization
-- **Event Intelligence**: Data-driven insights for booking and programming
-
-## 🏗️ Architecture
-
-### Frontend (React + TypeScript)
-
-```
-src/
-├── components/
-│   ├── common/           # ✅ Modal, StepWizard, AmountSelector, MessageComposer (DRY)
-│   ├── LiveMusic/        # ✅ TippingModal, BountyModal, LiveTipFeed, VenuePicker
-│   ├── Social/           # ✅ AudioFeed, SnippetCard, SnippetRecorder
-│   ├── WalletConnection/ # ✅ WalletStatusCard (consistent UI)
-│   └── AppProviders.tsx  # ✅ Centralized provider wrapper
-├── contexts/
-│   └── WalletContext.tsx # ✅ Unified wallet state management
-├── hooks/               # ✅ useLiveTipFeed, useBountiesForEvent, useWallet
-├── services/            # ✅ walletService (tips + bounties), api, realtimeService
-├── config/
-│   └── environment.ts   # ✅ Centralized environment configuration
-└── styles/              # ✅ Design system and component styles
-```
-
-### Backend (Node.js + Express)
-
-```
-server/
-├── models/              # ✅ Venue, Event, User, Tip, Bounty (with indexing)
-├── controllers/         # ✅ tipController, bountyController, venueController
-├── routes/             # ✅ All routes integrated with WebSocket events
-├── services/           # ✅ db, websocket (real-time), validation
-├── middleware/         # ✅ validation, session, cors, security
-└── config/             # ✅ Environment configs
-```
-
-## 🚀 Current Status
-
-**Live Tipping + Bounty System Active** - Full ecosystem operational on Mantle Sepolia
-
-### ✅ Core Features Live
-
-- **Enhanced Tipping System** with multi-step UX and real-time feed
-- **Bounty Creation & Claims** for content requests (speakers → audience)
-- **Live WebSocket Updates** for tips and bounties across events
-- **Unified Component Architecture** (60% code reduction, DRY principles)
-- **GPS-based venue detection** with crypto conference data
-- **Dynamic.xyz wallet integration** with seamless Mantle Network support
-- **Mobile-optimized responsive design** with PWA capabilities
-
-### 🎯 Active Smart Contracts
-
-- **Tipping**: `0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F` 
+- **Tipping**: `0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F`
 - **Bounties**: `0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F`
 - **Platform Fee**: 5% across all transactions
 - **Network**: Mantle Sepolia (ultra-low gas ~$0.01)
@@ -193,8 +122,10 @@ server/
 ### 🔄 Integrated User Flows
 
 - **Tip-to-Bounty**: Speakers convert earnings into content bounties
-- **Real-time Engagement**: Live tip feed + bounty notifications  
+- **Real-time Engagement**: Live tip feed + bounty notifications
 - **Cross-feature Navigation**: Seamless speaker → audience workflows
+
+---
 
 ## 🔗 Wallet & Network Integration
 
@@ -222,61 +153,11 @@ MegaVibe uses [Dynamic.xyz](https://dynamic.xyz) for seamless wallet connection:
 - **Platform Fee**: 5% (95% goes to speakers/performers)
 - **Fee Recipient**: `0x8502d079f93AEcdaC7B0Fe71Fa877721995f1901`
 
-### Architecture
-
-```
-AppProviders.tsx
-├── DynamicContextProvider (wallet management)
-├── WagmiProvider (blockchain interactions)
-├── QueryClientProvider (data fetching)
-└── WalletProvider (centralized state management)
-    ├── App.tsx (/)
-    └── TipPage.tsx (/tip)
-```
-
-**Key Features:**
-- **Consistent State**: Single wallet context across all routes
-- **Auto-reconnect**: Wallet state persists across page navigation
-- **Network Validation**: Ensures users are on correct network
-- **Balance Tracking**: Real-time balance updates
-- **Error Recovery**: Automatic retry and user-friendly error messages
-
-## 🛣️ Roadmap
-
-See [ROADMAP.md](./ROADMAP.md) for detailed development phases.
+---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our contributing guidelines (coming soon).
-
-### Development Guidelines
-
-#### Wallet Integration
-- Always use the `useWallet()` hook from `WalletContext`
-- Never create separate wallet state - use the centralized context
-- Check `isWalletReady()` before performing blockchain operations
-- Handle network switching through the provided context methods
-
-#### Environment Configuration
-- Use the centralized `env` configuration from `src/config/environment.ts`
-- Add new environment variables to the validation schema
-- Test configuration with `VITE_DEBUG_MODE=true` for detailed logging
-
-#### Code Organization
-- Keep wallet-related logic in the WalletContext
-- Use AppProviders wrapper for any new top-level providers
-- Maintain DRY principles - no duplicate wallet connection logic
-
-## 📄 License
-
-[License Type] - see LICENSE file for details
-
-## 🙏 Acknowledgments
-
-- Built for the Mantle Network ecosystem
-
----
-
-**Demo**: [Coming Soon]
-**Documentation**: [Coming Soon]
-**Discord**: [Coming Soon]
+- Use `useWallet()` from WalletContext
+- Centralize env config in `src/config/environment.ts`
+- Keep wallet logic in WalletContext, use AppProviders for new providers
+- DRY: No duplicate wallet logic

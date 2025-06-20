@@ -7,7 +7,7 @@
     "skipLibCheck": true,
 
     /* Bundler mode */
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -34,7 +34,7 @@
     "noImplicitReturns": false,
     
     /* Type resolution - Fixed */
-    "types": ["vite/client", "node", "scheduler", "webidl-conversions", "whatwg-url"],
+    "types": ["node", "scheduler", "webidl-conversions", "whatwg-url"],
     "typeRoots": ["./node_modules/@types", "./src/types"],
     
     /* Skip problematic lib checks */
