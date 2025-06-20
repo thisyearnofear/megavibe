@@ -45,7 +45,7 @@ export const VenuePicker: React.FC<VenuePickerProps> = ({
         setVenues([]);
       } else {
         setVenues(nearbyVenues);
-        const activeVenue = nearbyVenues.find(v => v.isActive);
+        const activeVenue = Array.isArray(nearbyVenues) ? nearbyVenues.find(v => v.isActive) : undefined;
         if (activeVenue) {
           setSelectedVenue(activeVenue);
         }

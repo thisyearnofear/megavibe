@@ -20,12 +20,12 @@ interface RetryConfig {
 // API client configuration
 const getApiBaseUrl = (): string => {
   // Use environment variable if available
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+  if (process.env.VITE_API_URL) {
+    return process.env.VITE_API_URL;
   }
 
   // Fallback based on environment
-  return import.meta.env.PROD
+  return process.env.PROD
     ? 'https://megavibe.onrender.com'
     : 'http://localhost:3000';
 };
@@ -55,7 +55,7 @@ api.interceptors.request.use(
     config.headers['X-Request-ID'] = generateRequestId();
 
     // Log request in development
-    if (import.meta.env.DEV) {
+    if (process.env.DEV) {
       console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`, {
         data: config.data,
         params: config.params,
@@ -74,7 +74,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response: AxiosResponse) => {
     // Log response in development
-    if (import.meta.env.DEV) {
+    if (process.env.DEV) {
       console.log(`✅ API Response: ${response.config.method?.toUpperCase()} ${response.config.url}`, {
         status: response.status,
         data: response.data,
@@ -87,7 +87,7 @@ api.interceptors.response.use(
     const config = error.config as AxiosRequestConfig & RetryConfig;
 
     // Log error in development
-    if (import.meta.env.DEV) {
+    if (process.env.DEV) {
       console.error(`❌ API Error: ${config?.method?.toUpperCase()} ${config?.url}`, {
         status: error.response?.status,
         message: error.message,

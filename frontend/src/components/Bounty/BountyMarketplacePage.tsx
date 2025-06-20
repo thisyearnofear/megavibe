@@ -63,7 +63,7 @@ export const BountyMarketplacePage: React.FC<BountyMarketplacePageProps> = ({ on
       return;
     }
 
-    const activeSpeaker = speakers.find(s => s.isActive) || speakers[0];
+    const activeSpeaker = Array.isArray(speakers) ? speakers.find(s => s.isActive) : undefined;
     if (activeSpeaker) {
       setSelectedSpeaker(activeSpeaker);
       setShowCreateBounty(true);
@@ -118,7 +118,7 @@ export const BountyMarketplacePage: React.FC<BountyMarketplacePageProps> = ({ on
           </>
         ) : (
           filteredBounties.map(bounty => (
-            <Card key={bounty.id} hoverable className="bounty-card">
+            <Card key={bounty.id} className="bounty-card">
               <div className="bounty-header">
                 <div className="bounty-reward">
                   <span className="reward-amount">${bounty.rewardAmount}</span>

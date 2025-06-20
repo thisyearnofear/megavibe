@@ -60,7 +60,7 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
   return (
     <DynamicContextProvider
       settings={{
-        environmentId: import.meta.env.VITE_DYNAMIC_ENVIRONMENT_ID || 'cd08ffe6-e5d5-49d4-8cb3-f9419a7f5e4d',
+        environmentId: process.env.VITE_DYNAMIC_ENVIRONMENT_ID || 'cd08ffe6-e5d5-49d4-8cb3-f9419a7f5e4d',
         walletConnectors: [EthereumWalletConnectors],
         overrides: {
           evmNetworks: [

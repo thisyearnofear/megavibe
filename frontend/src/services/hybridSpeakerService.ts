@@ -161,7 +161,7 @@ class HybridSpeakerService {
 
     // Remove duplicates and limit results
     const uniqueResults = results.filter((profile, index, self) => 
-      self.findIndex(p => p.address.toLowerCase() === profile.address.toLowerCase()) === index
+      self.findIndex && Array.isArray(self) && self.findIndex(p => p.address.toLowerCase() === profile.address.toLowerCase()) === index
     );
 
     return uniqueResults.slice(0, limit);

@@ -270,7 +270,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       };
     } catch (error) {
       // Wallet doesn't support event listeners
-      if (import.meta.env.VITE_DEBUG_MODE === 'true') {
+      if (process.env.VITE_DEBUG_MODE === 'true') {
         console.log('Wallet does not support event listeners:', error);
       }
     }
@@ -286,7 +286,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
 
   // Debug logging in development
   useEffect(() => {
-    if (import.meta.env.VITE_DEBUG_MODE === 'true') {
+    if (process.env.VITE_DEBUG_MODE === 'true') {
       console.log('Wallet state updated:', {
         isConnected: state.isConnected,
         address: state.address,

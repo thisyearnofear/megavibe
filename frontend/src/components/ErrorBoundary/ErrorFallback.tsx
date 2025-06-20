@@ -7,7 +7,7 @@ interface ErrorFallbackProps {
 }
 
 export const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetError }) => {
-  const isDevelopment = import.meta.env.DEV;
+  const isDevelopment = process.env.DEV;
 
   const handleReload = () => {
     window.location.reload();

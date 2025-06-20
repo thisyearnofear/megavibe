@@ -80,7 +80,7 @@ export const useLiveTipFeed = (eventId: string): UseLiveTipFeedReturn => {
     if (!eventId) return;
 
     // Connect to WebSocket
-    const socketConnection = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', {
+    const socketConnection = io(process.env.VITE_API_URL || 'http://localhost:3000', {
       transports: ['websocket', 'polling']
     });
 

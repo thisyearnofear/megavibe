@@ -124,7 +124,7 @@ class Web3SocialService {
   private lensApiUrl = 'https://api.lens.dev';
   
   constructor() {
-    this.neynarApiKey = import.meta.env.VITE_NEYNAR_API_KEY || '';
+    this.neynarApiKey = process.env.VITE_NEYNAR_API_KEY || '';
   }
 
   /**

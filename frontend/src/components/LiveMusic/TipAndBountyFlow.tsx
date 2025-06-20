@@ -671,8 +671,8 @@ export const TipAndBountyFlow: React.FC<TipAndBountyFlowProps> = ({
                   key={stepInfo.key}
                   className={`step ${step === stepInfo.key ? 'active' : ''}`}
                   onClick={() => {
-                    const stepIndex = TIP_STEPS.findIndex(s => s.key === stepInfo.key);
-                    const currentIndex = TIP_STEPS.findIndex(s => s.key === step);
+                    const stepIndex = Array.isArray(TIP_STEPS) ? TIP_STEPS.findIndex(s => s.key === stepInfo.key) : -1;
+                    const currentIndex = Array.isArray(TIP_STEPS) ? TIP_STEPS.findIndex(s => s.key === step) : -1;
                     if (stepIndex < currentIndex) {
                       setStep(stepInfo.key as FlowStep);
                     }

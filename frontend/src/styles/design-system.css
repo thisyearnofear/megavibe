@@ -1,38 +1,7 @@
 /* MegaVibe Design System v2.0 */
 /* Inspired by modern web design with music industry aesthetics */
 
-/* Local Font Definitions */
-@font-face {
-  font-family: 'WorkSans';
-  src: url('/fonts/WorkSans-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'WorkSans';
-  src: url('/fonts/WorkSans-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'WorkSans';
-  src: url('/fonts/WorkSans-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Anton';
-  src: url('/fonts/Anton-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+/* Fonts now loaded via Google Fonts CDN in index.html */
 
 :root {
   /* Color Palette - High Contrast & Clear */

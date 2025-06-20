@@ -25,7 +25,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
     if (stepKey === activeKey) return 'active';
     
     // Check if this step comes before the active step
-    const activeIndex = steps.findIndex(s => s.key === activeKey);
+    const activeIndex = Array.isArray(steps) ? steps.findIndex(s => s.key === activeKey) : -1;
     if (index < activeIndex) return 'completed';
     
     return 'pending';

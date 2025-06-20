@@ -41,7 +41,7 @@ export const KnowledgeFlywheelPage: React.FC<KnowledgeFlywheelPageProps> = ({ on
     }
 
     // Select first active speaker
-    const activeSpeaker = speakers.find(s => s.isActive) || speakers[0];
+    const activeSpeaker = Array.isArray(speakers) ? speakers.find(s => s.isActive) : undefined;
     if (activeSpeaker) {
       setSelectedSpeaker(activeSpeaker);
       setShowTippingModal(true);
@@ -53,7 +53,7 @@ export const KnowledgeFlywheelPage: React.FC<KnowledgeFlywheelPageProps> = ({ on
       return;
     }
 
-    const activeSpeaker = speakers.find(s => s.isActive) || speakers[0];
+    const activeSpeaker = Array.isArray(speakers) ? speakers.find(s => s.isActive) : undefined;
     if (activeSpeaker) {
       setSelectedSpeaker(activeSpeaker);
       setShowBountyModal(true);

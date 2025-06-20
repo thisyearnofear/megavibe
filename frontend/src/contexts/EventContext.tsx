@@ -301,7 +301,8 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
       // Fetch event list from backend
       const eventListRes = await api.get('/api/events/list');
       const events = eventListRes.data.events;
-      let event = events.find((e: any) => e._id === eventId) || events[0];
+      let event = Array.isArray(events) ? events.find((e: any) => e._id === eventId) : undefined;
+      if (!event && Array.isArray(events) && events.length > 0) event = events[0];
       if (!event) throw new Error('No events found');
       // Optionally fetch full event details if available
       // const eventDetailsRes = await api.get(`/api/events/${event._id}`);
@@ -331,7 +332,7 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
 
   const updateSpeakerStats = (speakerId: string, stats: Partial<Speaker>): void => {
     // Ensure 'name' is always present for Speaker type
-    const speaker = state.speakers.find(s => s.id === speakerId);
+    const speaker = Array.isArray(state.speakers) ? state.speakers.find(s => s.id === speakerId) : undefined;
     if (!speaker) return;
     dispatch({
       type: 'UPDATE_SPEAKER',
@@ -358,7 +359,7 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
     dispatch({ type: 'ADD_TIP', payload: tip });
 
     // Update speaker stats
-    const speaker = state.speakers.find(s => s.id === tip.speakerId);
+    const speaker = Array.isArray(state.speakers) ? state.speakers.find(s => s.id === tip.speakerId) : undefined;
     if (speaker) {
       updateSpeakerStats(tip.speakerId, {
         todayEarnings: (speaker.todayEarnings || 0) + tip.amount,

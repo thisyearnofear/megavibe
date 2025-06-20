@@ -65,7 +65,7 @@ export const FarcasterTest: React.FC = () => {
   return (
     <div style={{ padding: '20px', fontFamily: 'monospace' }}>
       <h2>🧪 Farcaster Integration Test</h2>
-      <p>API Key: {import.meta.env.VITE_NEYNAR_API_KEY ? '✅ Configured' : '❌ Missing'}</p>
+      <p>API Key: {process.env.VITE_NEYNAR_API_KEY ? '✅ Configured' : '❌ Missing'}</p>
       
       <button 
         onClick={runTests} 

@@ -4,22 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "start": "vite preview",
-    "preview": "vite preview",
+    "start": "webpack serve --config webpack.config.cjs --open",
+    "build": "webpack --config webpack.config.cjs --mode production",
     "test": "echo \"No tests specified\"",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css}\"",
     "clean": "rm -rf dist node_modules/.vite node_modules/.cache",
     "build:clean": "npm run clean && npm run build",
-    "prebuild": "node prebuild-check.js",
-    "build:production": "NODE_ENV=production npm run build",
-    "deploy": "npm run build:production",
-    "test:polyfills": "npm run build && npm run preview",
-    "test:production": "./test-production-build.sh",
-    "test:build": "./test-build.sh",
     "audit:fix": "npm audit fix",
     "audit:check": "npm audit --audit-level=moderate",
     "deps:update": "npm update && npm audit fix"
@@ -44,6 +36,7 @@
     "react-swipeable-views-react-18-fix": "^0.14.1",
     "socket.io-client": "^4.8.1",
     "viem": "^2.23.2",
+    "vite-plugin-commonjs-externals": "^0.1.4",
     "wagmi": "^2.15.6"
   },
   "overrides": {
@@ -58,6 +51,9 @@
     }
   },
   "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
     "@types/debug": "^4.1.12",
     "@types/lodash": "^4.17.17",
     "@types/ms": "^2.1.0",
@@ -74,20 +70,28 @@
     "@types/yargs-parser": "^21.0.3",
     "@typescript-eslint/eslint-plugin": "^8.34.0",
     "@typescript-eslint/parser": "^8.34.0",
-    "@vitejs/plugin-react": "^4.1.0",
+    "babel-loader": "^10.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.1",
+    "css-loader": "^7.1.2",
+    "dotenv-webpack": "^8.1.0",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "events": "^3.3.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.6.3",
+    "inherits": "^2.0.4",
     "prettier": "^3.5.3",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
+    "style-loader": "^4.0.0",
     "terser": "^5.36.0",
     "typescript": "^5.2.2",
     "util": "^0.12.5",
-    "vite": "^4.5.0"
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
   }
 }

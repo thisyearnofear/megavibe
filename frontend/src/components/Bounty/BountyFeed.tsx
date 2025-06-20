@@ -104,7 +104,7 @@ export const BountyFeed: React.FC<BountyFeedProps> = ({
   };
 
   const getSpeakerFromBounty = (bounty: Bounty): Speaker | undefined => {
-    return speakers.find(s => s.name === bounty.speaker.username);
+    return Array.isArray(speakers) ? speakers.find(s => s.name === bounty.speaker.username) : undefined;
   };
 
   const handleTipSpeaker = (bounty: Bounty) => {

@@ -48,7 +48,7 @@ class RealtimeService {
   }
 
   private initializeSocket(): void {
-    const wsUrl = import.meta.env.VITE_WS_URL || 'http://localhost:3000';
+    const wsUrl = process.env.VITE_WS_URL || 'http://localhost:3000';
     this.socket = io(wsUrl, {
       autoConnect: false,
       transports: ['websocket'],

@@ -446,9 +446,9 @@ class MockDataService {
         walletAddress: '0x9999999999999999999999999999999999999999'
       },
       recipient: {
-        username: MOCK_SPEAKERS.find(s => s.id === speakerId)?.name.toLowerCase().replace(' ', '') || 'speaker',
+        username: Array.isArray(MOCK_SPEAKERS) ? MOCK_SPEAKERS.find(s => s.id === speakerId)?.name.toLowerCase().replace(' ', '') : 'speaker',
         avatar: '/api/placeholder/40/40',
-        walletAddress: MOCK_SPEAKERS.find(s => s.id === speakerId)?.walletAddress || '0x0000000000000000000000000000000000000000'
+        walletAddress: Array.isArray(MOCK_SPEAKERS) ? MOCK_SPEAKERS.find(s => s.id === speakerId)?.walletAddress : '0x0000000000000000000000000000000000000000'
       },
       amount,
       message,
@@ -458,7 +458,7 @@ class MockDataService {
     };
 
     // Update speaker earnings
-    const speaker = MOCK_SPEAKERS.find(s => s.id === speakerId);
+    const speaker = Array.isArray(MOCK_SPEAKERS) ? MOCK_SPEAKERS.find(s => s.id === speakerId) : undefined;
     if (speaker) {
       speaker.todayEarnings = (speaker.todayEarnings || 0) + amount;
       speaker.tipCount = (speaker.tipCount || 0) + 1;
@@ -473,7 +473,7 @@ class MockDataService {
 
   // Simulate creating a bounty
   async addMockBounty(speakerId: string, description: string, reward: number, deadline: string): Promise<Bounty> {
-    const speaker = MOCK_SPEAKERS.find(s => s.id === speakerId);
+    const speaker = Array.isArray(MOCK_SPEAKERS) ? MOCK_SPEAKERS.find(s => s.id === speakerId) : undefined;
 
     const newBounty: Bounty = {
       id: `bounty-${Date.now()}`,

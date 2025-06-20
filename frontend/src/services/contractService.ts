@@ -25,16 +25,16 @@ interface Bounty {
 }
 
 // Use the deployed contract addresses from environment variables
-const TIPPING_CONTRACT_ADDRESS = import.meta.env.VITE_TIPPING_CONTRACT_ADDRESS;
-const BOUNTY_CONTRACT_ADDRESS = import.meta.env.VITE_BOUNTY_CONTRACT_ADDRESS;
-const FEE_RECIPIENT_ADDRESS = import.meta.env.VITE_FEE_RECIPIENT_ADDRESS;
-const PLATFORM_FEE_PERCENTAGE = Number(import.meta.env.VITE_PLATFORM_FEE_PERCENTAGE || '5');
+const TIPPING_CONTRACT_ADDRESS = process.env.VITE_TIPPING_CONTRACT_ADDRESS;
+const BOUNTY_CONTRACT_ADDRESS = process.env.VITE_BOUNTY_CONTRACT_ADDRESS;
+const FEE_RECIPIENT_ADDRESS = process.env.VITE_FEE_RECIPIENT_ADDRESS;
+const PLATFORM_FEE_PERCENTAGE = Number(process.env.VITE_PLATFORM_FEE_PERCENTAGE || '5');
 
 // Mantle Sepolia network configuration
 const MANTLE_SEPOLIA = {
   id: 5003,
   name: 'Mantle Sepolia',
-  rpcUrl: import.meta.env.VITE_MANTLE_RPC_URL || 'https://rpc.sepolia.mantle.xyz',
+  rpcUrl: process.env.VITE_MANTLE_RPC_URL || 'https://rpc.sepolia.mantle.xyz',
   blockExplorer: 'https://explorer.sepolia.mantle.xyz',
 };
 
