@@ -56,9 +56,9 @@
 
 .header-wallet-status .wallet-info {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
 }
 
 .wallet-icon {
@@ -88,6 +88,11 @@
   background: rgba(255, 255, 255, 0.1);
   padding: 1px 3px;
   border-radius: 3px;
+}
+
+.wallet-separator {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .spinner-sm {

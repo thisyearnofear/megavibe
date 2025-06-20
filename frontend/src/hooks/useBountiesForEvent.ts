@@ -262,14 +262,16 @@ export const useBountiesForEvent = (eventId: string): UseBountiesForEventReturn 
 
     setSocket(socketConnection);
 
-    // Load initial data
-    loadBounties();
+    // Load initial data only when the wallet is ready
+    if (isWalletReady()) {
+      loadBounties();
+    }
 
     // Cleanup on unmount
     return () => {
       socketConnection.disconnect();
     };
-  }, [eventId, loadBounties]);
+  }, [eventId, loadBounties, isConnected, isCorrectNetwork, isWalletReady]);
 
   // Update time remaining for active bounties
   useEffect(() => {

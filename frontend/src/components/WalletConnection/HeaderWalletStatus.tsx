@@ -55,6 +55,7 @@ export const HeaderWalletStatus: React.FC = () => {
       <span className="wallet-icon">✅</span>
       <div className="wallet-info">
         <span className="wallet-address">{formatAddress(address || '')}</span>
+        <span className="wallet-separator">|</span>
         <span className="wallet-balance">{formatBalance(balance)} MNT</span>
       </div>
     </div>

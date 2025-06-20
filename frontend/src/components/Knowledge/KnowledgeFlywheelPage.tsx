@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LiveTipFeed } from '../LiveMusic/LiveTipFeed';
 import { TippingModal } from '../LiveMusic/TippingModal';
 import { BountyModal } from '../LiveMusic/BountyModal';
@@ -18,6 +19,7 @@ interface KnowledgeFlywheelPageProps {
 export const KnowledgeFlywheelPage: React.FC<KnowledgeFlywheelPageProps> = ({ onBack }) => {
   console.log('🧠 KnowledgeFlywheelPage component rendered!');
 
+  const navigate = useNavigate();
   const [showTippingModal, setShowTippingModal] = useState(false);
   const [showBountyModal, setShowBountyModal] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState<any>(null);
@@ -35,40 +37,13 @@ export const KnowledgeFlywheelPage: React.FC<KnowledgeFlywheelPageProps> = ({ on
   }, []);
 
   const handleStartTipping = () => {
-    if (!isConnected) {
-      // Could trigger wallet connection here
-      return;
-    }
-
-    // Select first active speaker
-    const activeSpeaker = Array.isArray(speakers) ? speakers.find(s => s.isActive) : undefined;
-    if (activeSpeaker) {
-      setSelectedSpeaker(activeSpeaker);
-      setShowTippingModal(true);
-    }
+    navigate('/tip');
   };
 
   const handleCreateBounty = () => {
-    if (!isConnected) {
-      return;
-    }
-
-    const activeSpeaker = Array.isArray(speakers) ? speakers.find(s => s.isActive) : undefined;
-    if (activeSpeaker) {
-      setSelectedSpeaker(activeSpeaker);
-      setShowBountyModal(true);
-    }
+    navigate('/bounties');
   };
 
-  const handleTipSuccess = () => {
-    setShowTippingModal(false);
-    // Success feedback could be added here
-  };
-
-  const handleBountySuccess = () => {
-    setShowBountyModal(false);
-    // Success feedback could be added here
-  };
 
   return (
     <PageLayout
@@ -99,15 +74,13 @@ export const KnowledgeFlywheelPage: React.FC<KnowledgeFlywheelPageProps> = ({ on
                   variant="primary" 
                   size="lg" 
                   onClick={handleStartTipping}
-                  disabled={!isConnected}
                 >
                   💰 Start Tipping
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
+                <Button
+                  variant="outline"
+                  size="lg"
                   onClick={handleCreateBounty}
-                  disabled={!isConnected}
                 >
                   🎯 Create Bounty
                 </Button>
@@ -169,27 +142,6 @@ export const KnowledgeFlywheelPage: React.FC<KnowledgeFlywheelPageProps> = ({ on
         </div>
       </div>
 
-      {/* Modals */}
-      {showTippingModal && selectedSpeaker && currentEvent && (
-        <TippingModal
-          speaker={selectedSpeaker}
-          event={currentEvent}
-          onClose={() => setShowTippingModal(false)}
-          onSuccess={handleTipSuccess}
-          isOpen={showTippingModal}
-        />
-      )}
-
-      {showBountyModal && selectedSpeaker && currentEvent && (
-        <BountyModal
-          eventId={currentEvent.id}
-          speakerId={selectedSpeaker.id}
-          speakerName={selectedSpeaker.name}
-          onClose={() => setShowBountyModal(false)}
-          onSuccess={handleBountySuccess}
-          isOpen={showBountyModal}
-        />
-      )}
     </PageLayout>
   );
 };
