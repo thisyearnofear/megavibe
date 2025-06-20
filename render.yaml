@@ -20,6 +20,8 @@ services:
         generateValue: true
       - key: CORS_ORIGIN
         value: https://megavibe.vercel.app
+      - key: FORCE_SEED
+        value: "false"
       - key: PINATA_API_KEY
         sync: false
       - key: PINATA_API_SECRET

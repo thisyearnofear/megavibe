@@ -11,16 +11,8 @@ const User = require("../models/userModel.cjs");
 
 // Check if we should run this seed
 const shouldSeed = () => {
-  // Allow seeding in production or when explicitly forced
-  const isProduction =
-    process.env.NODE_ENV === "production" ||
-    process.env.RENDER_SERVICE_NAME || // Render environment indicator
-    process.env.RAILWAY_ENVIRONMENT; // Railway environment indicator
-
-  const shouldForce =
-    process.env.FORCE_SEED === "true" || process.env.SEED_ON_START === "true";
-
-  return isProduction && shouldForce;
+  // Only seed when explicitly forced
+  return process.env.FORCE_SEED === "true";
 };
 
 // Experience venue data with real coordinates
@@ -264,8 +256,10 @@ const productionSeed = async () => {
     console.log(`📊 Found ${existingVenues} venues, ${existingUsers} users`);
 
     // Only seed if database is empty or force seed is true
-    if (existingVenues > 5 && process.env.FORCE_SEED !== "true") {
-      console.log("✅ Database already has venues, skipping seed");
+    if (existingVenues > 0 && process.env.FORCE_SEED !== "true") {
+      console.log(
+        `✅ Database already contains ${existingVenues} venues. Skipping seed.`
+      );
       return {
         success: true,
         message: "Database already seeded",
@@ -352,7 +346,9 @@ const productionSeed = async () => {
 
       userData.push({
         username: speaker.name.toLowerCase().replace(/\s+/g, ""),
-        email: `${speaker.name.toLowerCase().replace(/\s+/g, "")}@cryptospeaker.com`,
+        email: `${speaker.name
+          .toLowerCase()
+          .replace(/\s+/g, "")}@cryptospeaker.com`,
         password: hashedPassword,
         displayName: speaker.name,
         bio: `Leading expert in ${speaker.expertise} with extensive experience in ${speaker.field}`,
@@ -386,7 +382,7 @@ const productionSeed = async () => {
 
       const endTime = new Date(startTime);
       endTime.setHours(
-        startTime.getHours() + 2 + Math.floor(Math.random() * 6),
+        startTime.getHours() + 2 + Math.floor(Math.random() * 6)
       );
 
       // Some events are live
@@ -397,9 +393,13 @@ const productionSeed = async () => {
       }
 
       eventData.push({
-        name: `${experienceSpeakers[i % experienceSpeakers.length].expertise} Experience 2024`,
+        name: `${
+          experienceSpeakers[i % experienceSpeakers.length].expertise
+        } Experience 2024`,
         type: eventTypes[i % eventTypes.length],
-        description: `Premier experience featuring ${experienceSpeakers[i % experienceSpeakers.length].expertise} in ${experienceSpeakers[i % experienceSpeakers.length].field}`,
+        description: `Premier experience featuring ${
+          experienceSpeakers[i % experienceSpeakers.length].expertise
+        } in ${experienceSpeakers[i % experienceSpeakers.length].field}`,
         venue: venue._id,
         startTime,
         endTime,
