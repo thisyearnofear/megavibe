@@ -17,6 +17,8 @@ const createExpressApp = require("./expressApp.cjs");
 const port = process.env.PORT || 3000;
 const helmet = require("helmet");
 const { handleError } = require("./utils/errorHandler.cjs");
+const fs = require("fs");
+const { initWebSocketServer } = require("./services/websocket.cjs");
 
 // Create Express application instance
 const app = express();
@@ -126,7 +128,10 @@ if (
 }
 
 // Enhanced error handling middleware
-const { globalErrorHandler, handleNotFound } = require('./middleware/errorHandler.cjs');
+const {
+  globalErrorHandler,
+  handleNotFound,
+} = require("./middleware/errorHandler.cjs");
 
 // 404 handler for undefined routes
 app.use(handleNotFound);
@@ -134,7 +139,25 @@ app.use(handleNotFound);
 // Global error handling middleware
 app.use(globalErrorHandler);
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+// Create HTTP(S) server and attach WebSocket server
+let server;
+if (process.env.NODE_ENV === "production") {
+  // Use HTTPS in production
+  const https = require("https");
+  const cert = fs.readFileSync(path.join(__dirname, "server-crt.pem"));
+  const key = fs.readFileSync(path.join(__dirname, "server-key.pem"));
+  server = https.createServer({ key, cert }, app);
+  server.listen(port, () => {
+    console.log(`HTTPS server listening on port ${port}`);
+  });
+} else {
+  // Use HTTP in development
+  const http = require("http");
+  server = http.createServer(app);
+  server.listen(port, () => {
+    console.log(`HTTP server listening on port ${port}`);
+  });
+}
+
+// Attach WebSocket server to the HTTP(S) server
+initWebSocketServer(server);
