@@ -114,7 +114,7 @@ declare global {
     // Add any global window properties you might use
     ethereum?: EthereumProvider;
     web3?: unknown;
-    
+
     // Node.js polyfills
     Buffer: typeof import('buffer').Buffer;
     EventEmitter: typeof import('events').EventEmitter;
@@ -129,7 +129,7 @@ declare global {
     };
     crypto: Crypto;
   }
-  
+
   interface GlobalThis {
     // Node.js polyfills for globalThis
     Buffer: typeof import('buffer').Buffer;
@@ -158,6 +158,28 @@ declare global {
     version: string;
     nextTick: (fn: Function) => void;
   };
+
+  // Webpack Hot Module Replacement
+  interface NodeModule {
+    hot?: {
+      accept(): void;
+      accept(dependencies: string[], callback?: () => void): void;
+      accept(dependency: string, callback?: () => void): void;
+      decline(): void;
+      decline(dependencies: string[]): void;
+      decline(dependency: string): void;
+      dispose(callback: (data: any) => void): void;
+      addDisposeHandler(callback: (data: any) => void): void;
+      removeDisposeHandler(callback: (data: any) => void): void;
+      check(autoApply?: boolean): Promise<string[] | null>;
+      apply(options?: any): Promise<string[] | null>;
+      status(): string;
+      addStatusHandler(callback: (status: string) => void): void;
+      removeStatusHandler(callback: (status: string) => void): void;
+    };
+  }
+
+  var module: NodeModule | undefined;
 }
 
 export {};

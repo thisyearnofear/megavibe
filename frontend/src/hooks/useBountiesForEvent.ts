@@ -77,7 +77,7 @@ export const useBountiesForEvent = (eventId: string): UseBountiesForEventReturn 
           // Use real contract data when wallet is connected
           console.log('Loading bounties from contract for event:', eventId);
           const contractBounties = await contractService.getBountiesForEvent(eventId);
-          
+
           // Transform contract data to match expected interface
           eventBounties = contractBounties.map((bounty, index) => ({
             id: `contract-${index}`,
@@ -93,7 +93,7 @@ export const useBountiesForEvent = (eventId: string): UseBountiesForEventReturn 
             description: bounty.description,
             rewardAmount: parseFloat(bounty.amount),
             deadline: new Date(bounty.deadline * 1000).toISOString(),
-            status: bounty.status === 'open' ? 'active' as const : 
+            status: bounty.status === 'open' ? 'active' as const :
                    bounty.status === 'claimed' ? 'claimed' as const : 'expired' as const,
             claimant: bounty.claimer ? {
               username: bounty.claimer.slice(0, 8) + '...',
@@ -176,7 +176,7 @@ export const useBountiesForEvent = (eventId: string): UseBountiesForEventReturn 
           bountyData.amount.toString(),
           Math.floor(Date.now() / 1000) + (bountyData.durationDays * 24 * 60 * 60)
         );
-        
+
         // Refresh bounties list after successful transaction
         setTimeout(() => {
           loadBounties();
@@ -206,7 +206,7 @@ export const useBountiesForEvent = (eventId: string): UseBountiesForEventReturn 
     if (!eventId) return;
 
     // Connect to WebSocket
-    const socketConnection = io(process.env.VITE_API_URL || 'http://localhost:3000', {
+    const socketConnection = io(process.env.VITE_API_URL || 'https://megavibe.onrender.com', {
       transports: ['websocket', 'polling']
     });
 
@@ -219,7 +219,7 @@ export const useBountiesForEvent = (eventId: string): UseBountiesForEventReturn 
     socketConnection.on('bountyCreated', (bountyData: any) => {
       if (bountyData.eventId === eventId) {
         setBounties(prev => [bountyData, ...prev]);
-        
+
         // Update stats
         setStats(prev => ({
           ...prev,
@@ -232,10 +232,10 @@ export const useBountiesForEvent = (eventId: string): UseBountiesForEventReturn 
 
     // Listen for bounty claims
     socketConnection.on('bountyClaimed', (claimData: any) => {
-      setBounties(prev => prev.map(bounty => 
+      setBounties(prev => prev.map(bounty =>
         bounty.id === claimData.bountyId
-          ? { 
-              ...bounty, 
+          ? {
+              ...bounty,
               status: 'claimed' as const,
               claimant: { username: claimData.claimant },
               submissionHash: claimData.submissionHash

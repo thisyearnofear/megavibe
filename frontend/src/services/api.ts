@@ -7,7 +7,7 @@ interface ApiError {
   message: string;
   status?: number;
   code?: string;
-  details?: any;
+  details?: unknown;
 }
 
 interface RetryConfig {
@@ -24,10 +24,13 @@ const getApiBaseUrl = (): string => {
     return process.env.VITE_API_URL;
   }
 
-  // Fallback based on environment
-  return process.env.PROD
-    ? 'https://megavibe.onrender.com'
-    : 'http://localhost:3000';
+  // Check for production environment
+  if (process.env.NODE_ENV === 'production' || process.env.VITE_ENVIRONMENT === 'production') {
+    return 'https://megavibe.onrender.com';
+  }
+
+  // Development fallback
+  return 'http://localhost:3000';
 };
 
 // Create axios instance with enhanced configuration
@@ -160,17 +163,17 @@ function shouldRetry(error: AxiosError, config?: AxiosRequestConfig & RetryConfi
 
 async function retryRequest(config: AxiosRequestConfig & RetryConfig): Promise<AxiosResponse> {
   config.retryCount = (config.retryCount || 0) + 1;
-  
+
   // Exponential backoff
   const delay = config.retryDelay * Math.pow(2, config.retryCount - 1);
-  
+
   console.log(`🔄 Retrying request (${config.retryCount}/${config.retries}) after ${delay}ms`);
-  
+
   await new Promise(resolve => setTimeout(resolve, delay));
   return api(config);
 }
 
-function createApiError(message: string, status?: number, code?: string, details?: any): ApiError {
+function createApiError(message: string, status?: number, code?: string, details?: unknown): ApiError {
   return {
     message,
     status,
@@ -182,11 +185,11 @@ function createApiError(message: string, status?: number, code?: string, details
 function createApiErrorFromAxiosError(error: AxiosError): ApiError {
   if (error.response) {
     // Server responded with error status
-    const data = error.response.data as any;
+    const data = error.response.data as Record<string, unknown>;
     return createApiError(
-      data?.message || `Request failed with status ${error.response.status}`,
+      (data?.message as string) || `Request failed with status ${error.response.status}`,
       error.response.status,
-      data?.code || 'API_ERROR',
+      (data?.code as string) || 'API_ERROR',
       data
     );
   } else if (error.request) {
@@ -412,20 +415,20 @@ export const apiEndpoints = {
 };
 
 // Legacy payment functions (keeping for backward compatibility)
-export const initiatePayment = async (paymentData: any) => {
+export const initiatePayment = async (paymentData: Record<string, unknown>) => {
   try {
     const response = await api.post('/api/payments', paymentData);
     return response.data;
-  } catch (error) {
+  } catch (_error) {
     throw createApiError('Payment initiation failed');
   }
 };
 
-export const confirmPayment = async (paymentId: any) => {
+export const confirmPayment = async (paymentId: unknown) => {
   try {
     const response = await api.post('/api/payments/confirm', { paymentId });
     return response.data;
-  } catch (error) {
+  } catch (_error) {
     throw createApiError('Payment confirmation failed');
   }
 };

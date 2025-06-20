@@ -19,7 +19,7 @@ import { useLocation } from 'react-router-dom';
 // Component to handle navigation with current page detection
 const AppWithNavigation: React.FC = () => {
   const location = useLocation();
-  
+
   const getCurrentPage = (): 'home' | 'tip' | 'infonomy' | 'bounties' | 'talent' => {
     const path = location.pathname;
     if (path === '/tip') return 'tip';
@@ -58,9 +58,11 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Clear any cached modules
-if (import.meta.hot) {
-  import.meta.hot.accept();
+// Clear any cached modules (Webpack HMR)
+// @ts-ignore - webpack HMR is available in development
+if (typeof module !== 'undefined' && module.hot) {
+  // @ts-ignore - webpack HMR API
+  module.hot.accept();
 }
 
 const container = document.getElementById('root');

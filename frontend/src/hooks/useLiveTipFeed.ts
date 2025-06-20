@@ -80,7 +80,7 @@ export const useLiveTipFeed = (eventId: string): UseLiveTipFeedReturn => {
     if (!eventId) return;
 
     // Connect to WebSocket
-    const socketConnection = io(process.env.VITE_API_URL || 'http://localhost:3000', {
+    const socketConnection = io(process.env.VITE_API_URL || 'https://megavibe.onrender.com', {
       transports: ['websocket', 'polling']
     });
 
@@ -93,7 +93,7 @@ export const useLiveTipFeed = (eventId: string): UseLiveTipFeedReturn => {
     socketConnection.on('tipConfirmed', (tipData: any) => {
       if (tipData.eventId === eventId) {
         setTips(prev => [tipData, ...prev.slice(0, 19)]); // Keep last 20 tips
-        
+
         // Update stats
         setStats(prev => ({
           ...prev,
@@ -107,8 +107,8 @@ export const useLiveTipFeed = (eventId: string): UseLiveTipFeedReturn => {
     // Listen for tip acknowledgments
     socketConnection.on('tipAcknowledged', (ackData: any) => {
       if (ackData.eventId === eventId) {
-        setTips(prev => prev.map(tip => 
-          tip.id === ackData.tipId 
+        setTips(prev => prev.map(tip =>
+          tip.id === ackData.tipId
             ? { ...tip, acknowledged: true, response: ackData.response }
             : tip
         ));
@@ -139,10 +139,10 @@ export const useLiveTipFeed = (eventId: string): UseLiveTipFeedReturn => {
   useEffect(() => {
     const interval = setInterval(() => {
       const oneMinuteAgo = new Date(Date.now() - 60000);
-      const recentTips = tips.filter(tip => 
+      const recentTips = tips.filter(tip =>
         new Date(tip.timestamp) > oneMinuteAgo
       );
-      
+
       setStats(prev => ({
         ...prev,
         tipsPerMinute: recentTips.length

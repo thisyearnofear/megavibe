@@ -43,8 +43,8 @@ class Environment {
   private loadConfiguration(): EnvironmentConfig {
     return {
       // API Configuration
-      apiUrl: process.env.VITE_API_URL || 'http://localhost:3000',
-      wsUrl: process.env.VITE_WS_URL || 'http://localhost:3000',
+      apiUrl: process.env.VITE_API_URL || (process.env.NODE_ENV === 'production' ? 'https://megavibe.onrender.com' : 'http://localhost:3000'),
+      wsUrl: process.env.VITE_WS_URL || (process.env.NODE_ENV === 'production' ? 'https://megavibe.onrender.com' : 'http://localhost:3000'),
       environment: process.env.VITE_ENVIRONMENT || 'development',
 
       // Dynamic.xyz Configuration

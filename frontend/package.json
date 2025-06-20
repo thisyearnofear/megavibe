@@ -36,7 +36,6 @@
     "react-swipeable-views-react-18-fix": "^0.14.1",
     "socket.io-client": "^4.8.1",
     "viem": "^2.23.2",
-    "vite-plugin-commonjs-externals": "^0.1.4",
     "vm-browserify": "^1.1.2",
     "wagmi": "^2.15.6"
   },

@@ -2,22 +2,18 @@ import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { TippingModal } from './LiveMusic/TippingModal';
 import { BountyModal } from './LiveMusic/BountyModal';
 import { LiveTipFeed } from './LiveMusic/LiveTipFeed';
-import { HeaderWalletStatus } from './WalletConnection/HeaderWalletStatus';
 import { useWallet } from '../contexts/WalletContext';
-import { useLiveTipFeed } from '../hooks/useLiveTipFeed';
-import { useBountiesForEvent } from '../hooks/useBountiesForEvent';
 import { api } from '../services/api';
 import '../styles/TipPage.css';
 import { PageLayout } from './Layout/PageLayout';
 import { Button } from './UI/Button';
-import { Card } from './UI/Card';
-import { SkeletonCard, SkeletonGrid } from './Loading/SkeletonCard';
+import { SkeletonGrid } from './Loading/SkeletonCard';
 import { PERFORMERS, Performer } from '../data/performers';
 import { useToast } from '../contexts/ToastContext';
 import { LoadingSpinner } from './Loading/LoadingSpinner';
 
 // Lazy load VenuePicker to avoid static import conflict
-const VenuePicker = lazy(() => 
+const VenuePicker = lazy(() =>
   import('./LiveMusic/VenuePicker').then(module => ({
     default: module.VenuePicker,
   }))
@@ -64,12 +60,12 @@ export const TipPage: React.FC = () => {
 
   // Wallet context
   const { isConnected, isCorrectNetwork } = useWallet();
-  
+
   // Toast notifications
   const { showSuccess, showError, showWarning } = useToast();
 
   // Helper to get speakers for a venue (for now, just filter by type)
-  const getSpeakersForVenue = (venueName: string): Performer[] => {
+  const getSpeakersForVenue = (_venueName: string): Performer[] => {
     // In the future, filter by events: p.events.includes(venueName)
     return PERFORMERS.filter(p => p.type === 'speaker');
   };
@@ -83,7 +79,7 @@ export const TipPage: React.FC = () => {
       const rawVenues = venuesResponse.data.slice(0, 10);
 
       // Create realistic events based on venue descriptions and add dates
-      const venuesWithEvents = rawVenues.map((venue: any, index: number) => {
+      const venuesWithEvents = rawVenues.map((venue: Venue, index: number) => {
         // Extract event name from description safely
         const eventMatch = venue.description && venue.description.match ? venue.description.match(/hosting (.+?) -/) : null;
         const eventName = eventMatch ? eventMatch[1] : `${venue.preferredGenres?.[0] || 'Tech'} Conference`;
@@ -111,12 +107,12 @@ export const TipPage: React.FC = () => {
       setVenues(venuesWithEvents);
 
       // Create detailed events for selected venues
-      const detailedEvents: Event[] = venuesWithEvents.map((venue: any) => ({
-        id: venue.currentEvent.id,
-        name: venue.currentEvent.name,
+      const detailedEvents: Event[] = venuesWithEvents.map((venue: Venue) => ({
+        id: venue.currentEvent!.id,
+        name: venue.currentEvent!.name,
         venue: venue.name,
-        startTime: venue.currentEvent.startTime,
-        endTime: venue.currentEvent.endTime,
+        startTime: venue.currentEvent!.startTime,
+        endTime: venue.currentEvent!.endTime,
         description: venue.description && venue.description.split ? (venue.description.split(' - ')[1] || venue.description) : 'Conference event',
         speakers: getSpeakersForVenue(venue.name)
       }));
@@ -130,7 +126,7 @@ export const TipPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [showError]);
 
   useEffect(() => {
     loadExperiences();
@@ -196,7 +192,7 @@ export const TipPage: React.FC = () => {
       <PageLayout
         title="Live Tipping"
         subtitle="Tip in real-time, shape your experience, support incredible talent."
-        
+
       >
         <div className="tip-content grid">
           {/* Example: Venue picker and live tip feed */}
@@ -230,7 +226,7 @@ export const TipPage: React.FC = () => {
     <PageLayout
       title="Live Tipping"
       subtitle="Tip in real-time, shape your experience, support incredible talent."
-      
+
     >
       <div className="tip-content grid">
         {!selectedVenue ? (
