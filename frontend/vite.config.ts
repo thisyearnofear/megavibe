@@ -89,7 +89,7 @@ export default defineConfig({
       process: "process/browser",
       util: "util",
       events: "events",
-      inherits: require.resolve('inherits'), // Ensure inherits is resolved
+      inherits: "inherits", // Use string reference for ESM compatibility
     },
   },
   optimizeDeps: {
