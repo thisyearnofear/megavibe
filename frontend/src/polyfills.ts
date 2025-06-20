@@ -1,24 +1,29 @@
 import { Buffer } from 'buffer';
 import crypto from 'crypto-browserify';
 
-// Polyfill global Buffer
-window.Buffer = Buffer;
+// Ensure globals are available before any other modules load
+(function() {
+  // Polyfill global Buffer
+  if (typeof window !== 'undefined' && !window.Buffer) {
+    window.Buffer = Buffer;
+  }
 
-// Polyfill process.env with better compatibility
-if (!window.process) {  
-  window.process = { 
-    env: {},
-    browser: true,
-    version: 'v18.0.0',
-    nextTick: (fn: Function) => setTimeout(fn, 0)
-  } as any;
-}
+  // Polyfill process.env with better compatibility
+  if (typeof window !== 'undefined' && !window.process) {  
+    window.process = { 
+      env: {},
+      browser: true,
+      version: 'v18.0.0',
+      nextTick: (fn: Function) => setTimeout(fn, 0)
+    } as any;
+  }
 
-// Polyfill global crypto for web3 libraries
-if (typeof window.crypto === 'undefined' || !window.crypto.subtle) {
-  // @ts-ignore
-  window.crypto = crypto;
-}
+  // Polyfill global crypto for web3 libraries
+  if (typeof window !== 'undefined' && (typeof window.crypto === 'undefined' || !window.crypto.subtle)) {
+    // @ts-ignore
+    window.crypto = crypto;
+  }
+})();
 
 // Add better error handling for wallet connections
 if (typeof window !== 'undefined') {

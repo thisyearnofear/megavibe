@@ -10,12 +10,17 @@ export default defineConfig({
     // Add these for better web3 compatibility
     "process.browser": true,
     "process.version": JSON.stringify("v18.0.0"),
+    // Fix for module initialization errors
+    "__DEV__": false,
   },
   build: {
     outDir: "dist",
     chunkSizeWarningLimit: 1000, // Increase warning limit to 1MB
     assetsInlineLimit: 0, // Don't inline assets, keep them as separate files
     rollupOptions: {
+      input: {
+        main: '/index.html'
+      },
       output: {
         // Manual chunk splitting for better caching
         manualChunks: (id) => {
