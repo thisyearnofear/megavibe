@@ -1,11 +1,17 @@
 import { Buffer } from 'buffer';
 import crypto from 'crypto-browserify';
+import { EventEmitter } from 'events';
 
 // Ensure globals are available before any other modules load
 (function() {
   // Polyfill global Buffer
   if (typeof window !== 'undefined' && !window.Buffer) {
     window.Buffer = Buffer;
+  }
+
+  // Polyfill global EventEmitter
+  if (typeof window !== 'undefined' && !window.EventEmitter) {
+    window.EventEmitter = EventEmitter;
   }
 
   // Polyfill process.env with better compatibility
@@ -30,6 +36,16 @@ import crypto from 'crypto-browserify';
     if (typeof globalThis !== 'undefined' && !globalThis.crypto) {
       globalThis.crypto = window.crypto;
     }
+    
+    // Make EventEmitter available globally for modules that need it
+    if (typeof globalThis !== 'undefined' && !globalThis.EventEmitter) {
+      globalThis.EventEmitter = EventEmitter;
+    }
+    
+    // Some libraries expect events module to be available globally
+    if (typeof globalThis !== 'undefined' && !globalThis.events) {
+      globalThis.events = { EventEmitter };
+    }
   }
 })();
 
@@ -43,11 +59,31 @@ if (typeof window !== 'undefined') {
     if (
       message.includes('Could not establish connection') ||
       message.includes('Receiving end does not exist') ||
-      message.includes("Backpack couldn't override window.ethereum")
+      message.includes("Backpack couldn't override window.ethereum") ||
+      message.includes('pageProvider.js') ||
+      message.includes('Extension context invalidated')
     ) {
-      console.warn('[Wallet Extension]', ...args);
+      // These are usually harmless extension communication issues
+      console.debug('[Wallet Extension - Non-Critical]', ...args);
       return;
     }
     originalConsoleError.apply(console, args);
   };
+  
+  // Also handle unhandled promise rejections from wallet extensions
+  window.addEventListener('unhandledrejection', (event) => {
+    const error = event.reason;
+    if (error && typeof error === 'object') {
+      const message = error.message || error.toString();
+      if (
+        message.includes('Could not establish connection') ||
+        message.includes('Receiving end does not exist') ||
+        message.includes('Extension context invalidated')
+      ) {
+        console.debug('[Wallet Extension - Promise Rejection]', error);
+        event.preventDefault(); // Prevent the error from showing in console
+        return;
+      }
+    }
+  });
 }

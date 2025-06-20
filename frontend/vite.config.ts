@@ -60,7 +60,8 @@ export default defineConfig({
             }
             // Crypto and Node polyfills
             if (id.includes('crypto-browserify') || id.includes('stream-browserify') || 
-                id.includes('buffer') || id.includes('process') || id.includes('ethereum-cryptography')) {
+                id.includes('buffer') || id.includes('process') || id.includes('ethereum-cryptography') ||
+                id.includes('events')) {
               return 'vendor-polyfills';
             }
             // Everything else
@@ -93,6 +94,7 @@ export default defineConfig({
       buffer: "buffer",
       process: "process/browser",
       util: "util",
+      events: "events",
     },
   },
   optimizeDeps: {
@@ -106,6 +108,7 @@ export default defineConfig({
       'crypto-browserify',
       'stream-browserify',
       'process/browser',
+      'events',
     ],
     esbuildOptions: {
       // Node.js global to browser globalThis

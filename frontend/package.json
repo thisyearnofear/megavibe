@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "start": "vite preview", 
+    "start": "vite preview",
     "preview": "vite preview",
     "test": "echo \"No tests specified\"",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
@@ -16,6 +16,8 @@
     "build:clean": "npm run clean && npm run build",
     "build:production": "NODE_ENV=production npm run build",
     "deploy": "npm run build:production",
+    "test:polyfills": "npm run build && npm run preview",
+    "test:production": "./test-production-build.sh",
     "audit:fix": "npm audit fix",
     "audit:check": "npm audit --audit-level=moderate",
     "deps:update": "npm update && npm audit fix"
@@ -77,6 +79,7 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
+    "events": "^3.3.0",
     "prettier": "^3.5.3",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",

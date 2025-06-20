@@ -114,7 +114,50 @@ declare global {
     // Add any global window properties you might use
     ethereum?: EthereumProvider;
     web3?: unknown;
+    
+    // Node.js polyfills
+    Buffer: typeof import('buffer').Buffer;
+    EventEmitter: typeof import('events').EventEmitter;
+    events: {
+      EventEmitter: typeof import('events').EventEmitter;
+    };
+    process: {
+      env: Record<string, string | undefined>;
+      browser: boolean;
+      version: string;
+      nextTick: (fn: Function) => void;
+    };
+    crypto: Crypto;
   }
+  
+  interface GlobalThis {
+    // Node.js polyfills for globalThis
+    Buffer: typeof import('buffer').Buffer;
+    EventEmitter: typeof import('events').EventEmitter;
+    events: {
+      EventEmitter: typeof import('events').EventEmitter;
+    };
+    process: {
+      env: Record<string, string | undefined>;
+      browser: boolean;
+      version: string;
+      nextTick: (fn: Function) => void;
+    };
+    crypto: Crypto;
+  }
+
+  // Global variables that our polyfills provide
+  var Buffer: typeof import('buffer').Buffer;
+  var EventEmitter: typeof import('events').EventEmitter;
+  var events: {
+    EventEmitter: typeof import('events').EventEmitter;
+  };
+  var process: {
+    env: Record<string, string | undefined>;
+    browser: boolean;
+    version: string;
+    nextTick: (fn: Function) => void;
+  };
 }
 
 export {};
