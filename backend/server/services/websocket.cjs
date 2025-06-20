@@ -4,16 +4,16 @@
  * reconnection logic, heartbeat monitoring, and room-based messaging.
  */
 
-const WebSocket = require("ws");
+const { Server } = require("socket.io");
 const { logger } = require("../middleware/errorHandler.cjs");
 
 // WebSocket server instance
-let wss;
+let io;
 
 // Connection management
-const connections = new Map(); // connectionId -> connection info
-const rooms = new Map(); // roomId -> Set of connectionIds
-const userConnections = new Map(); // userId -> Set of connectionIds
+const connections = new Map(); // socket.id -> connection info
+const rooms = new Map(); // roomId -> Set of socket.ids
+const userConnections = new Map(); // userId -> Set of socket.ids
 
 // Configuration
 const CONFIG = {
@@ -27,68 +27,68 @@ const CONFIG = {
 // Message types
 const MESSAGE_TYPES = {
   // System messages
-  CONNECTION_ESTABLISHED: 'CONNECTION_ESTABLISHED',
-  HEARTBEAT: 'HEARTBEAT',
-  PONG: 'PONG',
-  ERROR: 'ERROR',
-  
+  CONNECTION_ESTABLISHED: "CONNECTION_ESTABLISHED",
+  HEARTBEAT: "HEARTBEAT",
+  PONG: "PONG",
+  ERROR: "ERROR",
+
   // Application messages
-  TIP_CONFIRMED: 'TIP_CONFIRMED',
-  TIP_ACKNOWLEDGED: 'TIP_ACKNOWLEDGED',
-  BOUNTY_CREATED: 'BOUNTY_CREATED',
-  BOUNTY_CLAIMED: 'BOUNTY_CLAIMED',
-  BOUNTY_SUBMITTED: 'BOUNTY_SUBMITTED',
-  BOUNTY_COMPLETED: 'BOUNTY_COMPLETED',
-  
+  TIP_CONFIRMED: "TIP_CONFIRMED",
+  TIP_ACKNOWLEDGED: "TIP_ACKNOWLEDGED",
+  BOUNTY_CREATED: "BOUNTY_CREATED",
+  BOUNTY_CLAIMED: "BOUNTY_CLAIMED",
+  BOUNTY_SUBMITTED: "BOUNTY_SUBMITTED",
+  BOUNTY_COMPLETED: "BOUNTY_COMPLETED",
+
   // Room management
-  JOIN_ROOM: 'JOIN_ROOM',
-  LEAVE_ROOM: 'LEAVE_ROOM',
-  ROOM_UPDATE: 'ROOM_UPDATE',
+  JOIN_ROOM: "JOIN_ROOM",
+  LEAVE_ROOM: "LEAVE_ROOM",
+  ROOM_UPDATE: "ROOM_UPDATE",
 };
 
 // Initialize WebSocket server
 function initWebSocketServer(server) {
-  wss = new WebSocket.Server({ 
-    server,
-    perMessageDeflate: {
-      zlibDeflateOptions: {
-        threshold: 1024,
-        concurrencyLimit: 10,
-      },
+  io = new Server(server, {
+    cors: {
+      origin:
+        process.env.NODE_ENV === "production"
+          ? ["https://megavibe.vercel.app", "https://megavibe.onrender.com"]
+          : [
+              "http://localhost:5173",
+              "http://localhost:3000",
+              "https://megavibe.vercel.app",
+            ],
+      methods: ["GET", "POST"],
+      credentials: true,
     },
   });
 
-  logger.info("WebSocket server initialized");
+  logger.info("Socket.IO server initialized");
 
-  wss.on("connection", handleConnection);
-  
-  // Start heartbeat monitoring
-  startHeartbeatMonitoring();
-  
+  io.on("connection", handleConnection);
+
   // Cleanup interval
   setInterval(cleanupStaleConnections, 60000); // Every minute
 
-  return wss;
+  return io;
 }
 
 // Handle new WebSocket connection
-function handleConnection(ws, req) {
-  const connectionId = generateConnectionId();
-  const url = new URL(req.url, `http://${req.headers.host}`);
-  
-  // Extract connection parameters
-  const userId = url.searchParams.get("userId");
-  const venueId = url.searchParams.get("venueId");
-  const eventId = url.searchParams.get("eventId");
-  const userAgent = req.headers['user-agent'];
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+function handleConnection(socket) {
+  const connectionId = socket.id;
+
+  // Extract connection parameters from handshake
+  const { userId, venueId, eventId } = socket.handshake.query;
+  const userAgent = socket.handshake.headers["user-agent"];
+  const ip =
+    socket.handshake.headers["x-forwarded-for"] || socket.conn.remoteAddress;
 
   // Rate limiting per user
   if (userId && userConnections.has(userId)) {
     const userConns = userConnections.get(userId);
     if (userConns.size >= CONFIG.MAX_CONNECTIONS_PER_USER) {
       logger.warn(`User ${userId} exceeded max connections limit`);
-      ws.close(1008, 'Too many connections');
+      socket.disconnect(true);
       return;
     }
   }
@@ -96,7 +96,7 @@ function handleConnection(ws, req) {
   // Create connection info
   const connectionInfo = {
     id: connectionId,
-    ws,
+    socket,
     userId,
     venueId,
     eventId,
@@ -127,7 +127,7 @@ function handleConnection(ws, req) {
     joinRoom(connectionId, `event:${eventId}`);
   }
 
-  logger.info(`WebSocket connection established: ${connectionId}`, {
+  logger.info(`Socket.IO connection established: ${connectionId}`, {
     userId,
     venueId,
     eventId,
@@ -146,36 +146,23 @@ function handleConnection(ws, req) {
   });
 
   // Set up event handlers
-  ws.on("message", (data) => handleMessage(connectionId, data));
-  ws.on("close", (code, reason) => handleDisconnection(connectionId, code, reason));
-  ws.on("error", (error) => handleConnectionError(connectionId, error));
-  ws.on("pong", () => handlePong(connectionId));
-
-  // Set connection timeout
-  setTimeout(() => {
-    if (connections.has(connectionId)) {
-      const conn = connections.get(connectionId);
-      if (!conn.isAlive) {
-        logger.warn(`Connection timeout: ${connectionId}`);
-        ws.terminate();
-      }
-    }
-  }, CONFIG.CONNECTION_TIMEOUT);
+  socket.on("message", (data) => handleMessage(connectionId, data));
+  socket.on("disconnect", (reason) =>
+    handleDisconnection(connectionId, reason)
+  );
+  socket.on("error", (error) => handleConnectionError(connectionId, error));
+  socket.on("joinEvent", (eventId) => {
+    joinRoom(connectionId, `event:${eventId}`);
+  });
 }
 
 // Handle incoming messages
-function handleMessage(connectionId, data) {
+function handleMessage(connectionId, message) {
   try {
     const connection = connections.get(connectionId);
     if (!connection) return;
 
-    // Size check
-    if (data.length > CONFIG.MAX_MESSAGE_SIZE) {
-      sendError(connectionId, 'Message too large');
-      return;
-    }
-
-    const message = JSON.parse(data);
+    // Assuming message is already a JS object from socket.io
     connection.lastHeartbeat = new Date();
 
     logger.debug(`Message received from ${connectionId}:`, message.type);
@@ -184,42 +171,44 @@ function handleMessage(connectionId, data) {
       case MESSAGE_TYPES.HEARTBEAT:
         handleHeartbeat(connectionId);
         break;
-        
+
       case MESSAGE_TYPES.JOIN_ROOM:
         if (message.roomId) {
           joinRoom(connectionId, message.roomId);
         }
         break;
-        
+
       case MESSAGE_TYPES.LEAVE_ROOM:
         if (message.roomId) {
           leaveRoom(connectionId, message.roomId);
         }
         break;
-        
+
       default:
-        logger.warn(`Unknown message type: ${message.type} from ${connectionId}`);
+        // This is where custom events like 'joinEvent' would be handled if not handled directly on the socket
+        logger.warn(
+          `Unknown message type: ${message.type} from ${connectionId}`
+        );
     }
   } catch (error) {
-    logger.error(`Error parsing message from ${connectionId}:`, error);
-    sendError(connectionId, 'Invalid message format');
+    logger.error(`Error processing message from ${connectionId}:`, error);
+    sendError(connectionId, "Invalid message format");
   }
 }
 
 // Handle connection disconnection
-function handleDisconnection(connectionId, code, reason) {
+function handleDisconnection(connectionId, reason) {
   const connection = connections.get(connectionId);
   if (!connection) return;
 
-  logger.info(`WebSocket disconnection: ${connectionId}`, {
-    code,
-    reason: reason.toString(),
+  logger.info(`Socket.IO disconnection: ${connectionId}`, {
+    reason,
     userId: connection.userId,
     duration: Date.now() - connection.connectedAt.getTime(),
   });
 
   // Remove from all rooms
-  connection.rooms.forEach(roomId => {
+  connection.rooms.forEach((roomId) => {
     leaveRoom(connectionId, roomId);
   });
 
@@ -241,10 +230,10 @@ function handleDisconnection(connectionId, code, reason) {
 // Handle connection errors
 function handleConnectionError(connectionId, error) {
   logger.error(`WebSocket error for ${connectionId}:`, error);
-  
+
   const connection = connections.get(connectionId);
   if (connection) {
-    sendError(connectionId, 'Connection error occurred');
+    sendError(connectionId, "Connection error occurred");
   }
 }
 
@@ -254,20 +243,11 @@ function handleHeartbeat(connectionId) {
   if (connection) {
     connection.isAlive = true;
     connection.lastHeartbeat = new Date();
-    
+
     sendToConnection(connectionId, {
       type: MESSAGE_TYPES.PONG,
       timestamp: new Date().toISOString(),
     });
-  }
-}
-
-// Handle pong response
-function handlePong(connectionId) {
-  const connection = connections.get(connectionId);
-  if (connection) {
-    connection.isAlive = true;
-    connection.lastHeartbeat = new Date();
   }
 }
 
@@ -288,7 +268,7 @@ function joinRoom(connectionId, roomId) {
   // Notify connection
   sendToConnection(connectionId, {
     type: MESSAGE_TYPES.ROOM_UPDATE,
-    action: 'joined',
+    action: "joined",
     roomId,
     memberCount: rooms.get(roomId).size,
     timestamp: new Date().toISOString(),
@@ -315,7 +295,7 @@ function leaveRoom(connectionId, roomId) {
   // Notify connection
   sendToConnection(connectionId, {
     type: MESSAGE_TYPES.ROOM_UPDATE,
-    action: 'left',
+    action: "left",
     roomId,
     memberCount: rooms.has(roomId) ? rooms.get(roomId).size : 0,
     timestamp: new Date().toISOString(),
@@ -334,7 +314,7 @@ function broadcastToRoom(roomId, message, excludeConnectionId = null) {
   const roomConnections = rooms.get(roomId);
   let sentCount = 0;
 
-  roomConnections.forEach(connectionId => {
+  roomConnections.forEach((connectionId) => {
     if (connectionId !== excludeConnectionId) {
       if (sendToConnection(connectionId, message)) {
         sentCount++;
@@ -342,7 +322,9 @@ function broadcastToRoom(roomId, message, excludeConnectionId = null) {
     }
   });
 
-  logger.debug(`Broadcasted to room ${roomId}: ${sentCount}/${roomConnections.size} connections`);
+  logger.debug(
+    `Broadcasted to room ${roomId}: ${sentCount}/${roomConnections.size} connections`
+  );
   return sentCount;
 }
 
@@ -355,13 +337,15 @@ function broadcastToUser(userId, message) {
   const userConns = userConnections.get(userId);
   let sentCount = 0;
 
-  userConns.forEach(connectionId => {
+  userConns.forEach((connectionId) => {
     if (sendToConnection(connectionId, message)) {
       sentCount++;
     }
   });
 
-  logger.debug(`Broadcasted to user ${userId}: ${sentCount}/${userConns.size} connections`);
+  logger.debug(
+    `Broadcasted to user ${userId}: ${sentCount}/${userConns.size} connections`
+  );
   return sentCount;
 }
 
@@ -376,24 +360,22 @@ function broadcastGlobal(message, excludeUserId = null) {
     }
   });
 
-  logger.debug(`Global broadcast: ${sentCount}/${connections.size} connections`);
+  logger.debug(
+    `Global broadcast: ${sentCount}/${connections.size} connections`
+  );
   return sentCount;
 }
 
 // Send message to specific connection
 function sendToConnection(connectionId, message) {
   const connection = connections.get(connectionId);
-  if (!connection || connection.ws.readyState !== WebSocket.OPEN) {
+  if (!connection || !connection.socket.connected) {
     return false;
   }
 
   try {
-    const messageStr = JSON.stringify({
-      ...message,
-      timestamp: message.timestamp || new Date().toISOString(),
-    });
-    
-    connection.ws.send(messageStr);
+    // socket.io handles object serialization
+    connection.socket.emit(message.type, message);
     return true;
   } catch (error) {
     logger.error(`Error sending message to ${connectionId}:`, error);
@@ -410,24 +392,6 @@ function sendError(connectionId, errorMessage) {
   });
 }
 
-// Heartbeat monitoring
-function startHeartbeatMonitoring() {
-  setInterval(() => {
-    connections.forEach((connection, connectionId) => {
-      if (!connection.isAlive) {
-        logger.warn(`Terminating stale connection: ${connectionId}`);
-        connection.ws.terminate();
-        return;
-      }
-
-      connection.isAlive = false;
-      if (connection.ws.readyState === WebSocket.OPEN) {
-        connection.ws.ping();
-      }
-    });
-  }, CONFIG.HEARTBEAT_INTERVAL);
-}
-
 // Cleanup stale connections
 function cleanupStaleConnections() {
   const now = Date.now();
@@ -435,17 +399,17 @@ function cleanupStaleConnections() {
 
   connections.forEach((connection, connectionId) => {
     const timeSinceLastHeartbeat = now - connection.lastHeartbeat.getTime();
-    
+
     if (timeSinceLastHeartbeat > CONFIG.HEARTBEAT_INTERVAL * 2) {
       staleConnections.push(connectionId);
     }
   });
 
-  staleConnections.forEach(connectionId => {
+  staleConnections.forEach((connectionId) => {
     const connection = connections.get(connectionId);
     if (connection) {
       logger.warn(`Cleaning up stale connection: ${connectionId}`);
-      connection.ws.terminate();
+      connection.socket.disconnect(true);
     }
   });
 
@@ -455,9 +419,6 @@ function cleanupStaleConnections() {
 }
 
 // Utility functions
-function generateConnectionId() {
-  return `conn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-}
 
 function getConnectionStats() {
   return {
@@ -479,12 +440,12 @@ function notifyTipConfirmed(tipData) {
   };
 
   let sentCount = 0;
-  
+
   // Broadcast to event room
   if (tipData.eventId) {
     sentCount += broadcastToRoom(`event:${tipData.eventId}`, message);
   }
-  
+
   // Broadcast to venue room if available
   if (tipData.venueId) {
     sentCount += broadcastToRoom(`venue:${tipData.venueId}`, message);
@@ -500,12 +461,12 @@ function notifyBountyCreated(bountyData) {
   };
 
   let sentCount = 0;
-  
+
   // Broadcast to event room
   if (bountyData.eventId) {
     sentCount += broadcastToRoom(`event:${bountyData.eventId}`, message);
   }
-  
+
   // Notify speaker directly
   if (bountyData.speakerId) {
     sentCount += broadcastToUser(bountyData.speakerId, message);
@@ -521,17 +482,17 @@ function notifyBountyUpdate(bountyData, updateType) {
   };
 
   let sentCount = 0;
-  
+
   // Broadcast to event room
   if (bountyData.eventId) {
     sentCount += broadcastToRoom(`event:${bountyData.eventId}`, message);
   }
-  
+
   // Notify relevant users
   if (bountyData.creatorId) {
     sentCount += broadcastToUser(bountyData.creatorId, message);
   }
-  
+
   if (bountyData.claimedBy) {
     sentCount += broadcastToUser(bountyData.claimedBy, message);
   }
@@ -541,24 +502,18 @@ function notifyBountyUpdate(bountyData, updateType) {
 
 // Graceful shutdown
 function shutdown() {
-  logger.info('Shutting down WebSocket server...');
-  
-  if (wss) {
-    wss.clients.forEach(ws => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.close(1001, 'Server shutting down');
-      }
-    });
-    
-    wss.close(() => {
-      logger.info('WebSocket server closed');
+  logger.info("Shutting down Socket.IO server...");
+
+  if (io) {
+    io.close(() => {
+      logger.info("Socket.IO server closed");
     });
   }
 }
 
 // Handle process signals
-process.on('SIGTERM', shutdown);
-process.on('SIGINT', shutdown);
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);
 
 module.exports = {
   initWebSocketServer,

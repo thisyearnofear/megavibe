@@ -7,7 +7,7 @@
 const Event = require("../models/eventModel.cjs");
 const Venue = require("../models/venueModel.cjs");
 const asyncHandler = require("express-async-handler");
-const { broadcastToVenue } = require("../services/websocket.cjs");
+const { broadcastToRoom } = require("../services/websocket.cjs");
 
 // @desc    Update current song for an event
 // @route   PUT /api/events/:id/current-song
@@ -36,7 +36,7 @@ const updateCurrentSong = asyncHandler(async (req, res) => {
     const updatedEvent = await event.save();
 
     // Broadcast update to connected clients in the venue
-    broadcastToVenue(event.venue.toString(), {
+    broadcastToRoom(`venue:${event.venue.toString()}`, {
       type: "CURRENT_SONG_UPDATE",
       eventId: event._id.toString(),
       currentSong: updatedEvent.currentSong,
@@ -76,7 +76,7 @@ const sendNotification = asyncHandler(async (req, res) => {
     await event.save();
 
     // Broadcast notification to connected clients in the venue
-    broadcastToVenue(event.venue.toString(), {
+    broadcastToRoom(`venue:${event.venue.toString()}`, {
       type: "EVENT_NOTIFICATION",
       eventId: event._id.toString(),
       notification,
@@ -112,7 +112,7 @@ const updateOccupancy = asyncHandler(async (req, res) => {
     const updatedVenue = await venue.save();
 
     // Broadcast update to connected clients in the venue
-    broadcastToVenue(venue._id.toString(), {
+    broadcastToRoom(`venue:${venue._id.toString()}`, {
       type: "OCCUPANCY_UPDATE",
       venueId: venue._id.toString(),
       currentOccupancy: updatedVenue.currentOccupancy,
@@ -192,7 +192,7 @@ const broadcastTipNotification = asyncHandler(async (req, res) => {
     };
 
     // Broadcast tip notification to connected clients in the venue
-    broadcastToVenue(event.venue.toString(), tipNotification);
+    broadcastToRoom(`venue:${event.venue.toString()}`, tipNotification);
 
     res
       .status(200)
