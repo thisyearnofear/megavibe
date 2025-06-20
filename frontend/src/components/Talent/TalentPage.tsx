@@ -16,7 +16,7 @@ import './TalentPage.css';
 // Known speaker addresses with verified Farcaster profiles
 const KNOWN_SPEAKERS = [
   '0xd7029bdea1c17493893aafe29aad69ef892b8ff2', // dwr.eth (Dan Romero - Farcaster co-founder)
-  '0xd8da6bf26964af9d7eed9e03e53415d37aa96045', // vitalik.eth 
+  '0xd8da6bf26964af9d7eed9e03e53415d37aa96045', // vitalik.eth
   '0x50ec05ade8280758e2077fcbc08d878d4aef79c3', // balajis.eth
   '0x182359B4129AC1bb7E7c51Ac8F65c4F87d3b3E9d', // jessepollak.eth (Jesse Pollak - Base)
   '0x3ecA6B4e4b5f21Ad95B71df1B1E1a9C24bbc9F3d', // linda.eth
@@ -41,8 +41,8 @@ export const TalentPage: React.FC<TalentPageProps> = ({
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'reputation' | 'tips' | 'social' | 'recent'>('reputation');
-  const [filterBy, setFilterBy] = useState<'all' | 'farcaster' | 'lens' | 'verified'>('all');
-  
+  const [filterBy, setFilterBy] = useState<'all' | 'farcaster' | 'verified'>('all');
+
   // Get context from URL params
   const eventId = searchParams.get('event');
   const focusedSpeaker = searchParams.get('speaker');
@@ -54,15 +54,15 @@ export const TalentPage: React.FC<TalentPageProps> = ({
   const loadSpeakers = async () => {
     try {
       setLoading(true);
-      
+
       let speakerAddresses: string[] = [];
-      
+
       if (isConnected && isCorrectNetwork && eventId) {
         // Try to get speakers from event contract (if we have this functionality)
         try {
           // const eventSpeakers = await contractService.getSpeakersForEvent(eventId);
           // speakerAddresses = eventSpeakers;
-          
+
           // For now, use known speakers
           speakerAddresses = KNOWN_SPEAKERS;
         } catch (error) {
@@ -73,7 +73,7 @@ export const TalentPage: React.FC<TalentPageProps> = ({
         // Use known speakers for demo
         speakerAddresses = KNOWN_SPEAKERS;
       }
-      
+
       setSpeakers(speakerAddresses);
     } catch (error) {
       console.error('Failed to load speakers:', error);
@@ -98,7 +98,7 @@ export const TalentPage: React.FC<TalentPageProps> = ({
     const params = new URLSearchParams();
     params.set('speaker', speakerAddress);
     if (eventId) params.set('event', eventId);
-    
+
     navigate(`/tip?${params.toString()}`);
     onNavigateToTip?.(speakerAddress);
   };
@@ -119,7 +119,7 @@ export const TalentPage: React.FC<TalentPageProps> = ({
     params.set('speaker', speakerAddress);
     params.set('create', 'true');
     if (eventId) params.set('event', eventId);
-    
+
     navigate(`/bounties?${params.toString()}`);
     onNavigateToBounty?.(speakerAddress);
   };
@@ -127,12 +127,12 @@ export const TalentPage: React.FC<TalentPageProps> = ({
   const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-    
+
     setLoading(true);
     try {
       // Search for speakers using hybrid system (Farcaster + curated)
       const searchResults = await hybridSpeakerService.searchSpeakers(searchQuery);
-      
+
       if (searchResults.length > 0) {
         // Extract addresses from search results
         const addresses = searchResults.map(result => result.address);
@@ -178,8 +178,8 @@ export const TalentPage: React.FC<TalentPageProps> = ({
         <div className="talent-layout">
           {/* Sidebar Navigation */}
           <div className="talent-sidebar">
-            <CrossPlatformNav 
-              eventId={eventId || undefined} 
+            <CrossPlatformNav
+              eventId={eventId || undefined}
               speakerAddress={focusedSpeaker || undefined}
             />
           </div>
@@ -205,8 +205,8 @@ export const TalentPage: React.FC<TalentPageProps> = ({
 
                 {/* Filters */}
                 <div className="filter-controls">
-                  <select 
-                    value={sortBy} 
+                  <select
+                    value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
                     className="filter-select"
                   >
@@ -216,14 +216,13 @@ export const TalentPage: React.FC<TalentPageProps> = ({
                     <option value="recent">Sort: Recent Activity</option>
                   </select>
 
-                  <select 
-                    value={filterBy} 
+                  <select
+                    value={filterBy}
                     onChange={(e) => setFilterBy(e.target.value as any)}
                     className="filter-select"
                   >
                     <option value="all">All Profiles</option>
                     <option value="farcaster">Farcaster Users</option>
-                    <option value="lens">Lens Profiles</option>
                     <option value="verified">Verified Only</option>
                   </select>
                 </div>
@@ -270,8 +269,8 @@ export const TalentPage: React.FC<TalentPageProps> = ({
               <div className="empty-state">
                 <h3>🔍 No Speakers Found</h3>
                 <p>Try adjusting your search or filters</p>
-                <Button 
-                  variant="primary" 
+                <Button
+                  variant="primary"
                   onClick={() => {
                     setSearchQuery('');
                     setFilterBy('all');
@@ -302,7 +301,7 @@ export const TalentPage: React.FC<TalentPageProps> = ({
                 </div>
                 <div className="feature">
                   <span className="feature-icon">📱</span>
-                  <strong>Social Verification:</strong> Farcaster & Lens integration
+                  <strong>Social Verification:</strong> Farcaster integration
                 </div>
               </div>
             </Card>

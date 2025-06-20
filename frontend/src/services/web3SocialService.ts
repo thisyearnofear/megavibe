@@ -75,31 +75,16 @@ export interface FarcasterProfile {
   }>;
 }
 
-export interface LensProfile {
-  id: string;
-  handle: string;
-  name: string;
-  bio: string;
-  picture: string;
-  stats: {
-    followers: number;
-    following: number;
-    posts: number;
-  };
-  ownedBy: string;
-}
+// Lens integration removed - focusing on Farcaster only
 
 export interface Web3SpeakerProfile {
   // Core identity
   address: string;
   ensName?: string;
-  
+
   // Farcaster data
   farcaster?: FarcasterProfile;
-  
-  // Lens data  
-  lens?: LensProfile;
-  
+
   // On-chain reputation (from our contracts)
   onChainStats: {
     totalTipsReceived: string;
@@ -108,23 +93,25 @@ export interface Web3SpeakerProfile {
     eventsParticipated: number;
     reputationScore: number;
   };
-  
+
   // Aggregated social proof
   socialMetrics: {
     totalFollowers: number;
     totalEngagement: number;
     verifiedIdentity: boolean;
-    primaryPlatform: 'farcaster' | 'lens' | 'ens' | 'address';
+    primaryPlatform: 'farcaster' | 'ens' | 'address';
   };
 }
 
 class Web3SocialService {
   private neynarApiKey: string;
   private neynarBaseUrl = 'https://api.neynar.com/v2/farcaster';
-  private lensApiUrl = 'https://api.lens.dev';
-  
+
   constructor() {
-    this.neynarApiKey = process.env.VITE_NEYNAR_API_KEY || '';
+    this.neynarApiKey = process.env.VITE_NEYNAR_API_KEY || process.env.NEYNAR_API_KEY || '';
+    if (!this.neynarApiKey) {
+      console.warn('⚠️ VITE_NEYNAR_API_KEY or NEYNAR_API_KEY not configured. Farcaster profiles will not load.');
+    }
   }
 
   /**
@@ -158,7 +145,7 @@ class Web3SocialService {
 
       const data: { [key: string]: NeynarUser[] } = await response.json();
       const userArray = data[address.toLowerCase()];
-      
+
       if (!userArray || userArray.length === 0) {
         return null;
       }
@@ -196,7 +183,7 @@ class Web3SocialService {
       }
 
       const data: NeynarUserSearchResponse = await response.json();
-      
+
       return data.result.users.map(user => this.transformNeynarUser(user));
     } catch (error) {
       console.error('Error searching Farcaster users:', error);
@@ -233,7 +220,7 @@ class Web3SocialService {
       }
 
       const data: { user: NeynarUser } = await response.json();
-      
+
       return this.transformNeynarUser(data.user);
     } catch (error) {
       console.error('Error fetching Farcaster profile by username:', error);
@@ -268,7 +255,7 @@ class Web3SocialService {
       }
 
       const data: NeynarBulkUsersResponse = await response.json();
-      
+
       return data.users.map(user => this.transformNeynarUser(user));
     } catch (error) {
       console.error('Error fetching Farcaster profiles by FIDs:', error);
@@ -280,7 +267,7 @@ class Web3SocialService {
    * Transform Neynar API response to our internal format
    */
   private transformNeynarUser(neynarUser: NeynarUser): FarcasterProfile {
-    const location = neynarUser.profile?.location?.address 
+    const location = neynarUser.profile?.location?.address
       ? `${neynarUser.profile.location.address.city}, ${neynarUser.profile.location.address.state}`
       : undefined;
 
@@ -301,79 +288,11 @@ class Web3SocialService {
   }
 
   /**
-   * Get Lens profile by address
+   * Lens integration removed - focusing on Farcaster only
    */
-  async getLensProfile(address: string): Promise<LensProfile | null> {
-    try {
-      const query = `
-        query Profiles($ownedBy: [EthereumAddress!]) {
-          profiles(request: { ownedBy: $ownedBy, limit: 1 }) {
-            items {
-              id
-              handle
-              name
-              bio
-              picture {
-                ... on NftImage {
-                  uri
-                }
-                ... on MediaSet {
-                  original {
-                    url
-                  }
-                }
-              }
-              stats {
-                totalFollowers
-                totalFollowing
-                totalPosts
-              }
-              ownedBy
-            }
-          }
-        }
-      `;
-
-      const response = await fetch(this.lensApiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query,
-          variables: { ownedBy: [address] }
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Lens API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const profiles = data.data?.profiles?.items;
-      
-      if (!profiles || profiles.length === 0) {
-        return null;
-      }
-
-      const profile = profiles[0];
-      return {
-        id: profile.id,
-        handle: profile.handle,
-        name: profile.name,
-        bio: profile.bio,
-        picture: profile.picture?.original?.url || profile.picture?.uri || '',
-        stats: {
-          followers: profile.stats.totalFollowers,
-          following: profile.stats.totalFollowing,
-          posts: profile.stats.totalPosts
-        },
-        ownedBy: profile.ownedBy
-      };
-    } catch (error) {
-      console.error('Error fetching Lens profile:', error);
-      return null;
-    }
+  async getLensProfile(address: string): Promise<null> {
+    // Lens integration removed to focus on Farcaster
+    return null;
   }
 
   /**
@@ -384,7 +303,7 @@ class Web3SocialService {
       // Use a public ENS resolver
       const response = await fetch(`https://api.ensideas.com/ens/resolve/${address}`);
       if (!response.ok) return null;
-      
+
       const data = await response.json();
       return data.name || null;
     } catch (error) {
@@ -394,25 +313,22 @@ class Web3SocialService {
   }
 
   /**
-   * Get comprehensive Web3 profile for a speaker
+   * Get comprehensive Web3 profile for a speaker (Farcaster focused)
    */
   async getWeb3SpeakerProfile(address: string): Promise<Web3SpeakerProfile> {
-    const [farcaster, lens, ensName] = await Promise.all([
+    const [farcaster, ensName] = await Promise.all([
       this.getFarcasterProfile(address),
-      this.getLensProfile(address), // Keep for future Lens integration
       this.getENSName(address)
     ]);
 
-    // Calculate aggregated social metrics (focusing on Farcaster for now)
-    const totalFollowers = (farcaster?.followerCount || 0) + (lens?.stats.followers || 0);
-    const totalEngagement = (farcaster?.followerCount || 0) + (lens?.stats.posts || 0);
-    const verifiedIdentity = !!(farcaster || lens || ensName);
-    
-    let primaryPlatform: 'farcaster' | 'lens' | 'ens' | 'address' = 'address';
-    if (farcaster && farcaster.followerCount > (lens?.stats.followers || 0)) {
+    // Calculate aggregated social metrics (Farcaster focused)
+    const totalFollowers = farcaster?.followerCount || 0;
+    const totalEngagement = farcaster?.followerCount || 0;
+    const verifiedIdentity = !!(farcaster || ensName);
+
+    let primaryPlatform: 'farcaster' | 'ens' | 'address' = 'address';
+    if (farcaster) {
       primaryPlatform = 'farcaster';
-    } else if (lens) {
-      primaryPlatform = 'lens';
     } else if (ensName) {
       primaryPlatform = 'ens';
     }
@@ -421,13 +337,29 @@ class Web3SocialService {
       address,
       ensName,
       farcaster,
-      lens,
       onChainStats: {
         totalTipsReceived: '0', // Will be populated from contract
         totalBountiesCreated: 0,
         totalBountiesClaimed: 0,
         eventsParticipated: 0,
-        reputationScore: 0
+        reputationScore: this.calculateReputationScore({
+          address,
+          ensName,
+          farcaster,
+          onChainStats: {
+            totalTipsReceived: '0',
+            totalBountiesCreated: 0,
+            totalBountiesClaimed: 0,
+            eventsParticipated: 0,
+            reputationScore: 0
+          },
+          socialMetrics: {
+            totalFollowers,
+            totalEngagement,
+            verifiedIdentity,
+            primaryPlatform
+          }
+        })
       },
       socialMetrics: {
         totalFollowers,
@@ -445,21 +377,20 @@ class Web3SocialService {
     try {
       // Search Farcaster first
       const farcasterResults = await this.searchFarcasterUsers(query, 10);
-      
+
       // Convert Farcaster results to Web3SpeakerProfiles
       const profiles = await Promise.all(
         farcasterResults.map(async (fc) => {
           // Get the primary ETH address from verifications
           const primaryAddress = fc.verifications[0] || fc.custodyAddress;
-          
+
           // Get ENS name for the address if available
           const ensName = await this.getENSName(primaryAddress);
-          
+
           return {
             address: primaryAddress,
             ensName,
             farcaster: fc,
-            lens: null, // Will add Lens later
             onChainStats: {
               totalTipsReceived: '0',
               totalBountiesCreated: 0,
@@ -476,7 +407,7 @@ class Web3SocialService {
           };
         })
       );
-      
+
       return profiles;
     } catch (error) {
       console.error('Error searching speakers:', error);
@@ -485,35 +416,32 @@ class Web3SocialService {
   }
 
   /**
-   * Get display name with fallback priority
+   * Get display name with fallback priority (Farcaster focused)
    */
   getDisplayName(profile: Web3SpeakerProfile): string {
     if (profile.farcaster?.displayName) return profile.farcaster.displayName;
-    if (profile.lens?.name) return profile.lens.name;
     if (profile.ensName) return profile.ensName;
     if (profile.farcaster?.username) return `@${profile.farcaster.username}`;
-    if (profile.lens?.handle) return `@${profile.lens.handle}`;
     return `${profile.address.slice(0, 6)}...${profile.address.slice(-4)}`;
   }
 
   /**
-   * Get profile picture with fallback
+   * Get profile picture with fallback (Farcaster focused)
    */
   getProfilePicture(profile: Web3SpeakerProfile): string {
     if (profile.farcaster?.pfpUrl && profile.farcaster.pfpUrl !== '/api/placeholder/60/60') {
       return profile.farcaster.pfpUrl;
     }
-    if (profile.lens?.picture) return profile.lens.picture;
-    return '/api/placeholder/60/60'; // Default avatar
+    // Generate a consistent avatar based on address
+    return `https://api.dicebear.com/7.x/identicon/svg?seed=${profile.address}&backgroundColor=8A63D2`;
   }
 
   /**
-   * Get bio with fallback
+   * Get bio with fallback (Farcaster focused)
    */
   getBio(profile: Web3SpeakerProfile): string {
     if (profile.farcaster?.bio) return profile.farcaster.bio;
-    if (profile.lens?.bio) return profile.lens.bio;
-    return 'Web3 Speaker & Content Creator';
+    return 'Web3 Builder & Creator';
   }
 
   /**
@@ -536,14 +464,7 @@ class Web3SocialService {
       });
     }
 
-    if (profile.lens) {
-      links.push({
-        platform: 'lens',
-        url: `https://lenster.xyz/u/${profile.lens.handle}`,
-        username: profile.lens.handle,
-        followers: profile.lens.stats.followers
-      });
-    }
+    // Lens integration removed - focusing on Farcaster only
 
     // Add verified accounts from Farcaster
     if (profile.farcaster?.verifiedAccounts) {
@@ -574,26 +495,25 @@ class Web3SocialService {
    */
   calculateReputationScore(profile: Web3SpeakerProfile): number {
     let score = 0;
-    
+
     // Base score for having a profile
-    if (profile.farcaster) score += 100;
-    if (profile.lens) score += 50;
-    if (profile.ensName) score += 25;
-    
-    // Follower-based scoring
+    if (profile.farcaster) score += 200;
+    if (profile.ensName) score += 50;
+
+    // Follower-based scoring (Farcaster focused)
     const totalFollowers = profile.socialMetrics.totalFollowers;
-    if (totalFollowers > 10000) score += 500;
-    else if (totalFollowers > 5000) score += 300;
-    else if (totalFollowers > 1000) score += 200;
-    else if (totalFollowers > 500) score += 100;
-    else if (totalFollowers > 100) score += 50;
-    
+    if (totalFollowers > 10000) score += 600;
+    else if (totalFollowers > 5000) score += 400;
+    else if (totalFollowers > 1000) score += 250;
+    else if (totalFollowers > 500) score += 150;
+    else if (totalFollowers > 100) score += 75;
+
     // Power badge bonus
     if (profile.farcaster?.powerBadge) score += 200;
-    
+
     // Verification bonus
     if (profile.farcaster?.verifications.length > 0) score += 100;
-    
+
     return Math.min(score, 1000); // Cap at 1000
   }
 }
