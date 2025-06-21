@@ -55,7 +55,7 @@ function initWebSocketServer(server) {
           ? ["https://megavibe.vercel.app", "https://megavibe.onrender.com"]
           : [
               "http://localhost:5173",
-              "http://localhost:3000",
+              "http://localhost:3001",
               "https://megavibe.vercel.app",
             ],
       methods: ["GET", "POST"],

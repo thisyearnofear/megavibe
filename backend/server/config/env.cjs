@@ -12,7 +12,7 @@ dotenv.config();
 // Environment configuration
 const envConfig = {
   // Server settings
-  PORT: process.env.PORT || 3000,
+  PORT: process.env.PORT || 3001,
   NODE_ENV: process.env.NODE_ENV || "development",
 
   // Database settings

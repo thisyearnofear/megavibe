@@ -101,6 +101,7 @@ VITE_MANTLE_CHAIN_ID=5003
 VITE_MANTLE_NETWORK_NAME=Mantle Sepolia
 
 # Smart Contract Configuration
+VITE_EVENT_CONTRACT_ADDRESS=0x3332Af8198A2b7382153f0F21f94216540c98598
 VITE_TIPPING_CONTRACT_ADDRESS=0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F
 VITE_BOUNTY_CONTRACT_ADDRESS=0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F
 VITE_FEE_RECIPIENT_ADDRESS=0x8502d079f93AEcdaC7B0Fe71Fa877721995f1901
@@ -114,6 +115,7 @@ VITE_DEBUG_MODE=true
 
 ## 🎯 Active Smart Contracts
 
+- **Event Contract**: `0x3332Af8198A2b7382153f0F21f94216540c98598`
 - **Tipping**: `0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F`
 - **Bounties**: `0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F`
 - **Platform Fee**: 5% across all transactions
@@ -148,6 +150,7 @@ MegaVibe uses [Dynamic.xyz](https://dynamic.xyz) for seamless wallet connection:
 
 ### Smart Contracts
 
+- **Event Contract**: `0x3332Af8198A2b7382153f0F21f94216540c98598`
 - **Tipping Contract**: `0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F`
 - **Bounty Contract**: `0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F`
 - **Platform Fee**: 5% (95% goes to speakers/performers)

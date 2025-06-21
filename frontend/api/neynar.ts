@@ -1,7 +1,7 @@
 // Vercel Serverless API route for Neynar proxy
 
 export default async function handler(req, res) {
-  const apiKey = process.env.NEYNAR_API_KEY;
+  const apiKey = import.meta.env.NEYNAR_API_KEY;
   if (!apiKey) {
     res.status(500).json({ error: 'Missing NEYNAR_API_KEY' });
     return;

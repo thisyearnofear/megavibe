@@ -1,8 +1,6 @@
-import './polyfills';
-console.log('process.env at startup:', process.env);
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import App from './App';
 import { TipPage } from './components/TipPage';
 import { KnowledgeFlywheelPage } from './components/Knowledge/KnowledgeFlywheelPage';
@@ -14,9 +12,9 @@ import { NotFound } from './components/Shared/NotFound';
 import { AppProviders } from './components/AppProviders';
 import { GlobalNav } from './components/Navigation/GlobalNav';
 import { MobileNav } from './components/Navigation/MobileNav';
-import { useLocation } from 'react-router-dom';
+import './styles/design-system.css';
+import './styles/global.css';
 
-// Component to handle navigation with current page detection
 const AppWithNavigation: React.FC = () => {
   const location = useLocation();
 
@@ -46,24 +44,6 @@ const AppWithNavigation: React.FC = () => {
     </div>
   );
 };
-import './styles/design-system.css';
-import './styles/global.css';
-
-// Force cache refresh
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for(let registration of registrations) {
-      registration.unregister();
-    }
-  });
-}
-
-// Clear any cached modules (Webpack HMR)
-// @ts-ignore - webpack HMR is available in development
-if (typeof module !== 'undefined' && module.hot) {
-  // @ts-ignore - webpack HMR API
-  module.hot.accept();
-}
 
 const container = document.getElementById('root');
 if (container) {

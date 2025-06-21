@@ -32,7 +32,7 @@ const VenueMoreFields = mongoose.model(
 
 async function testVenueMoreFields() {
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
+    await mongoose.connect(import.meta.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

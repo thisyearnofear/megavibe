@@ -110,7 +110,7 @@ const getSnippets = asyncHandler(async (req, res) => {
 // @access  Public
 const getSnippetById = asyncHandler(async (req, res) => {
   const snippet = await AudioSnippet.findById(req.params.id).populate(
-    "creator venue event artist",
+    "creator venue event artist"
   );
 
   if (snippet) {
@@ -240,7 +240,7 @@ const addReaction = asyncHandler(async (req, res) => {
   const existingReactionIndex = snippet.reactions.findIndex(
     (r) =>
       r.user.toString() === req.user._id.toString() &&
-      r.reactionType === reactionType,
+      r.reactionType === reactionType
   );
 
   if (existingReactionIndex !== -1) {

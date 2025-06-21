@@ -9,42 +9,33 @@ interface NetworkInfo {
 }
 
 export interface WalletState {
-  // Connection state
   isConnected: boolean;
   isConnecting: boolean;
   isInitialized: boolean;
-
-  // Wallet information
   address: string | null;
   balance: string;
   chainId: number | null;
   isCorrectNetwork: boolean;
-
-  // Error handling
   error: string | null;
-
-  // Network information
   networkInfo: NetworkInfo | null;
 }
 
 export interface WalletActions {
-  // Connection actions
   connectWallet: () => Promise<void>;
   disconnectWallet: () => Promise<void>;
   switchToMantleSepolia: () => Promise<boolean>;
-
-  // Utility actions
   refreshBalance: () => Promise<void>;
   refreshWalletState: () => Promise<void>;
   clearError: () => void;
-
-  // Helper functions
   formatBalance: (balance: string) => string;
   formatAddress: (address: string) => string;
   isWalletReady: () => boolean;
 }
 
-export interface WalletContextValue extends WalletState, WalletActions {}
+// Use a more generic type for primaryWallet
+export interface WalletContextValue extends WalletState, WalletActions {
+  primaryWallet: any; 
+}
 
 const WalletContext = createContext<WalletContextValue | null>(null);
 
@@ -75,7 +66,6 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     networkInfo: null,
   });
 
-  // Initialize wallet state
   const refreshWalletState = useCallback(async () => {
     if (!primaryWallet) {
       setState(prev => ({
@@ -95,7 +85,6 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     try {
       setState(prev => ({ ...prev, isConnecting: true, error: null }));
 
-      // Get wallet client and initialize wallet service
       const walletClient = await (primaryWallet as any).getWalletClient();
       const initialized = await walletService.initialize(walletClient);
 
@@ -103,10 +92,8 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         throw new Error('Failed to initialize wallet service');
       }
 
-      // Also initialize contract service
       await contractService.initialize(walletClient);
 
-      // Get wallet information
       const address = primaryWallet.address;
       const balance = await walletService.getBalance();
       const networkInfo = await walletService.getNetwork();
@@ -135,7 +122,6 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     }
   }, [primaryWallet]);
 
-  // Connect wallet
   const connectWallet = useCallback(async () => {
     try {
       setState(prev => ({ ...prev, isConnecting: true, error: null }));
@@ -150,7 +136,6 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     }
   }, [setShowDynamicUserProfile]);
 
-  // Disconnect wallet
   const disconnectWallet = useCallback(async () => {
     try {
       await handleLogOut();
@@ -174,15 +159,11 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     }
   }, [handleLogOut]);
 
-  // Switch to Mantle Sepolia
   const switchToMantleSepolia = useCallback(async (): Promise<boolean> => {
     try {
       setState(prev => ({ ...prev, isConnecting: true, error: null }));
-
       const success = await walletService.switchToMantleSepolia();
-
       if (success) {
-        // Wait for network switch to complete, then refresh state
         setTimeout(() => {
           refreshWalletState();
         }, 1000);
@@ -206,10 +187,8 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     }
   }, [refreshWalletState]);
 
-  // Refresh balance
   const refreshBalance = useCallback(async () => {
     if (!state.isConnected || !primaryWallet) return;
-
     try {
       const balance = await walletService.getBalance();
       setState(prev => ({ ...prev, balance }));
@@ -218,12 +197,10 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     }
   }, [state.isConnected, primaryWallet]);
 
-  // Clear error
   const clearError = useCallback(() => {
     setState(prev => ({ ...prev, error: null }));
   }, []);
 
-  // Helper functions
   const formatBalance = useCallback((walletBalance: string): string => {
     const num = parseFloat(walletBalance);
     return isNaN(num) ? '0.000' : num.toFixed(3);
@@ -237,31 +214,20 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     return state.isConnected && state.isCorrectNetwork && !state.isConnecting;
   }, [state.isConnected, state.isCorrectNetwork, state.isConnecting]);
 
-  // Update wallet state when primary wallet changes
   useEffect(() => {
     refreshWalletState();
   }, [refreshWalletState]);
 
-  // Listen for account and chain changes
   useEffect(() => {
     if (!primaryWallet) return;
-
-    const handleAccountsChanged = () => {
-      refreshWalletState();
-    };
-
-    const handleChainChanged = () => {
-      refreshWalletState();
-    };
-
-    // Add event listeners if the wallet supports them
+    const handleAccountsChanged = () => refreshWalletState();
+    const handleChainChanged = () => refreshWalletState();
     try {
       const walletClient = (primaryWallet as any).connector;
       if (walletClient?.on) {
         walletClient.on('accountsChanged', handleAccountsChanged);
         walletClient.on('chainChanged', handleChainChanged);
       }
-
       return () => {
         if (walletClient?.off) {
           walletClient.off('accountsChanged', handleAccountsChanged);
@@ -269,24 +235,20 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         }
       };
     } catch (error) {
-      // Wallet doesn't support event listeners
-      if (process.env.VITE_DEBUG_MODE === 'true') {
+      if (import.meta.env.VITE_DEBUG_MODE === 'true') {
         console.log('Wallet does not support event listeners:', error);
       }
     }
   }, [primaryWallet, refreshWalletState]);
 
-  // Auto-refresh balance every 30 seconds when connected
   useEffect(() => {
     if (!state.isConnected) return;
-
     const interval = setInterval(refreshBalance, 30000);
     return () => clearInterval(interval);
   }, [state.isConnected, refreshBalance]);
 
-  // Debug logging in development
   useEffect(() => {
-    if (process.env.VITE_DEBUG_MODE === 'true') {
+    if (import.meta.env.VITE_DEBUG_MODE === 'true') {
       console.log('Wallet state updated:', {
         isConnected: state.isConnected,
         address: state.address,
@@ -298,18 +260,14 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   }, [state]);
 
   const contextValue: WalletContextValue = {
-    // State
     ...state,
-
-    // Actions
+    primaryWallet, // Expose primaryWallet
     connectWallet,
     disconnectWallet,
     switchToMantleSepolia,
     refreshBalance,
     refreshWalletState,
     clearError,
-
-    // Helpers
     formatBalance,
     formatAddress,
     isWalletReady,

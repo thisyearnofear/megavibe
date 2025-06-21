@@ -15,7 +15,7 @@ const MinimalVenue = mongoose.model("MinimalVenue", minimalVenueSchema);
 
 async function testMinimalVenue() {
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
+    await mongoose.connect(import.meta.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

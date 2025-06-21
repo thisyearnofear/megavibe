@@ -25,6 +25,7 @@ export const Web3SpeakerCard: React.FC<Web3SpeakerCardProps> = ({
 }) => {
   const [profile, setProfile] = useState<Web3SpeakerProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState(false);
   const [onChainStats, setOnChainStats] = useState({
     totalTipsReceived: '0',
     totalBountiesCreated: 0,
@@ -43,6 +44,11 @@ export const Web3SpeakerCard: React.FC<Web3SpeakerCardProps> = ({
 
       // Load Web3 social profile
       const web3Profile = await web3SocialService.getWeb3SpeakerProfile(address);
+      if (web3Profile && web3Profile.error) {
+        setApiError(true);
+        setLoading(false);
+        return;
+      }
 
       // Load on-chain stats if available
       if (isConnected && isCorrectNetwork) {
@@ -75,6 +81,7 @@ export const Web3SpeakerCard: React.FC<Web3SpeakerCardProps> = ({
       setProfile(web3Profile);
     } catch (error) {
       console.error('Failed to load speaker profile:', error);
+      setApiError(true);
     } finally {
       setLoading(false);
     }
@@ -89,6 +96,21 @@ export const Web3SpeakerCard: React.FC<Web3SpeakerCardProps> = ({
             <div className="skeleton-line skeleton-line--title"></div>
             <div className="skeleton-line skeleton-line--subtitle"></div>
             <div className="skeleton-line skeleton-line--bio"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (apiError) {
+    return (
+      <div className={`speaker-card speaker-card--${layout} speaker-card--error`}>
+        <div className="speaker-header">
+          <div className="speaker-identity">
+            <h3 className="speaker-name">API Error</h3>
+            <p className="speaker-bio">
+              Could not load Farcaster data. Please ensure your <code>VITE_NEYNAR_API_KEY</code> is correctly configured in your <code>.env</code> file.
+            </p>
           </div>
         </div>
       </div>

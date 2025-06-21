@@ -15,7 +15,7 @@ import { EventEmitter } from 'events';
       window.EventEmitter = EventEmitter;
     }
 
-    // Polyfill process.env with better compatibility
+    // Polyfill import.meta.env with better compatibility
     if (typeof window !== 'undefined' && !window.process) {  
       window.process = { 
         env: {},

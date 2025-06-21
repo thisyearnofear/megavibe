@@ -3,8 +3,8 @@ const path = require("path");
 require("dotenv").config({
   path:
     process.env.NODE_ENV === "production"
-      ? path.join(__dirname, ".env.production")
-      : path.join(__dirname, ".env"),
+      ? path.join(__dirname, "..", ".env.production")
+      : path.join(__dirname, "..", ".env"),
 });
 
 console.log("Environment:", process.env.NODE_ENV);
@@ -14,7 +14,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const connectDB = require("./services/db.cjs");
 const createExpressApp = require("./expressApp.cjs");
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 const helmet = require("helmet");
 const { handleError } = require("./utils/errorHandler.cjs");
 const fs = require("fs");
@@ -29,7 +29,7 @@ const allowedOrigins =
     ? ["https://megavibe.vercel.app", "https://megavibe.onrender.com"]
     : [
         "http://localhost:5173",
-        "http://localhost:3000",
+        "http://localhost:3001",
         "https://megavibe.vercel.app",
       ];
 

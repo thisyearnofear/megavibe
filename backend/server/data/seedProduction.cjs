@@ -367,7 +367,9 @@ const generateSessions = (events, users) => {
         event: event._id,
         startTime: sessionStart,
         endTime: sessionEnd,
-        description: `Deep dive into ${topic.toLowerCase()} presented by industry expert ${speaker.name}`,
+        description: `Deep dive into ${topic.toLowerCase()} presented by industry expert ${
+          speaker.name
+        }`,
         tags: [
           speaker.expertise.toLowerCase(),
           topic.toLowerCase().replace(/\s+/g, "-"),
@@ -409,7 +411,7 @@ const seedProductionDatabase = async () => {
     console.log("🚀 Starting production database seeding...");
     console.log(
       "📡 Connecting to:",
-      PRODUCTION_MONGO_URI.replace(/\/\/.*@/, "//***:***@"),
+      PRODUCTION_MONGO_URI.replace(/\/\/.*@/, "//***:***@")
     );
 
     // Connect to production MongoDB
@@ -425,10 +427,10 @@ const seedProductionDatabase = async () => {
 
     if (existingVenues > 0 || existingEvents > 0) {
       console.log(
-        `⚠️  Database already has data (${existingVenues} venues, ${existingEvents} events)`,
+        `⚠️  Database already has data (${existingVenues} venues, ${existingEvents} events)`
       );
       console.log(
-        "Do you want to clear and reseed? (This will delete all existing data)",
+        "Do you want to clear and reseed? (This will delete all existing data)"
       );
 
       // For production safety, require explicit confirmation

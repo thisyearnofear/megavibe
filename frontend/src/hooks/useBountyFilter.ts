@@ -21,15 +21,17 @@ export function useBountyFilter(
     if (speakerId) {
       result = result.filter(b => b.speaker.username === speakerId);
     }
-    result = result.filter(b => b.rewardAmount >= priceRange[0] && b.rewardAmount <= priceRange[1]);
+    // Corrected property name from rewardAmount to amount
+    result = result.filter(b => parseFloat(b.amount) >= priceRange[0] && parseFloat(b.amount) <= priceRange[1]);
     if (sort === 'highest') {
-      result = [...result].sort((a, b) => b.rewardAmount - a.rewardAmount);
+      result = [...result].sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
     } else if (sort === 'ending-soon') {
-      result = [...result].sort((a, b) => a.timeRemaining - b.timeRemaining);
+      result = [...result].sort((a, b) => a.deadline - b.deadline);
     } else if (sort === 'most-popular') {
-      result = [...result].sort((a, b) => b.rewardAmount - a.rewardAmount); // Placeholder for engagement
+      // Placeholder for engagement sorting
+      result = [...result].sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
     } else {
-      result = [...result].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      result = [...result].sort((a, b) => b.deadline - a.deadline);
     }
     return result;
   }, [bounties, status, sort, speakerId, priceRange]);

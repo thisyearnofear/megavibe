@@ -43,30 +43,30 @@ class Environment {
   private loadConfiguration(): EnvironmentConfig {
     return {
       // API Configuration
-      apiUrl: process.env.VITE_API_URL || (process.env.NODE_ENV === 'production' ? 'https://megavibe.onrender.com' : 'http://localhost:3000'),
-      wsUrl: process.env.VITE_WS_URL || (process.env.NODE_ENV === 'production' ? 'https://megavibe.onrender.com' : 'http://localhost:3000'),
-      environment: process.env.VITE_ENVIRONMENT || 'development',
+      apiUrl: import.meta.env.VITE_API_URL || (import.meta.env.NODE_ENV === 'production' ? 'https://megavibe.onrender.com' : 'http://localhost:3000'),
+      wsUrl: import.meta.env.VITE_WS_URL || (import.meta.env.NODE_ENV === 'production' ? 'https://megavibe.onrender.com' : 'http://localhost:3000'),
+      environment: import.meta.env.VITE_ENVIRONMENT || 'development',
 
       // Dynamic.xyz Configuration
-      dynamicEnvironmentId: process.env.VITE_DYNAMIC_ENVIRONMENT_ID || 'cd08ffe6-e5d5-49d4-8cb3-f9419a7f5e4d',
+      dynamicEnvironmentId: import.meta.env.VITE_DYNAMIC_ENVIRONMENT_ID || 'cd08ffe6-e5d5-49d4-8cb3-f9419a7f5e4d',
 
       // Mantle Network Configuration
-      mantleRpcUrl: process.env.VITE_MANTLE_RPC_URL || 'https://rpc.sepolia.mantle.xyz',
-      mantleChainId: Number(process.env.VITE_MANTLE_CHAIN_ID) || 5003,
-      mantleNetworkName: process.env.VITE_MANTLE_NETWORK_NAME || 'Mantle Sepolia',
+      mantleRpcUrl: import.meta.env.VITE_MANTLE_RPC_URL || 'https://rpc.sepolia.mantle.xyz',
+      mantleChainId: Number(import.meta.env.VITE_MANTLE_CHAIN_ID) || 5003,
+      mantleNetworkName: import.meta.env.VITE_MANTLE_NETWORK_NAME || 'Mantle Sepolia',
 
       // Smart Contract Configuration
-      tippingContractAddress: process.env.VITE_TIPPING_CONTRACT_ADDRESS || '0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F',
-      bountyContractAddress: process.env.VITE_BOUNTY_CONTRACT_ADDRESS || '0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F',
-      tippingContractNetwork: process.env.VITE_TIPPING_CONTRACT_NETWORK || 'mantleSepolia',
+      tippingContractAddress: import.meta.env.VITE_TIPPING_CONTRACT_ADDRESS || '0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F',
+      bountyContractAddress: import.meta.env.VITE_BOUNTY_CONTRACT_ADDRESS || '0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F',
+      tippingContractNetwork: import.meta.env.VITE_TIPPING_CONTRACT_NETWORK || 'mantleSepolia',
 
       // Fee Configuration
-      feeRecipientAddress: process.env.VITE_FEE_RECIPIENT_ADDRESS || '0x8502d079f93AEcdaC7B0Fe71Fa877721995f1901',
-      platformFeePercentage: Number(process.env.VITE_PLATFORM_FEE_PERCENTAGE) || 5,
+      feeRecipientAddress: import.meta.env.VITE_FEE_RECIPIENT_ADDRESS || '0x8502d079f93AEcdaC7B0Fe71Fa877721995f1901',
+      platformFeePercentage: Number(import.meta.env.VITE_PLATFORM_FEE_PERCENTAGE) || 5,
 
       // Development Features
-      debugMode: process.env.VITE_DEBUG_MODE === 'true',
-      logLevel: process.env.VITE_LOG_LEVEL || 'info',
+      debugMode: import.meta.env.VITE_DEBUG_MODE === 'true',
+      logLevel: import.meta.env.VITE_LOG_LEVEL || 'info',
     };
   }
 

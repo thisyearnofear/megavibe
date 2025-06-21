@@ -7,25 +7,25 @@ interface LiveTipFeedProps {
   className?: string;
 }
 
-export const LiveTipFeed: React.FC<LiveTipFeedProps> = ({ 
-  eventId, 
-  className = '' 
+export const LiveTipFeed: React.FC<LiveTipFeedProps> = ({
+  eventId,
+  className = '',
 }) => {
-  const { tips, stats, isLoading, error, refreshFeed } = useLiveTipFeed(eventId);
+  const { tips, stats, isLoading, error, isConnected, refreshFeed } = useLiveTipFeed(eventId);
   const [showAllTips, setShowAllTips] = useState(false);
 
   const formatTimeAgo = (timestamp: string): string => {
     const now = new Date();
     const tipTime = new Date(timestamp);
     const diffMs = now.getTime() - tipTime.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    
+    const diffMins = Math.round(diffMs / 60000);
+
     if (diffMins < 1) return 'just now';
     if (diffMins < 60) return `${diffMins}m ago`;
-    
+
     const diffHours = Math.floor(diffMins / 60);
     if (diffHours < 24) return `${diffHours}h ago`;
-    
+
     const diffDays = Math.floor(diffHours / 24);
     return `${diffDays}d ago`;
   };
@@ -36,42 +36,46 @@ export const LiveTipFeed: React.FC<LiveTipFeedProps> = ({
 
   const displayedTips = showAllTips ? tips : tips.slice(0, 10);
 
-  if (isLoading) {
-    return (
-      <div className={`live-tip-feed loading ${className}`}>
-        <div className="feed-header">
-          <h3>🔴 Live Tip Feed</h3>
-          <div className="loading-spinner"></div>
-        </div>
-        <div className="tip-skeleton">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="tip-item skeleton">
-              <div className="skeleton-avatar"></div>
-              <div className="skeleton-content">
-                <div className="skeleton-line"></div>
-                <div className="skeleton-line short"></div>
-              </div>
-            </div>
-          ))}
-        </div>
+  const renderLoadingState = () => (
+    <div className={`live-tip-feed loading ${className}`}>
+      <div className="feed-header">
+        <h3>🔴 Live Tip Feed</h3>
+        <div className="loading-spinner"></div>
       </div>
-    );
+      <div className="tip-skeleton">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="tip-item skeleton">
+            <div className="skeleton-avatar"></div>
+            <div className="skeleton-content">
+              <div className="skeleton-line"></div>
+              <div className="skeleton-line short"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderErrorState = () => (
+    <div className={`live-tip-feed error ${className}`}>
+      <div className="feed-header">
+        <h3>🔴 Live Tip Feed</h3>
+        <button onClick={refreshFeed} className="refresh-btn" title="Retry connection">
+          🔄 Retry
+        </button>
+      </div>
+      <div className="error-message">
+        <span>⚠️ {error}</span>
+      </div>
+    </div>
+  );
+
+  if (isLoading) {
+    return renderLoadingState();
   }
 
-  if (error) {
-    return (
-      <div className={`live-tip-feed error ${className}`}>
-        <div className="feed-header">
-          <h3>🔴 Live Tip Feed</h3>
-          <button onClick={refreshFeed} className="refresh-btn">
-            🔄 Retry
-          </button>
-        </div>
-        <div className="error-message">
-          <span>⚠️ {error}</span>
-        </div>
-      </div>
-    );
+  if (error && !isConnected) {
+    return renderErrorState();
   }
 
   return (
@@ -102,7 +106,7 @@ export const LiveTipFeed: React.FC<LiveTipFeedProps> = ({
 
       {/* Tips List */}
       <div className="tips-container">
-        {displayedTips.length === 0 ? (
+        {tips.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">💰</div>
             <p>No tips yet</p>
@@ -112,12 +116,11 @@ export const LiveTipFeed: React.FC<LiveTipFeedProps> = ({
           <>
             <div className="tips-list">
               {displayedTips.map((tip, index) => (
-                <div 
-                  key={tip.id} 
+                <div
+                  key={tip.id}
                   className={`tip-item ${index < 3 ? 'recent' : ''}`}
-                  style={{ 
+                  style={{
                     animationDelay: `${index * 0.1}s`,
-                    opacity: Math.max(0.3, 1 - (index * 0.1))
                   }}
                 >
                   <div className="tip-avatar">
@@ -129,18 +132,18 @@ export const LiveTipFeed: React.FC<LiveTipFeedProps> = ({
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="tip-content">
                     <div className="tip-header">
                       <span className="tipper-name">@{tip.tipper.username}</span>
                       <span className="tip-amount">{formatAmount(tip.amount)}</span>
                       <span className="tip-time">{formatTimeAgo(tip.timestamp)}</span>
                     </div>
-                    
+
                     {tip.message && (
                       <div className="tip-message">"{tip.message}"</div>
                     )}
-                    
+
                     <div className="tip-recipient">
                       → {tip.recipient.username}
                     </div>
@@ -165,7 +168,7 @@ export const LiveTipFeed: React.FC<LiveTipFeedProps> = ({
 
             {tips.length > 10 && (
               <div className="feed-footer">
-                <button 
+                <button
                   className="show-more-btn"
                   onClick={() => setShowAllTips(!showAllTips)}
                 >
@@ -178,9 +181,9 @@ export const LiveTipFeed: React.FC<LiveTipFeedProps> = ({
       </div>
 
       {/* Live Indicator */}
-      <div className="live-indicator">
+      <div className={`live-indicator ${isConnected ? 'connected' : 'disconnected'}`}>
         <span className="live-dot"></span>
-        <span>Live</span>
+        <span>{isConnected ? 'Live' : 'Offline'}</span>
       </div>
     </div>
   );

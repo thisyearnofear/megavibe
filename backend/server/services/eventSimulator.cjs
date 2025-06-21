@@ -7,7 +7,7 @@ const Reaction = require("../models/reactionModel.cjs");
 const io = require("socket.io-client");
 
 // Connect to WebSocket server for real-time updates
-const socket = io(process.env.WS_URL || "http://localhost:3000", {
+const socket = io(process.env.WS_URL || "http://localhost:3001", {
   autoConnect: false,
 });
 

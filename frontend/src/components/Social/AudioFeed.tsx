@@ -64,7 +64,7 @@ export const AudioFeed: React.FC<AudioFeedProps> = ({ filter = 'all', limit = 20
 
       // Check backend health first
       try {
-        const healthCheck = await fetch(`${process.env.VITE_API_URL || 'https://megavibe.onrender.com'}/api/health/ping`);
+        const healthCheck = await fetch(`${import.meta.env.VITE_API_URL || 'https://megavibe.onrender.com'}/api/health/ping`);
         if (!healthCheck.ok) {
           throw new Error('Backend server is not responding');
         }
@@ -384,7 +384,7 @@ export const AudioFeed: React.FC<AudioFeedProps> = ({ filter = 'all', limit = 20
             className="btn-test"
             onClick={async () => {
               try {
-                const response = await fetch(`${process.env.VITE_API_URL || 'https://megavibe.onrender.com'}/api/health`);
+                const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://megavibe.onrender.com'}/api/health`);
                 const data = await response.json();
                 alert(`Backend Status: ${data.status}\nDatabase: ${data.services?.database || 'unknown'}`);
               } catch (err) {
@@ -398,7 +398,7 @@ export const AudioFeed: React.FC<AudioFeedProps> = ({ filter = 'all', limit = 20
             className="btn-test"
             onClick={async () => {
               try {
-                const response = await fetch(`${process.env.VITE_API_URL || 'https://megavibe.onrender.com'}/api/audio/create-sample`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://megavibe.onrender.com'}/api/audio/create-sample`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                 });

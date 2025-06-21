@@ -1,7 +1,7 @@
 // stripe.cjs
 
-// Require stripe 
-const Stripe = require('stripe');
+// Require stripe
+const Stripe = require("stripe");
 
 // Initialize stripe client
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -13,16 +13,15 @@ async function createIntent(amount, currency) {
     // Configure intent as needed
     return await stripe.paymentIntents.create({
       amount,
-      currency    
+      currency,
     });
   } catch (error) {
     console.error(error);
     throw error;
   }
-
 }
 
 // Export functionality
 module.exports = {
-  createIntent 
+  createIntent,
 };

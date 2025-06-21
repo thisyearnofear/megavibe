@@ -106,8 +106,8 @@
             
             if (typeof process !== 'undefined') {
                 addResult('<p class="success">✅ Global process is available</p>');
-                if (process.env !== undefined) {
-                    addResult('<p class="success">✅ process.env is available</p>');
+                if (import.meta.env !== undefined) {
+                    addResult('<p class="success">✅ import.meta.env is available</p>');
                 }
             } else {
                 addResult('<p class="error">❌ Global process is NOT available</p>');

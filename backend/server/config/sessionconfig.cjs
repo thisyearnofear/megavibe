@@ -1,9 +1,9 @@
 // config/sessionConfig.cjs
 
-require('dotenv').config();
+require("dotenv").config();
 
-const session = require('express-session');
-const MemoryStore = require('memorystore')(session);
+const session = require("express-session");
+const MemoryStore = require("memorystore")(session);
 
 const sessionConfig = {
   secret: process.env.SESSION_SECRET,
@@ -16,7 +16,6 @@ const sessionConfig = {
     maxAge: 86400000, // 24 hours (in milliseconds)
     secure: false, // Set to true in a production environment with HTTPS
   },
-  
 };
 
 module.exports = sessionConfig;

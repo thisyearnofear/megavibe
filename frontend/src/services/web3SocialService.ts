@@ -81,6 +81,7 @@ export interface Web3SpeakerProfile {
   // Core identity
   address: string;
   ensName?: string;
+  error?: string;
 
   // Farcaster data
   farcaster?: FarcasterProfile;
@@ -108,7 +109,7 @@ class Web3SocialService {
   private neynarBaseUrl = 'https://api.neynar.com/v2/farcaster';
 
   constructor() {
-    this.neynarApiKey = process.env.VITE_NEYNAR_API_KEY || process.env.NEYNAR_API_KEY || '';
+    this.neynarApiKey = import.meta.env.VITE_NEYNAR_API_KEY || import.meta.env.NEYNAR_API_KEY || '';
     if (!this.neynarApiKey) {
       console.warn('⚠️ VITE_NEYNAR_API_KEY or NEYNAR_API_KEY not configured. Farcaster profiles will not load.');
     }
@@ -316,6 +317,25 @@ class Web3SocialService {
    * Get comprehensive Web3 profile for a speaker (Farcaster focused)
    */
   async getWeb3SpeakerProfile(address: string): Promise<Web3SpeakerProfile> {
+    if (!this.neynarApiKey) {
+      return {
+        address,
+        error: 'Neynar API key not configured',
+        onChainStats: {
+          totalTipsReceived: '0',
+          totalBountiesCreated: 0,
+          totalBountiesClaimed: 0,
+          eventsParticipated: 0,
+          reputationScore: 0
+        },
+        socialMetrics: {
+          totalFollowers: 0,
+          totalEngagement: 0,
+          verifiedIdentity: false,
+          primaryPlatform: 'address'
+        }
+      };
+    }
     const [farcaster, ensName] = await Promise.all([
       this.getFarcasterProfile(address),
       this.getENSName(address)

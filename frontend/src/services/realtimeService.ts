@@ -1,10 +1,12 @@
 import { io, Socket } from 'socket.io-client';
 
-export interface RealtimeEvent {
+// Define a more structured event type for clarity
+export interface RealtimeEvent<T> {
   type: string;
-  payload: unknown;
+  payload: T;
 }
 
+// Specific event payload types
 export interface SongChangeEvent {
   songId: string;
   title: string;
@@ -15,12 +17,19 @@ export interface SongChangeEvent {
 }
 
 export interface TipReceivedEvent {
+  id: string;
+  tipper: {
+    username: string;
+    avatar?: string;
+  };
+  recipient: {
+    username: string;
+  };
   amount: number;
-  fromUser: string;
-  songId: string;
-  eventId: string;
-  venueId: string;
+  message?: string;
   timestamp: string;
+  txHash?: string;
+  eventId: string;
 }
 
 export interface AudienceReactionEvent {
@@ -39,49 +48,69 @@ export interface EventStatusEvent {
   timestamp: string;
 }
 
+// Backend message structure
+interface WebSocketMessage {
+  type: string;
+  data: any;
+  // Other fields if any, like timestamp
+}
+
 class RealtimeService {
   private socket: Socket | null = null;
-  private listeners: Map<string, ((data: unknown) => void)[]> = new Map();
+  private listeners: Map<string, ((data: any) => void)[]> = new Map();
 
   constructor() {
-    this.initializeSocket();
+    // The initialization is deferred to the connect method
   }
 
   private initializeSocket(): void {
-    const wsUrl = process.env.VITE_WS_URL || 'https://megavibe.onrender.com';
+    if (this.socket) return;
+
+    const wsUrl = import.meta.env.VITE_API_URL || 'https://megavibe.onrender.com';
+    console.log(`Initializing WebSocket connection to ${wsUrl}`);
+
     this.socket = io(wsUrl, {
       autoConnect: false,
-      transports: ['websocket'],
+      transports: ['websocket', 'polling'],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 3000,
     });
 
     this.socket.on('connect', () => {
-      console.log('WebSocket connected');
-      // Rejoin any previously joined venues or events
-      const lastVenueId = localStorage.getItem('last_venue_id');
-      if (lastVenueId) {
-        this.joinVenue(lastVenueId);
-      }
+      console.log('WebSocket connected:', this.socket?.id);
+      this.emitToListeners('connect', this.socket?.id);
     });
 
-    this.socket.on('disconnect', () => {
-      console.log('WebSocket disconnected');
+    this.socket.on('disconnect', (reason) => {
+      console.log('WebSocket disconnected:', reason);
+      this.emitToListeners('disconnect', reason);
     });
 
-    this.socket.on('error', (error: unknown) => {
-      console.error('WebSocket error:', error);
+    this.socket.on('connect_error', (error) => {
+      console.error('WebSocket connection error:', error);
+      this.emitToListeners('connect_error', error.message);
     });
 
-    // Generic event handler to dispatch to listeners
-    this.socket.onAny((event: string, data: unknown) => {
-      const eventListeners = this.listeners.get(event);
-      if (eventListeners) {
-        eventListeners.forEach(listener => listener(data));
-      }
+    // Centralized handler for all incoming messages from the server
+    this.socket.onAny((eventName: string, message: WebSocketMessage) => {
+      // The backend sends the event name as the event, and the payload as the argument.
+      // e.g., socket.emit('TIP_CONFIRMED', { type: 'TIP_CONFIRMED', data: ... })
+      // So, we use the eventName from onAny and extract the data from the message.
+      this.emitToListeners(eventName, message.data);
     });
   }
 
+  private emitToListeners(event: string, data: any) {
+    const eventListeners = this.listeners.get(event);
+    if (eventListeners) {
+      eventListeners.forEach(listener => listener(data));
+    }
+  }
+
   connect(): void {
+    this.initializeSocket();
     if (this.socket && !this.socket.connected) {
+      console.log('Attempting to connect WebSocket...');
       this.socket.connect();
     }
   }
@@ -92,96 +121,61 @@ class RealtimeService {
     }
   }
 
-  joinVenue(venueId: string): void {
+  // --- Room Management ---
+
+  joinEvent(eventId: string): void {
     if (this.socket && this.socket.connected) {
-      this.socket.emit('join_venue', venueId);
-      localStorage.setItem('last_venue_id', venueId);
-      console.log(`Joined venue: ${venueId}`);
+      this.socket.emit('joinEvent', eventId);
+      console.log(`Joined event room: ${eventId}`);
     } else {
-      console.warn('Cannot join venue: WebSocket not connected');
-      // Store for reconnection
-      localStorage.setItem('last_venue_id', venueId);
+      console.warn('Cannot join event room: WebSocket not connected.');
     }
   }
 
-  leaveVenue(venueId: string): void {
-    if (this.socket && this.socket.connected) {
-      this.socket.emit('leave_venue', venueId);
-      localStorage.removeItem('last_venue_id');
-      console.log(`Left venue: ${venueId}`);
-    }
+  leaveEvent(eventId: string): void {
+    // Note: The backend doesn't have a 'leaveEvent' handler,
+    // disconnection handles cleanup. This is for client-side logic.
+    console.log(`Leaving event room: ${eventId}`);
   }
 
-  // Subscribe to specific event types
-  on(event: string, callback: (data: unknown) => void): () => void {
-    return this.addListener(event, callback);
-  }
+  // --- Event Subscription ---
 
-  off(event: string, callback: (data: unknown) => void): void {
-    const eventListeners = this.listeners.get(event);
-    if (eventListeners) {
-      const index = eventListeners.indexOf(callback);
-      if (index !== -1) {
-        eventListeners.splice(index, 1);
-        this.listeners.set(event, eventListeners);
-      }
-    }
-  }
-
-  onSongChanged(callback: (data: SongChangeEvent) => void): () => void {
-    return this.addListener('song_changed', callback);
-  }
-
-  onTipReceived(callback: (data: TipReceivedEvent) => void): () => void {
-    return this.addListener('tip_received', callback);
-  }
-
-  onAudienceReaction(callback: (data: AudienceReactionEvent) => void): () => void {
-    return this.addListener('audience_reaction', callback);
-  }
-
-  onEventStatus(callback: (data: EventStatusEvent) => void): () => void {
-    return this.addListener('event_status', callback);
-  }
-
-  private addListener<T>(event: string, callback: (data: T) => void): () => void {
+  on<T>(event: string, callback: (data: T) => void): () => void {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, []);
     }
-    const listeners = this.listeners.get(event);
-    if (listeners) {
-      listeners.push(callback as (data: unknown) => void);
-      this.listeners.set(event, listeners);
-    }
+    this.listeners.get(event)!.push(callback);
 
     // Return unsubscribe function
     return () => {
       const eventListeners = this.listeners.get(event);
       if (eventListeners) {
-        const index = eventListeners.indexOf(callback as (data: unknown) => void);
+        const index = eventListeners.indexOf(callback);
         if (index !== -1) {
           eventListeners.splice(index, 1);
-          this.listeners.set(event, eventListeners);
         }
       }
     };
   }
 
-  // Method to get current song for a venue
-  getCurrentSong(venueId: string): Promise<SongChangeEvent | null> {
-    return new Promise((resolve) => {
-      if (this.socket && this.socket.connected) {
-        this.socket.emit('get_current_song', venueId, (response: SongChangeEvent | null) => {
-          resolve(response);
-        });
-      } else {
-        console.warn('Cannot get current song: WebSocket not connected');
-        resolve(null);
+  off(event: string, callback: (data: any) => void): void {
+    const eventListeners = this.listeners.get(event);
+    if (eventListeners) {
+      const index = eventListeners.indexOf(callback);
+      if (index !== -1) {
+        eventListeners.splice(index, 1);
       }
-    });
+    }
   }
 
-  // Check connection status
+  // --- Specific Event Subscriptions (Type-safe) ---
+
+  onTipConfirmed(callback: (data: TipReceivedEvent) => void): () => void {
+    return this.on('TIP_CONFIRMED', callback);
+  }
+
+  // --- Connection Status ---
+
   isConnected(): boolean {
     return this.socket ? this.socket.connected : false;
   }

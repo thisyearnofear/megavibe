@@ -14,7 +14,7 @@ const {
   catchAsync,
   validateRequired,
   sendResponse,
-  logger
+  logger,
 } = require("../middleware/errorHandler.cjs");
 
 // Create a new crypto tip
@@ -30,14 +30,17 @@ router.get("/event/:eventId", catchAsync(getEventTips));
 router.get("/speaker/:speakerId/earnings", catchAsync(getSpeakerEarnings));
 
 // Acknowledge tip (speakers only)
-router.post("/:tipId/acknowledge", [validateUserSession, catchAsync(acknowledgeTip)]);
+router.post("/:tipId/acknowledge", [
+  validateUserSession,
+  catchAsync(acknowledgeTip),
+]);
 
 // Get live tip feed for event
 router.get("/event/:eventId/live", catchAsync(getLiveTipFeed));
 
 // Health check endpoint
 router.get("/health", (req, res) => {
-  sendResponse(res, 200, { status: 'healthy' }, 'Tip service is running');
+  sendResponse(res, 200, { status: "healthy" }, "Tip service is running");
 });
 
 // Legacy routes for backward compatibility
@@ -51,7 +54,7 @@ async function createCryptoTip(req, res) {
   const { speakerId, eventId, amountUSD, message } = req.body;
 
   // Validate required fields
-  validateRequired(['speakerId', 'eventId', 'amountUSD'], req.body);
+  validateRequired(["speakerId", "eventId", "amountUSD"], req.body);
 
   // Validate amount
   if (amountUSD <= 0) {
@@ -113,24 +116,31 @@ async function createCryptoTip(req, res) {
 
   await tip.save();
 
-  logger.info(`Tip created: ${tip._id} for speaker ${speakerId} amount $${amountUSD}`);
+  logger.info(
+    `Tip created: ${tip._id} for speaker ${speakerId} amount $${amountUSD}`
+  );
 
-  sendResponse(res, 201, {
-    tipId: tip._id,
-    speakerWallet: speaker.walletAddress,
-    contractAddress: process.env.TIPPING_CONTRACT_ADDRESS,
-    amountUSD: amountUSD,
-    speakerAmount: speakerAmount,
-    platformFee: platformFee,
-    expiresAt: tip.expiresAt,
-  }, "Tip created successfully");
+  sendResponse(
+    res,
+    201,
+    {
+      tipId: tip._id,
+      speakerWallet: speaker.walletAddress,
+      contractAddress: process.env.TIPPING_CONTRACT_ADDRESS,
+      amountUSD: amountUSD,
+      speakerAmount: speakerAmount,
+      platformFee: platformFee,
+      expiresAt: tip.expiresAt,
+    },
+    "Tip created successfully"
+  );
 }
 
 // Confirm tip transaction with blockchain hash
 async function confirmTip(req, res) {
   const { tipId, txHash, amountMNT, blockNumber, gasUsed } = req.body;
 
-  validateRequired(['tipId', 'txHash'], req.body);
+  validateRequired(["tipId", "txHash"], req.body);
 
   // Validate transaction hash format
   if (!ethers.isHexString(txHash, 32)) {
@@ -178,8 +188,8 @@ async function confirmTip(req, res) {
 
   // Populate tip data for response
   await tip.populate([
-    { path: 'tipper', select: 'username avatar' },
-    { path: 'recipient', select: 'username avatar' }
+    { path: "tipper", select: "username avatar" },
+    { path: "recipient", select: "username avatar" },
   ]);
 
   logger.info(`Tip confirmed: ${tip._id} with tx ${txHash}`);
@@ -203,7 +213,7 @@ async function confirmTip(req, res) {
 // Get tips for an event
 async function getEventTips(req, res) {
   const { eventId } = req.params;
-  const { limit = 50, offset = 0, status = 'confirmed' } = req.query;
+  const { limit = 50, offset = 0, status = "confirmed" } = req.query;
 
   // Validate eventId
   if (!mongoose.Types.ObjectId.isValid(eventId)) {
@@ -236,27 +246,37 @@ async function getEventTips(req, res) {
 
   // Get event statistics
   const stats = await Tip.aggregate([
-    { $match: { event: new mongoose.Types.ObjectId(eventId), status: 'confirmed' } },
+    {
+      $match: {
+        event: new mongoose.Types.ObjectId(eventId),
+        status: "confirmed",
+      },
+    },
     {
       $group: {
         _id: null,
-        totalAmount: { $sum: '$amountUSD' },
+        totalAmount: { $sum: "$amountUSD" },
         totalTips: { $sum: 1 },
-        avgAmount: { $avg: '$amountUSD' },
-        maxAmount: { $max: '$amountUSD' },
-      }
-    }
+        avgAmount: { $avg: "$amountUSD" },
+        maxAmount: { $max: "$amountUSD" },
+      },
+    },
   ]);
 
   sendResponse(res, 200, {
     tips,
-    stats: stats[0] || { totalAmount: 0, totalTips: 0, avgAmount: 0, maxAmount: 0 },
+    stats: stats[0] || {
+      totalAmount: 0,
+      totalTips: 0,
+      avgAmount: 0,
+      maxAmount: 0,
+    },
     pagination: {
       total,
       limit: limitNum,
       offset: offsetNum,
       hasMore: offsetNum + limitNum < total,
-    }
+    },
   });
 }
 
@@ -272,18 +292,18 @@ async function getSpeakerEarnings(req, res) {
   // Calculate time range
   const now = new Date();
   let startTime;
-  
+
   switch (timeframe) {
-    case '1h':
+    case "1h":
       startTime = new Date(now.getTime() - 60 * 60 * 1000);
       break;
-    case '24h':
+    case "24h":
       startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
       break;
-    case '7d':
+    case "7d":
       startTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       break;
-    case '30d':
+    case "30d":
       startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
       break;
     default:
@@ -294,19 +314,19 @@ async function getSpeakerEarnings(req, res) {
     {
       $match: {
         recipient: new mongoose.Types.ObjectId(speakerId),
-        status: 'confirmed',
-        confirmedAt: { $gte: startTime }
-      }
+        status: "confirmed",
+        confirmedAt: { $gte: startTime },
+      },
     },
     {
       $group: {
         _id: null,
-        totalEarnings: { $sum: '$speakerAmount' },
+        totalEarnings: { $sum: "$speakerAmount" },
         totalTips: { $sum: 1 },
-        avgTip: { $avg: '$speakerAmount' },
-        maxTip: { $max: '$speakerAmount' },
-      }
-    }
+        avgTip: { $avg: "$speakerAmount" },
+        maxTip: { $max: "$speakerAmount" },
+      },
+    },
   ]);
 
   // Get pending withdrawable balance (all time)
@@ -314,21 +334,30 @@ async function getSpeakerEarnings(req, res) {
     {
       $match: {
         recipient: new mongoose.Types.ObjectId(speakerId),
-        status: 'confirmed',
-      }
+        status: "confirmed",
+      },
     },
     {
       $group: {
         _id: null,
-        withdrawableBalance: { $sum: '$speakerAmount' },
-        totalLifetimeEarnings: { $sum: '$speakerAmount' },
+        withdrawableBalance: { $sum: "$speakerAmount" },
+        totalLifetimeEarnings: { $sum: "$speakerAmount" },
         totalLifetimeTips: { $sum: 1 },
-      }
-    }
+      },
+    },
   ]);
 
-  const result = earnings[0] || { totalEarnings: 0, totalTips: 0, avgTip: 0, maxTip: 0 };
-  const lifetime = pendingTips[0] || { withdrawableBalance: 0, totalLifetimeEarnings: 0, totalLifetimeTips: 0 };
+  const result = earnings[0] || {
+    totalEarnings: 0,
+    totalTips: 0,
+    avgTip: 0,
+    maxTip: 0,
+  };
+  const lifetime = pendingTips[0] || {
+    withdrawableBalance: 0,
+    totalLifetimeEarnings: 0,
+    totalLifetimeTips: 0,
+  };
 
   sendResponse(res, 200, {
     timeframe,
@@ -359,7 +388,7 @@ async function acknowledgeTip(req, res) {
     throw new APIError("Only the tip recipient can acknowledge", 403);
   }
 
-  if (tip.status !== 'confirmed') {
+  if (tip.status !== "confirmed") {
     throw new APIError("Can only acknowledge confirmed tips", 400);
   }
 
@@ -405,7 +434,7 @@ async function getLiveTipFeed(req, res) {
 
   const tips = await Tip.find({
     event: eventId,
-    status: 'confirmed',
+    status: "confirmed",
     isPublic: true,
   })
     .populate("tipper", "username avatar")
@@ -423,7 +452,7 @@ async function getLiveTipFeed(req, res) {
 
 // Legacy function - keep for backward compatibility
 async function getTips(req, res) {
-  const { limit = 100, status = 'confirmed' } = req.query;
+  const { limit = 100, status = "confirmed" } = req.query;
   const limitNum = Math.min(parseInt(limit) || 100, 200);
 
   const tips = await Tip.find({ status })
@@ -474,7 +503,7 @@ async function updateTip(req, res) {
   }
 
   // Only allow updates to pending tips
-  if (tip.status !== 'pending') {
+  if (tip.status !== "pending") {
     throw new APIError("Can only update pending tips", 400);
   }
 
@@ -508,7 +537,7 @@ async function deleteTip(req, res) {
   }
 
   // Only allow deletion of pending tips
-  if (tip.status !== 'pending') {
+  if (tip.status !== "pending") {
     throw new APIError("Can only delete pending tips", 400);
   }
 

@@ -1,257 +1,129 @@
-import React, { useState, useEffect } from 'react';
-import { BountyModal } from '../LiveMusic/BountyModal';
-import { TippingModal } from '../LiveMusic/TippingModal';
-import { useEvent } from '../../contexts/EventContext';
-import { useWallet } from '../../contexts/WalletContext';
+import React, { useState } from 'react';
 import { useBountiesForEvent } from '../../hooks/useBountiesForEvent';
 import { useBountyFilter } from '../../hooks/useBountyFilter';
-import '../../styles/design-system.css';
-import './BountyMarketplacePage.css';
 import { PageLayout } from '../Layout/PageLayout';
 import { Button } from '../UI/Button';
 import { Card } from '../UI/Card';
 import { SkeletonCard } from '../Loading/SkeletonCard';
-import { MOCK_EVENTS } from '../../services/mockDataService';
+import { BountyModal } from '../LiveMusic/BountyModal';
+import { useWallet } from '../../contexts/WalletContext';
+import { useEvent } from '../../contexts/EventContext';
+import './BountyMarketplacePage.css';
 
-interface BountyMarketplacePageProps {
-  onBack?: () => void;
-}
+export const BountyMarketplacePage: React.FC = () => {
+  const { currentEvent, speakers } = useEvent();
+  const { isConnected } = useWallet();
+  
+  const eventId = currentEvent?.id || 'devcon-7-bangkok';
 
-export const BountyMarketplacePage: React.FC<BountyMarketplacePageProps> = ({ onBack }) => {
-  console.log('🎯 BountyMarketplacePage component rendered!');
+  const { bounties, stats, isLoading, error, refreshBounties } = useBountiesForEvent(eventId);
+  const { filtered: filteredBounties } = useBountyFilter(bounties);
 
   const [showCreateBounty, setShowCreateBounty] = useState(false);
-  const [showTipping, setShowTipping] = useState(false);
-  const [selectedSpeaker, setSelectedSpeaker] = useState<any>(null);
-  const [hasLoadingTimeout, setHasLoadingTimeout] = useState(false);
 
-  const { currentEvent, speakers, isLoading } = useEvent();
-
-  // Ensure we always have an event (for demo/mock)
-  useEffect(() => {
-    if (!currentEvent) {
-      // Use the first mock event if none is loaded
-      // @ts-ignore
-      if (MOCK_EVENTS && MOCK_EVENTS[0] && typeof window !== 'undefined') {
-        // @ts-ignore
-        window.__eventContext?.loadEvent?.(MOCK_EVENTS[0].id);
-      }
-    }
-  }, [currentEvent]);
-
-  const eventId = currentEvent?.id || (MOCK_EVENTS[0]?.id ?? '');
-  const { isConnected } = useWallet();
-  const { bounties, stats, isLoading: bountiesLoading, refreshBounties } = useBountiesForEvent(eventId);
-  const {
-    status, setStatus,
-    sort, setSort,
-    speakerId, setSpeakerId,
-    priceRange, setPriceRange,
-    filtered: filteredBounties
-  } = useBountyFilter(bounties);
-
-  // Add timeout to prevent infinite loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setHasLoadingTimeout(true);
-    }, 3000); // 3 second timeout
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleCreateBounty = () => {
-    if (!isConnected) {
-      return;
-    }
-
-    const activeSpeaker = Array.isArray(speakers) ? speakers.find(s => s.isActive) : undefined;
-    if (activeSpeaker) {
-      setSelectedSpeaker(activeSpeaker);
-      setShowCreateBounty(true);
-    }
-  };
-
-  const handleTipSpeaker = (speaker: any) => {
-    if (!isConnected) {
-      return;
-    }
-
-    setSelectedSpeaker(speaker);
-    setShowTipping(true);
-  };
-
-  const handleBountySuccess = () => {
+  const handleCreateBountySuccess = () => {
     setShowCreateBounty(false);
     refreshBounties();
   };
 
-  const handleTipSuccess = () => {
-    setShowTipping(false);
-  };
+  const renderLoadingState = () => (
+    <div className="bounty-list">
+      {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
+    </div>
+  );
 
-  // Don't show loading if we have timeout or have basic data
-  if (!hasLoadingTimeout && ((isLoading && !currentEvent) || (bountiesLoading && bounties.length === 0 && !stats.totalBounties))) {
-    return (
-      <div className="bounty-marketplace-page loading">
-        <div className="loading-spinner"></div>
-        <p>Loading Bounty Marketplace...</p>
+  const renderErrorState = () => (
+    <div className="error-container">
+      <h2>⚠️ Error Loading Bounties</h2>
+      <p>{error}</p>
+      <Button onClick={refreshBounties}>Retry</Button>
+    </div>
+  );
+
+  const renderBountyCard = (bounty: any) => (
+    <Card key={bounty.id} className="bounty-card">
+      <div className="bounty-header">
+        <div className="bounty-reward">
+          <span className="reward-amount">{bounty.amount} MNT</span>
+        </div>
+        <span className={`bounty-status badge-${bounty.status}`}>{bounty.status}</span>
       </div>
-    );
-  }
+      <div className="bounty-description">
+        <p>{bounty.description}</p>
+      </div>
+      <div className="bounty-meta">
+        <div className="bounty-sponsor">
+          <span className="role">Sponsor</span>
+          <span className="username">{`${bounty.creator.slice(0, 6)}...${bounty.creator.slice(-4)}`}</span>
+        </div>
+        {bounty.claimer && bounty.claimer !== '0x0000000000000000000000000000000000000000' && (
+          <div className="bounty-claimant">
+            <span className="role">Claimant</span>
+            <span className="username">{`${bounty.claimer.slice(0, 6)}...${bounty.claimer.slice(-4)}`}</span>
+          </div>
+        )}
+         <div className="bounty-deadline">
+          <span>Expires: {new Date(bounty.deadline).toLocaleString()}</span>
+        </div>
+      </div>
+      <div className="bounty-actions">
+        <Button variant="primary" size="sm" disabled={bounty.status !== 'active'}>
+          Claim Bounty
+        </Button>
+      </div>
+    </Card>
+  );
 
   return (
     <PageLayout
-      title="Bounty Marketplace"
-      subtitle="Discover, create, and claim bounties for live events."
-      
+      title="On-Chain Bounty Marketplace"
+      subtitle={`Discover, create, and claim bounties for ${currentEvent?.name || 'events'}.`}
     >
-      <div className="marketplace-content grid">
-        {onBack && (
-          <Button variant="secondary" size="md" onClick={onBack} style={{ marginBottom: 'var(--space-lg)' }}>
-            &larr; Back
+      <div className="marketplace-header">
+        <div className="header-stats">
+          <div className="stat-item">
+            <span className="stat-value">{stats.activeBounties}</span>
+            <span className="stat-label">Active Bounties</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-value">{stats.totalReward.toFixed(2)} MNT</span>
+            <span className="stat-label">Total Rewards</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-value">{stats.claimedBounties}</span>
+            <span className="stat-label">Claimed</span>
+          </div>
+        </div>
+        <div className="header-actions">
+          <Button onClick={() => setShowCreateBounty(true)} disabled={!isConnected}>
+            Create Bounty
           </Button>
-        )}
-        {(isLoading || bountiesLoading) ? (
-          <>
-            {[...Array(3)].map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
-          </>
-        ) : (
-          filteredBounties.map(bounty => (
-            <Card key={bounty.id} className="bounty-card">
-              <div className="bounty-header">
-                <div className="bounty-reward">
-                  <span className="reward-amount">${bounty.rewardAmount}</span>
-                  <span className={`bounty-status badge badge-${bounty.status}`}>{bounty.status.toUpperCase()}</span>
-                </div>
-                <div className="bounty-deadline">
-                  <span>Deadline: {new Date(bounty.deadline).toLocaleString()}</span>
-                </div>
-              </div>
-              <div className="bounty-description">
-                <p>{bounty.description}</p>
-              </div>
-              <div className="bounty-meta">
-                <div className="bounty-speaker">
-                  <span className="avatar">
-                    {bounty.speaker.avatar ? (
-                      <img src={bounty.speaker.avatar} alt={bounty.speaker.username} />
-                    ) : (
-                      bounty.speaker.username[0]?.toUpperCase() || 'S'
-                    )}
-                  </span>
-                  <span className="username">{bounty.speaker.username}</span>
-                  <span className="role">Speaker</span>
-                </div>
-                <div className="bounty-sponsor">
-                  <span className="avatar">
-                    {bounty.sponsor.avatar ? (
-                      <img src={bounty.sponsor.avatar} alt={bounty.sponsor.username} />
-                    ) : (
-                      bounty.sponsor.username[0]?.toUpperCase() || 'U'
-                    )}
-                  </span>
-                  <span className="username">{bounty.sponsor.username}</span>
-                  <span className="role">Sponsor</span>
-                </div>
-                {bounty.claimant && (
-                  <div className="bounty-claimant">
-                    <span className="avatar">
-                      {bounty.claimant.avatar ? (
-                        <img src={bounty.claimant.avatar} alt={bounty.claimant.username} />
-                      ) : (
-                        bounty.claimant.username[0]?.toUpperCase() || 'C'
-                      )}
-                    </span>
-                    <span className="username">{bounty.claimant.username}</span>
-                    <span className="role">Claimant</span>
-                  </div>
-                )}
-              </div>
-            </Card>
-          ))
-        )}
-      </div>
-
-      {/* Success Stories Section */}
-      <div className="marketplace-success-stories">
-        <h2>🏆 Bounty Success Stories</h2>
-        <div className="success-grid">
-          <div className="success-story">
-            <div className="story-header">
-              <span className="story-avatar">🧠</span>
-              <div className="story-info">
-                <h4>Advanced ZK-Proofs Tutorial</h4>
-                <p className="story-bounty">$450 bounty • Completed in 36h</p>
-              </div>
-            </div>
-            <p className="story-description">
-              "Detailed 45-minute tutorial covering advanced zero-knowledge proof concepts with practical examples."
-            </p>
-            <div className="story-metrics">
-              <span className="metric">1.2K views</span>
-              <span className="metric">4.9/5 rating</span>
-              <span className="metric">12 comments</span>
-            </div>
-          </div>
-
-          <div className="success-story">
-            <div className="story-header">
-              <span className="story-avatar">🚀</span>
-              <div className="story-info">
-                <h4>DeFi Yield Strategies Guide</h4>
-                <p className="story-bounty">$300 bounty • Completed in 24h</p>
-              </div>
-            </div>
-            <p className="story-description">
-              "Comprehensive guide to yield farming strategies with risk analysis and portfolio recommendations."
-            </p>
-            <div className="story-metrics">
-              <span className="metric">850 views</span>
-              <span className="metric">4.7/5 rating</span>
-              <span className="metric">8 comments</span>
-            </div>
-          </div>
-
-          <div className="success-story">
-            <div className="story-header">
-              <span className="story-avatar">💡</span>
-              <div className="story-info">
-                <h4>Smart Contract Security Audit</h4>
-                <p className="story-bounty">$500 bounty • Completed in 48h</p>
-              </div>
-            </div>
-            <p className="story-description">
-              "Professional security audit checklist with automated tools and manual review processes."
-            </p>
-            <div className="story-metrics">
-              <span className="metric">2.1K views</span>
-              <span className="metric">5.0/5 rating</span>
-              <span className="metric">18 comments</span>
-            </div>
-          </div>
         </div>
       </div>
 
-      {/* Modals */}
-      {showCreateBounty && selectedSpeaker && currentEvent && (
-        <BountyModal
-          eventId={currentEvent.id}
-          speakerId={selectedSpeaker.id}
-          speakerName={selectedSpeaker.name}
-          onClose={() => setShowCreateBounty(false)}
-          onSuccess={handleBountySuccess}
-          isOpen={showCreateBounty}
-        />
+      {isLoading && renderLoadingState()}
+      {!isLoading && error && renderErrorState()}
+      {!isLoading && !error && (
+        <div className="bounty-list">
+          {filteredBounties.length > 0 ? (
+            filteredBounties.map(renderBountyCard)
+          ) : (
+            <div className="empty-state">
+              <h3>No Bounties Found</h3>
+              <p>Be the first to create a bounty for this event!</p>
+            </div>
+          )}
+        </div>
       )}
 
-      {showTipping && selectedSpeaker && currentEvent && (
-        <TippingModal
-          speaker={selectedSpeaker}
-          event={currentEvent}
-          onClose={() => setShowTipping(false)}
-          onSuccess={handleTipSuccess}
-          isOpen={showTipping}
+      {showCreateBounty && currentEvent && (
+        <BountyModal
+          eventId={currentEvent.id}
+          speakerId={speakers?.[0]?.id || 'general'}
+          speakerName={speakers?.[0]?.name || 'General'}
+          onClose={() => setShowCreateBounty(false)}
+          onSuccess={handleCreateBountySuccess}
+          isOpen={showCreateBounty}
         />
       )}
     </PageLayout>

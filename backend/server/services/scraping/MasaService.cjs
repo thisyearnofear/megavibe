@@ -3,17 +3,17 @@
  * Handles social media scraping using Masa Data API
  */
 
-const BaseScrapingService = require('./BaseScrapingService.cjs');
-const fetch = require('node-fetch');
+const BaseScrapingService = require("./BaseScrapingService.cjs");
+const fetch = require("node-fetch");
 
 class MasaService extends BaseScrapingService {
   constructor(options = {}) {
-    super('Masa', options);
+    super("Masa", options);
     this.apiKey = process.env.MASA_API_KEY;
-    this.baseUrl = 'https://data.masa.ai/api/v1';
-    
+    this.baseUrl = "https://data.masa.ai/api/v1";
+
     if (!this.apiKey) {
-      throw new Error('MASA_API_KEY environment variable is required');
+      throw new Error("MASA_API_KEY environment variable is required");
     }
   }
 
@@ -22,13 +22,13 @@ class MasaService extends BaseScrapingService {
    */
   async searchTwitterEvents(queries, options = {}) {
     const results = [];
-    
+
     for (const query of queries) {
-      await this.checkRateLimit('masa');
-      
+      await this.checkRateLimit("masa");
+
       const cacheKey = `${this.options.CACHE.keyPrefix}masa:twitter:${query}`;
       const cached = this.getCached(cacheKey);
-      
+
       if (cached) {
         results.push(...cached);
         continue;
@@ -37,17 +37,17 @@ class MasaService extends BaseScrapingService {
       try {
         const searchResult = await this.searchTwitter(query, options);
         const events = await this.parseTwitterEvents(searchResult, query);
-        
+
         this.setCached(cacheKey, events);
         results.push(...events);
-        
+
         // Rate limiting for Twitter API
         await this.sleep(1000 / 3); // 3 requests per second max
       } catch (error) {
-        this.emit('error', {
-          operation: 'searchTwitterEvents',
+        this.emit("error", {
+          operation: "searchTwitterEvents",
           query,
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -60,16 +60,16 @@ class MasaService extends BaseScrapingService {
    */
   async searchTwitter(query, options = {}) {
     const searchData = {
-      type: 'twitter-credential-scraper',
+      type: "twitter-credential-scraper",
       arguments: {
         query: this.buildTwitterQuery(query, options),
-        max_results: options.maxResults || 50
-      }
+        max_results: options.maxResults || 50,
+      },
     };
 
     const jobResult = await this.withRetry(
-      () => this.makeMasaRequest('/search/live/twitter', searchData),
-      { operation: 'searchTwitter', query }
+      () => this.makeMasaRequest("/search/live/twitter", searchData),
+      { operation: "searchTwitter", query }
     );
 
     // Poll for results
@@ -81,29 +81,29 @@ class MasaService extends BaseScrapingService {
    */
   buildTwitterQuery(baseQuery, options = {}) {
     const {
-      dateRange = 'until:2025-12-31 since:2024-01-01',
+      dateRange = "until:2025-12-31 since:2024-01-01",
       excludeRetweets = true,
       minRetweets = 5,
-      language = 'en'
+      language = "en",
     } = options;
 
     let query = baseQuery;
-    
+
     // Add date range
     if (dateRange) {
       query += ` ${dateRange}`;
     }
-    
+
     // Exclude retweets
     if (excludeRetweets) {
-      query += ' -is:retweet';
+      query += " -is:retweet";
     }
-    
+
     // Minimum engagement
     if (minRetweets) {
       query += ` min_retweets:${minRetweets}`;
     }
-    
+
     // Language filter
     if (language) {
       query += ` lang:${language}`;
@@ -111,7 +111,7 @@ class MasaService extends BaseScrapingService {
 
     // Add event-specific keywords
     query += ' (conference OR summit OR meetup OR event OR "save the date")';
-    
+
     return query;
   }
 
@@ -120,7 +120,7 @@ class MasaService extends BaseScrapingService {
    */
   async parseTwitterEvents(twitterData, originalQuery) {
     const events = [];
-    
+
     if (!twitterData || !twitterData.data) {
       return events;
     }
@@ -132,9 +132,9 @@ class MasaService extends BaseScrapingService {
           events.push(eventData);
         }
       } catch (error) {
-        this.emit('parseError', {
+        this.emit("parseError", {
           tweet: tweet.id,
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -146,25 +146,31 @@ class MasaService extends BaseScrapingService {
    * Extract event information from a single tweet
    */
   extractEventFromTweet(tweet, query) {
-    const text = tweet.text || tweet.full_text || '';
+    const text = tweet.text || tweet.full_text || "";
     const urls = tweet.entities?.urls || [];
-    
+
     // Event detection patterns
     const eventPatterns = [
       /(?:join us|save the date|register now|tickets available).{0,100}(?:conference|summit|meetup|event)/i,
       /(?:announcing|excited to announce).{0,100}(?:conference|summit|event)/i,
-      /(?:\d{1,2}[-\/]\d{1,2}[-\/]\d{4}|\w+ \d{1,2}, \d{4}).{0,100}(?:conference|summit|event)/i
+      /(?:\d{1,2}[-\/]\d{1,2}[-\/]\d{4}|\w+ \d{1,2}, \d{4}).{0,100}(?:conference|summit|event)/i,
     ];
 
-    const isEvent = eventPatterns.some(pattern => pattern.test(text));
+    const isEvent = eventPatterns.some((pattern) => pattern.test(text));
     if (!isEvent) return null;
 
     // Extract event name
-    const nameMatch = text.match(/(?:announcing|join us for|welcome to)\s+([^.!?]+)/i);
-    const eventName = nameMatch ? nameMatch[1].trim() : this.extractEventNameFromText(text);
+    const nameMatch = text.match(
+      /(?:announcing|join us for|welcome to)\s+([^.!?]+)/i
+    );
+    const eventName = nameMatch
+      ? nameMatch[1].trim()
+      : this.extractEventNameFromText(text);
 
     // Extract date
-    const dateMatch = text.match(/(\d{1,2}[-\/]\d{1,2}[-\/]\d{4}|\w+ \d{1,2}, \d{4}|\d{4}-\d{2}-\d{2})/);
+    const dateMatch = text.match(
+      /(\d{1,2}[-\/]\d{1,2}[-\/]\d{4}|\w+ \d{1,2}, \d{4}|\d{4}-\d{2}-\d{2})/
+    );
     let eventDate = null;
     if (dateMatch) {
       try {
@@ -179,8 +185,8 @@ class MasaService extends BaseScrapingService {
 
     // Extract URLs for more info
     const eventUrls = urls
-      .filter(url => !url.expanded_url.includes('twitter.com'))
-      .map(url => url.expanded_url);
+      .filter((url) => !url.expanded_url.includes("twitter.com"))
+      .map((url) => url.expanded_url);
 
     if (!eventName || eventName.length < 3) return null;
 
@@ -189,21 +195,21 @@ class MasaService extends BaseScrapingService {
       date: eventDate,
       location: location,
       description: this.cleanText(text.substring(0, 200)),
-      source: 'Twitter',
+      source: "Twitter",
       sourceUrl: `https://twitter.com/user/status/${tweet.id}`,
       socialData: {
-        platform: 'twitter',
+        platform: "twitter",
         tweetId: tweet.id,
         author: tweet.user?.screen_name || tweet.author_id,
         engagement: {
           retweets: tweet.retweet_count || 0,
           likes: tweet.favorite_count || tweet.public_metrics?.like_count || 0,
-          replies: tweet.reply_count || tweet.public_metrics?.reply_count || 0
+          replies: tweet.reply_count || tweet.public_metrics?.reply_count || 0,
         },
-        urls: eventUrls
+        urls: eventUrls,
       },
       tags: this.extractTagsFromQuery(query),
-      scrapedAt: new Date()
+      scrapedAt: new Date(),
     };
   }
 
@@ -213,16 +219,16 @@ class MasaService extends BaseScrapingService {
   extractEventNameFromText(text) {
     // Remove URLs, mentions, hashtags for cleaner extraction
     const cleanText = text
-      .replace(/https?:\/\/\S+/g, '')
-      .replace(/@\w+/g, '')
-      .replace(/#\w+/g, '')
+      .replace(/https?:\/\/\S+/g, "")
+      .replace(/@\w+/g, "")
+      .replace(/#\w+/g, "")
       .trim();
 
     // Try to find event name patterns
     const patterns = [
       /(?:at|for|to)\s+([A-Z][^.!?]{10,50})/,
       /([A-Z][^.!?]{10,50})(?:\s+(?:conference|summit|event|meetup))/i,
-      /^([^.!?]{10,50})/
+      /^([^.!?]{10,50})/,
     ];
 
     for (const pattern of patterns) {
@@ -243,7 +249,7 @@ class MasaService extends BaseScrapingService {
     const locationPatterns = [
       /(?:in|at|@)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*,\s*[A-Z][a-z]+)/g,
       /(?:in|at|@)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/g,
-      /📍\s*([^.!?\n]+)/g
+      /📍\s*([^.!?\n]+)/g,
     ];
 
     for (const pattern of locationPatterns) {
@@ -260,14 +266,15 @@ class MasaService extends BaseScrapingService {
    * Extract tags from search query
    */
   extractTagsFromQuery(query) {
-    const baseTags = ['web3', 'crypto', 'blockchain'];
+    const baseTags = ["web3", "crypto", "blockchain"];
     const queryWords = query.toLowerCase().split(/\s+/);
-    
-    const additionalTags = queryWords.filter(word => 
-      word.length > 3 && 
-      !['conference', 'event', 'meetup', 'summit'].includes(word) &&
-      !word.includes(':') &&
-      !word.startsWith('-')
+
+    const additionalTags = queryWords.filter(
+      (word) =>
+        word.length > 3 &&
+        !["conference", "event", "meetup", "summit"].includes(word) &&
+        !word.includes(":") &&
+        !word.startsWith("-")
     );
 
     return [...baseTags, ...additionalTags].slice(0, 5);
@@ -280,20 +287,20 @@ class MasaService extends BaseScrapingService {
     // Check if Masa supports web scraping
     const scrapeData = {
       url,
-      ...options
+      ...options,
     };
 
     try {
       return await this.withRetry(
-        () => this.makeMasaRequest('/search/live/web/scrape', scrapeData),
-        { operation: 'scrapeWeb', url }
+        () => this.makeMasaRequest("/search/live/web/scrape", scrapeData),
+        { operation: "scrapeWeb", url }
       );
     } catch (error) {
       // Masa might not support web scraping yet
-      this.emit('error', {
-        operation: 'scrapeWeb',
-        error: 'Web scraping not available via Masa API',
-        url
+      this.emit("error", {
+        operation: "scrapeWeb",
+        error: "Web scraping not available via Masa API",
+        url,
       });
       return null;
     }
@@ -304,12 +311,12 @@ class MasaService extends BaseScrapingService {
    */
   async makeMasaRequest(endpoint, data) {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${this.apiKey}`,
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
 
     if (!response.ok) {
@@ -323,14 +330,18 @@ class MasaService extends BaseScrapingService {
   /**
    * Poll Twitter job for completion
    */
-  async pollTwitterJob(jobId, maxWaitTime = 120000) { // 2 minutes
+  async pollTwitterJob(jobId, maxWaitTime = 120000) {
+    // 2 minutes
     const startTime = Date.now();
-    
+
     while (Date.now() - startTime < maxWaitTime) {
       try {
-        const response = await fetch(`${this.baseUrl}/search/live/twitter/result/${jobId}`, {
-          headers: { 'Authorization': `Bearer ${this.apiKey}` }
-        });
+        const response = await fetch(
+          `${this.baseUrl}/search/live/twitter/result/${jobId}`,
+          {
+            headers: { Authorization: `Bearer ${this.apiKey}` },
+          }
+        );
 
         if (response.ok) {
           const result = await response.json();
@@ -347,17 +358,17 @@ class MasaService extends BaseScrapingService {
       }
     }
 
-    throw new Error('Twitter job polling timeout');
+    throw new Error("Twitter job polling timeout");
   }
 
   /**
    * Parse event data (implementation of abstract method)
    */
   async parseEventData(rawData, source) {
-    if (source.platform === 'twitter') {
+    if (source.platform === "twitter") {
       return await this.parseTwitterEvents(rawData, source.query);
     }
-    
+
     return [];
   }
 
@@ -365,10 +376,10 @@ class MasaService extends BaseScrapingService {
    * Scrape method (implementation of abstract method)
    */
   async scrape(query, options = {}) {
-    if (options.platform === 'twitter') {
+    if (options.platform === "twitter") {
       return await this.searchTwitter(query, options);
     }
-    
+
     return await this.scrapeWeb(query, options);
   }
 }

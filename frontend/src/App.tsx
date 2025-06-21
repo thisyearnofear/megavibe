@@ -243,7 +243,7 @@ function App() {
       <div className="features-showcase">
         <div className="showcase-header">
           <h2>🚀 Choose Your Experience</h2>
-          <p>Select one of our core features to get started</p>
+          <p>Select one of of our core features to get started</p>
         </div>
 
         <div className="welcome-features main-features">
@@ -491,7 +491,7 @@ function App() {
               <div className="modal-header">
                 <h2>Welcome to MegaVibe!</h2>
                 <p style={{
-                  color: 'var(--gray-600)',
+                  color: 'var(--gray-300)',
                   fontSize: 'var(--font-size-base)',
                   margin: 'var(--space-sm) 0 0 0',
                   fontWeight: '400'
