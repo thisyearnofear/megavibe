@@ -151,8 +151,8 @@
       ]
     },
     "/Users/udingethe/Desktop/gpt-engineer/MANTLE/megavibe/contracts/contracts/MegaVibeBounties.sol": {
-      "lastModificationDate": 1750333222869,
-      "contentHash": "277202845e1cc2186ce63a27cf66c580",
+      "lastModificationDate": 1750465828694,
+      "contentHash": "9e59205a00a3b15f294f0a533462479a",
       "sourceName": "contracts/MegaVibeBounties.sol",
       "solcConfig": {
         "version": "0.8.20",

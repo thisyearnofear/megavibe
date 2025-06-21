@@ -1,0 +1,83 @@
+.claim-bounty-modal-body {
+  padding: 1rem;
+}
+
+.claim-bounty-modal-body h3 {
+  color: #111827;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+.claim-bounty-modal-body p {
+  color: #374151;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #111827;
+  background-color: #f9fafb;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.button-group button {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.2s ease-in-out;
+  border: none;
+}
+
+.button-group button.btn-primary {
+  background-color: #6366f1;
+  color: white;
+}
+
+.button-group button.btn-primary:hover:not(:disabled) {
+  background-color: #4f46e5;
+}
+
+.button-group button.btn-secondary {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.button-group button.btn-secondary:hover:not(:disabled) {
+  background-color: #d1d5db;
+}
+
+.button-group button:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}

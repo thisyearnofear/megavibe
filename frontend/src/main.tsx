@@ -5,6 +5,7 @@ import App from './App';
 import { TipPage } from './components/TipPage';
 import { KnowledgeFlywheelPage } from './components/Knowledge/KnowledgeFlywheelPage';
 import { BountyMarketplacePage } from './components/Bounty/BountyMarketplacePage';
+import { SubmissionsPage } from './pages/Bounty/SubmissionsPage'; // Import the new page
 import { TalentPage } from './components/Talent/TalentPage';
 import { AdminPage } from './components/Admin/AdminPage';
 import { FarcasterTest } from './components/Test/FarcasterTest';
@@ -22,7 +23,7 @@ const AppWithNavigation: React.FC = () => {
     const path = location.pathname;
     if (path === '/tip') return 'tip';
     if (path === '/infonomy') return 'infonomy';
-    if (path === '/bounties') return 'bounties';
+    if (path.startsWith('/bounties')) return 'bounties'; // Match base path
     if (path === '/talent') return 'talent';
     return 'home';
   };
@@ -36,6 +37,7 @@ const AppWithNavigation: React.FC = () => {
         <Route path="/tip" element={<TipPage />} />
         <Route path="/infonomy" element={<KnowledgeFlywheelPage />} />
         <Route path="/bounties" element={<BountyMarketplacePage />} />
+        <Route path="/bounties/:bountyId/submissions" element={<SubmissionsPage />} />
         <Route path="/talent" element={<TalentPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/test-farcaster" element={<FarcasterTest />} />

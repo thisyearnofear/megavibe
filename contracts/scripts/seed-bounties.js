@@ -1,7 +1,7 @@
 const { ethers } = require("hardhat");
 
 // --- Configuration ---
-const BOUNTY_CONTRACT_ADDRESS = "0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F";
+const BOUNTY_CONTRACT_ADDRESS = "0x59854F1DCc03E6d65E9C4e148D5635Fb56d3d892";
 const EVENT_ID = "devcon-7-bangkok"; // A default event ID for the bounties
 
 // --- Sample Bounty Data ---

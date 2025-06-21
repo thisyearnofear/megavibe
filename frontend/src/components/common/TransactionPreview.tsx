@@ -2,10 +2,10 @@ import React from 'react';
 import './TransactionPreview.css';
 
 interface TransactionPreviewProps {
-  amountUSD: number;
+  amountUSD?: number;
+  amountMNT?: number;
   platformFeePct?: number;
   gasEstimateUSD?: number;
-  currency?: string;
   networkName?: string;
   showBreakdown?: boolean;
   className?: string;
@@ -13,16 +13,21 @@ interface TransactionPreviewProps {
 
 export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
   amountUSD,
+  amountMNT,
   platformFeePct = 5,
   gasEstimateUSD = 0.01,
-  currency = 'USD',
   networkName = 'Mantle Sepolia',
   showBreakdown = true,
   className = ''
 }) => {
-  const platformFee = amountUSD * (platformFeePct / 100);
-  const recipientAmount = amountUSD - platformFee;
-  const totalCost = amountUSD + gasEstimateUSD;
+  const isMNT = amountMNT !== undefined;
+  const amount = isMNT ? amountMNT : amountUSD || 0;
+  const currency = isMNT ? 'MNT' : 'USD';
+
+  const platformFee = amount * (platformFeePct / 100);
+  const recipientAmount = amount - platformFee;
+  // Note: Gas is still estimated in USD for simplicity. A real app would use an oracle.
+  const totalCost = amount + (isMNT ? 0 : gasEstimateUSD); 
 
   return (
     <div className={`transaction-preview ${className}`}>
@@ -40,7 +45,7 @@ export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
             <div className="breakdown-item">
               <span className="breakdown-label">Amount</span>
               <span className="breakdown-value">
-                ${amountUSD.toFixed(2)} {currency}
+                {amount.toFixed(2)} {currency}
               </span>
             </div>
 
@@ -49,14 +54,14 @@ export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
                 Platform Fee ({platformFeePct}%)
               </span>
               <span className="breakdown-value">
-                ${platformFee.toFixed(2)} {currency}
+                {platformFee.toFixed(2)} {currency}
               </span>
             </div>
 
             <div className="breakdown-item highlight">
               <span className="breakdown-label">Recipient Receives</span>
               <span className="breakdown-value">
-                ${recipientAmount.toFixed(2)} {currency}
+                {recipientAmount.toFixed(2)} {currency}
               </span>
             </div>
 
@@ -68,7 +73,7 @@ export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
                 <span className="fee-badge">Ultra-low</span>
               </span>
               <span className="breakdown-value">
-                ~${gasEstimateUSD.toFixed(3)} {currency}
+                ~${gasEstimateUSD.toFixed(3)} USD
               </span>
             </div>
           </div>
@@ -78,7 +83,8 @@ export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
           <div className="total-item">
             <span className="total-label">Total Cost</span>
             <span className="total-value">
-              ${totalCost.toFixed(2)} {currency}
+              {totalCost.toFixed(2)} {currency}
+              {!isMNT && <span> + Gas</span>}
             </span>
           </div>
         </div>
@@ -99,16 +105,6 @@ export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
         </div>
       </div>
     </div>
-  );
-};
-
-// Simplified version for tips specifically
-export const TipSummary: React.FC<TransactionPreviewProps> = (props) => {
-  return (
-    <TransactionPreview
-      {...props}
-      className={`tip-summary ${props.className || ''}`}
-    />
   );
 };
 

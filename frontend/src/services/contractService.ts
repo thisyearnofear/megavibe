@@ -2,7 +2,6 @@ import { ethers, Contract, JsonRpcProvider, BrowserProvider, formatEther, parseE
 import MegaVibeTippingABI from '../contracts/MegaVibeTipping.json';
 import MegaVibeBountiesABI from '../contracts/MegaVibeBounties.json';
 
-// Use 'active' to align with filter hooks
 export interface Bounty {
   id: string;
   creator: string;
@@ -16,7 +15,7 @@ export interface Bounty {
 }
 
 const TIPPING_CONTRACT_ADDRESS = import.meta.env.VITE_TIPPING_CONTRACT_ADDRESS;
-const BOUNTY_CONTRACT_ADDRESS = import.meta.env.VITE_BOUNTY_CONTRACT_ADDRESS;
+const BOUNTY_CONTRACT_ADDRESS = "0x59854F1DCc03E6d65E9C4e148D5635Fb56d3d892";
 
 const MANTLE_SEPOLIA = {
   id: 5003,
@@ -71,89 +70,45 @@ class ContractService {
   }
 
   async getActiveBountiesForEvent(eventId: string): Promise<any[]> {
-    try {
-      const contract = this.getBountyContract(true);
-      const data = await contract.getActiveBountiesForEvent(eventId);
-      return data;
-    } catch (error) {
-      console.error(`Error fetching bounties for event ${eventId}:`, error);
-      return [];
-    }
-  }
-
-  onBountyCreated(callback: (...args: any[]) => void): () => void {
     const contract = this.getBountyContract(true);
-    const eventName = 'BountyCreated';
-    contract.on(eventName, callback);
-    return () => {
-      contract.off(eventName, callback);
-    };
+    return contract.getActiveBountiesForEvent(eventId);
   }
 
-  onBountyClaimed(callback: (...args: any[]) => void): () => void {
+  async getBounty(bountyId: number): Promise<any> {
     const contract = this.getBountyContract(true);
-    const eventName = 'BountyClaimed';
-    contract.on(eventName, callback);
-    return () => {
-      contract.off(eventName, callback);
-    };
+    return contract.getBounty(bountyId);
   }
 
-  onTipConfirmed(callback: (...args: any[]) => void): () => void {
-    const contract = new Contract(TIPPING_CONTRACT_ADDRESS, MegaVibeTippingABI.abi, this.provider!);
-    const eventName = 'TipConfirmed';
-    contract.on(eventName, callback);
-    return () => {
-      contract.off(eventName, callback);
-    };
+  async getSubmissionsForBounty(bountyId: number): Promise<any[]> {
+    const contract = this.getBountyContract(true);
+    return contract.getSubmissionsForBounty(bountyId);
   }
 
-  async sendTip(
-    recipientAddress: string, 
-    amount: string, 
-    message: string = '',
-    eventId: string = 'current-event',
-    speakerId: string = 'current-speaker'
-  ): Promise<string> {
-    if (!isAddress(recipientAddress)) throw new Error('Invalid recipient address');
-    if (parseFloat(amount) <= 0) throw new Error('Invalid amount');
-    
-    const contract = this.getTippingContract();
-    const tx = await contract.tipSpeaker(
-      recipientAddress, 
-      message, 
-      eventId, 
-      speakerId,
-      { value: parseEther(amount) }
-    );
+  async createBounty(eventId: string, speakerId: string, description: string, amount: string, deadline: number): Promise<string> {
+    const contract = this.getBountyContract();
+    const tx = await contract.createBounty(eventId, speakerId, description, deadline, { value: parseEther(amount) });
     await tx.wait();
     return tx.hash;
   }
 
-  async createBounty(
-    eventId: string,
-    speakerId: string,
-    description: string, 
-    amount: string, 
-    deadline: number
-  ): Promise<string> {
-    if (parseFloat(amount) <= 0) throw new Error('Invalid amount');
-
+  async submitForBounty(bountyId: number, submissionHash: string): Promise<string> {
     const contract = this.getBountyContract();
-    const tx = await contract.createBounty(
-      eventId, 
-      speakerId, 
-      description, 
-      deadline,
-      { value: parseEther(amount) }
-    );
+    const stakeAmount = await contract.submissionStakeAmount();
+    const tx = await contract.submitForBounty(bountyId, submissionHash, { value: stakeAmount });
     await tx.wait();
     return tx.hash;
   }
 
-  async claimBounty(bountyId: number, submissionHash: string): Promise<string> {
+  async approveSubmission(bountyId: number, submissionId: number): Promise<string> {
     const contract = this.getBountyContract();
-    const tx = await contract.claimBounty(bountyId, submissionHash);
+    const tx = await contract.approveSubmission(bountyId, submissionId);
+    await tx.wait();
+    return tx.hash;
+  }
+
+  async rejectSubmission(bountyId: number, submissionId: number): Promise<string> {
+    const contract = this.getBountyContract();
+    const tx = await contract.rejectSubmission(bountyId, submissionId);
     await tx.wait();
     return tx.hash;
   }

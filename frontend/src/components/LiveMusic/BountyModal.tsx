@@ -5,9 +5,9 @@ import { AmountSelector } from '../common/AmountSelector';
 import { MessageComposer } from '../common/MessageComposer';
 import { TransactionPreview } from '../common/TransactionPreview';
 import { useWallet } from '../../contexts/WalletContext';
-import { api } from '../../services/api';
-import { walletService } from '../../services/walletService';
+import contractService from '../../services/contractService';
 import ModalErrorBanner from '../common/ModalErrorBanner';
+import './BountyModal.css';
 
 interface BountyModalProps {
   eventId: string;
@@ -34,7 +34,7 @@ export const BountyModal: React.FC<BountyModalProps> = ({
   isOpen
 }) => {
   const [step, setStep] = useState<'amount' | 'details' | 'confirm' | 'success'>('amount');
-  const [amount, setAmount] = useState<number>(50);
+  const [amount, setAmount] = useState<number>(10); // Default to 10 MNT
   const [description, setDescription] = useState<string>('');
   const [deadline, setDeadline] = useState<string>('');
   const [isSubmitting, setSubmitting] = useState(false);
@@ -54,7 +54,7 @@ export const BountyModal: React.FC<BountyModalProps> = ({
 
   const handleCreate = async () => {
     if (!isWalletReady()) {
-      setError('Wallet not ready');
+      setError('Wallet not ready. Please connect to the Mantle Sepolia network.');
       return;
     }
 
@@ -62,29 +62,16 @@ export const BountyModal: React.FC<BountyModalProps> = ({
     setError(null);
 
     try {
-      // Convert deadline to timestamp
       const deadlineTs = Math.floor(new Date(deadline).getTime() / 1000);
       
-      // Create bounty on-chain
-      const tx = await walletService.createBounty(
+      await contractService.createBounty(
         eventId,
         speakerId,
         description,
-        deadlineTs,
-        amount
+        amount.toString(),
+        deadlineTs
       );
       
-      await tx.wait();
-
-      // Save to backend
-      await api.post('/api/bounties/create', {
-        contractBountyId: tx.logs[0].args.bountyId.toNumber(),
-        eventId,
-        speakerId,
-        description,
-        deadline
-      });
-
       setStep('success');
       setTimeout(() => {
         onSuccess();
@@ -92,7 +79,7 @@ export const BountyModal: React.FC<BountyModalProps> = ({
       }, 2000);
 
     } catch (e: any) {
-      setError(e.message || 'Failed to create bounty');
+      setError(e.message || 'Failed to create bounty. Please check your wallet and try again.');
     } finally {
       setSubmitting(false);
     }
@@ -101,7 +88,7 @@ export const BountyModal: React.FC<BountyModalProps> = ({
   return (
     <Modal
       isOpen={isOpen}
-      title="Create Content Bounty"
+      title="Create On-Chain Bounty"
       onClose={onClose}
       size="medium"
     >
@@ -109,14 +96,14 @@ export const BountyModal: React.FC<BountyModalProps> = ({
       
       {step === 'amount' && (
         <div>
-          <h3>Set Reward Amount</h3>
+          <h3>Set Reward Amount (in MNT)</h3>
           <AmountSelector
-            presets={[25, 50, 100, 200]}
+            presets={[5, 10, 25, 50]}
             selected={amount}
             onSelect={setAmount}
-            currency="$"
+            currency="MNT"
           />
-          <button onClick={handleNext}>Next</button>
+          <button onClick={handleNext} className="btn-primary">Next</button>
         </div>
       )}
 
@@ -126,7 +113,7 @@ export const BountyModal: React.FC<BountyModalProps> = ({
           <MessageComposer
             message={description}
             onChange={setDescription}
-            placeholder="Describe what content you want created..."
+            placeholder="Describe the content you want created..."
             maxLength={500}
           />
           <div>
@@ -137,8 +124,10 @@ export const BountyModal: React.FC<BountyModalProps> = ({
               onChange={e => setDeadline(e.target.value)}
             />
           </div>
-          <button onClick={handleBack}>Back</button>
-          <button onClick={handleNext}>Next</button>
+          <div className="button-group">
+            <button onClick={handleBack} className="btn-secondary">Back</button>
+            <button onClick={handleNext} className="btn-primary">Next</button>
+          </div>
         </div>
       )}
 
@@ -146,26 +135,28 @@ export const BountyModal: React.FC<BountyModalProps> = ({
         <div>
           <h3>Confirm Bounty</h3>
           <TransactionPreview
-            amountUSD={amount}
+            amountMNT={amount}
             platformFeePct={5}
             gasEstimateUSD={0.01}
           />
-          <p>Description: {description}</p>
-          <p>Deadline: {new Date(deadline).toLocaleString()}</p>
+          <p><strong>Description:</strong> {description}</p>
+          <p><strong>Deadline:</strong> {new Date(deadline).toLocaleString()}</p>
           {error && (
             <ModalErrorBanner error={error} onDismiss={() => setError(null)} />
           )}
-          <button onClick={handleBack}>Back</button>
-          <button onClick={handleCreate} disabled={isSubmitting}>
-            {isSubmitting ? 'Creating...' : 'Create Bounty'}
-          </button>
+          <div className="button-group">
+            <button onClick={handleBack} className="btn-secondary">Back</button>
+            <button onClick={handleCreate} disabled={isSubmitting} className="btn-primary">
+              {isSubmitting ? 'Creating...' : `Create Bounty for ${amount} MNT`}
+            </button>
+          </div>
         </div>
       )}
 
       {step === 'success' && (
         <div>
           <h3>✅ Bounty Created!</h3>
-          <p>Your bounty is now live and ready for submissions.</p>
+          <p>Your bounty is now live on the Mantle Sepolia network.</p>
         </div>
       )}
     </Modal>

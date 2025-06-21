@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Import Link
 import { useBountiesForEvent } from '../../hooks/useBountiesForEvent';
 import { useBountyFilter } from '../../hooks/useBountyFilter';
 import { PageLayout } from '../Layout/PageLayout';
@@ -6,12 +7,13 @@ import { Button } from '../UI/Button';
 import { Card } from '../UI/Card';
 import { SkeletonCard } from '../Loading/SkeletonCard';
 import { BountyModal } from '../LiveMusic/BountyModal';
+import { ClaimBountyModal } from './ClaimBountyModal';
 import { useWallet } from '../../contexts/WalletContext';
 import { useEvent } from '../../contexts/EventContext';
 import './BountyMarketplacePage.css';
 
 export const BountyMarketplacePage: React.FC = () => {
-  const { currentEvent, speakers } = useEvent();
+  const { currentEvent, speakers, loadEvent } = useEvent();
   const { isConnected } = useWallet();
   
   const eventId = currentEvent?.id || 'devcon-7-bangkok';
@@ -20,10 +22,28 @@ export const BountyMarketplacePage: React.FC = () => {
   const { filtered: filteredBounties } = useBountyFilter(bounties);
 
   const [showCreateBounty, setShowCreateBounty] = useState(false);
+  const [showClaimBounty, setShowClaimBounty] = useState(false);
+  const [selectedBountyId, setSelectedBountyId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!currentEvent || currentEvent.id !== eventId) {
+      loadEvent(eventId);
+    }
+  }, [eventId, currentEvent, loadEvent]);
 
   const handleCreateBountySuccess = () => {
     setShowCreateBounty(false);
     refreshBounties();
+  };
+
+  const handleClaimBountySuccess = () => {
+    setShowClaimBounty(false);
+    refreshBounties();
+  };
+
+  const openClaimModal = (bountyId: string) => {
+    setSelectedBountyId(bountyId);
+    setShowClaimBounty(true);
   };
 
   const renderLoadingState = () => (
@@ -67,9 +87,19 @@ export const BountyMarketplacePage: React.FC = () => {
         </div>
       </div>
       <div className="bounty-actions">
-        <Button variant="primary" size="sm" disabled={bounty.status !== 'active'}>
-          Claim Bounty
+        <Button 
+          variant="secondary" 
+          size="sm" 
+          onClick={() => openClaimModal(bounty.id)}
+          disabled={!isConnected}
+        >
+          Submit for Bounty
         </Button>
+        <Link to={`/bounties/${bounty.id}/submissions`}>
+          <Button variant="primary" size="sm">
+            View Submissions
+          </Button>
+        </Link>
       </div>
     </Card>
   );
@@ -77,7 +107,7 @@ export const BountyMarketplacePage: React.FC = () => {
   return (
     <PageLayout
       title="On-Chain Bounty Marketplace"
-      subtitle={`Discover, create, and claim bounties for ${currentEvent?.name || 'events'}.`}
+      subtitle="Discover, create, and claim bounties."
     >
       <div className="marketplace-header">
         <div className="header-stats">
@@ -124,6 +154,15 @@ export const BountyMarketplacePage: React.FC = () => {
           onClose={() => setShowCreateBounty(false)}
           onSuccess={handleCreateBountySuccess}
           isOpen={showCreateBounty}
+        />
+      )}
+
+      {showClaimBounty && selectedBountyId && (
+        <ClaimBountyModal
+          bountyId={selectedBountyId}
+          onClose={() => setShowClaimBounty(false)}
+          onSuccess={handleClaimBountySuccess}
+          isOpen={showClaimBounty}
         />
       )}
     </PageLayout>
