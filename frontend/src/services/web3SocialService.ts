@@ -105,7 +105,7 @@ export interface Web3SpeakerProfile {
 }
 
 class Web3SocialService {
-  private neynarBaseUrl = '/api/neynar-proxy';
+  private neynarBaseUrl = 'https://megavibe.onrender.com/api/neynar-proxy';
 
   constructor() {}
 
