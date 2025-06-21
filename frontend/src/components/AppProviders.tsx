@@ -8,6 +8,7 @@ import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
 import { WalletProvider } from '../contexts/WalletContext';
 import { EventProvider } from '../contexts/EventContext';
 import { ToastProvider } from '../contexts/ToastContext';
+import { ProfileProvider } from '../contexts/ProfileContext';
 
 // Simple Mantle Sepolia configuration
 const mantleSepolia = {
@@ -89,9 +90,11 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
           <DynamicWagmiConnector>
             <ToastProvider>
               <WalletProvider>
-                <EventProvider>
-                  {children}
-                </EventProvider>
+                <ProfileProvider>
+                  <EventProvider>
+                    {children}
+                  </EventProvider>
+                </ProfileProvider>
               </WalletProvider>
             </ToastProvider>
           </DynamicWagmiConnector>

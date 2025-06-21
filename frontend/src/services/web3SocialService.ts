@@ -105,41 +105,17 @@ export interface Web3SpeakerProfile {
 }
 
 class Web3SocialService {
-  private neynarApiKey: string;
-  private neynarClientId: string;
-  private neynarBaseUrl = 'https://api.neynar.com/v2/farcaster';
+  private neynarBaseUrl = '/api/neynar-proxy';
 
-  constructor() {
-    this.neynarApiKey = import.meta.env.VITE_NEYNAR_API_KEY || import.meta.env.NEYNAR_API_KEY || '';
-    this.neynarClientId = import.meta.env.VITE_NEYNAR_CLIENT_ID || import.meta.env.NEYNAR_CLIENT_ID || '';
-    if (!this.neynarApiKey) {
-      console.warn('⚠️ VITE_NEYNAR_API_KEY or NEYNAR_API_KEY not configured. Farcaster profiles will not load.');
-    }
-     if (!this.neynarClientId) {
-      console.warn('⚠️ VITE_NEYNAR_CLIENT_ID or NEYNAR_CLIENT_ID not configured. Farcaster profiles might not load.');
-    }
-  }
+  constructor() {}
 
   /**
    * Get Farcaster profile by address using Neynar API
    */
   async getFarcasterProfile(address: string): Promise<FarcasterProfile | null> {
-    if (!this.neynarApiKey) {
-      console.warn('Neynar API key not configured');
-      return null;
-    }
-
     try {
       const response = await fetch(
-        `${this.neynarBaseUrl}/user/bulk-by-address?addresses=${address}`,
-        {
-          method: 'GET',
-          headers: {
-            'accept': 'application/json',
-            'api_key': this.neynarApiKey,
-            'Neynar-Client-Id': this.neynarClientId
-          }
-        }
+        `${this.neynarBaseUrl}/user/bulk-by-address?addresses=${address}`
       );
 
       if (!response.ok) {
@@ -168,22 +144,11 @@ class Web3SocialService {
    * Search for Farcaster users by username
    */
   async searchFarcasterUsers(query: string, limit: number = 5): Promise<FarcasterProfile[]> {
-    if (!this.neynarApiKey) {
-      console.warn('Neynar API key not configured');
-      return [];
-    }
-
     try {
+      // This route is not yet implemented in the proxy, so this will fail.
+      // TODO: Implement /user/search in neynarProxyRoutes.cjs
       const response = await fetch(
-        `${this.neynarBaseUrl}/user/search?q=${encodeURIComponent(query)}&limit=${limit}`,
-        {
-          method: 'GET',
-          headers: {
-            'accept': 'application/json',
-            'api_key': this.neynarApiKey,
-            'Neynar-Client-Id': this.neynarClientId
-          }
-        }
+        `${this.neynarBaseUrl}/user/search?q=${encodeURIComponent(query)}&limit=${limit}`
       );
 
       if (!response.ok) {
@@ -203,22 +168,11 @@ class Web3SocialService {
    * Get Farcaster profile by username
    */
   async getFarcasterProfileByUsername(username: string): Promise<FarcasterProfile | null> {
-    if (!this.neynarApiKey) {
-      console.warn('Neynar API key not configured');
-      return null;
-    }
-
     try {
+      // This route is not yet implemented in the proxy, so this will fail.
+      // TODO: Implement /user/by_username in neynarProxyRoutes.cjs
       const response = await fetch(
-        `${this.neynarBaseUrl}/user/by_username?username=${encodeURIComponent(username)}`,
-        {
-          method: 'GET',
-          headers: {
-            'accept': 'application/json',
-            'api_key': this.neynarApiKey,
-            'Neynar-Client-Id': this.neynarClientId
-          }
-        }
+        `${this.neynarBaseUrl}/user/by_username?username=${encodeURIComponent(username)}`
       );
 
       if (!response.ok) {
@@ -241,23 +195,12 @@ class Web3SocialService {
    * Get multiple Farcaster profiles by FIDs
    */
   async getFarcasterProfilesByFids(fids: number[]): Promise<FarcasterProfile[]> {
-    if (!this.neynarApiKey) {
-      console.warn('Neynar API key not configured');
-      return [];
-    }
-
     try {
+      // This route is not yet implemented in the proxy, so this will fail.
+      // TODO: Implement /user/bulk in neynarProxyRoutes.cjs
       const fidsParam = fids.join(',');
       const response = await fetch(
-        `${this.neynarBaseUrl}/user/bulk?fids=${fidsParam}`,
-        {
-          method: 'GET',
-          headers: {
-            'accept': 'application/json',
-            'api_key': this.neynarApiKey,
-            'Neynar-Client-Id': this.neynarClientId
-          }
-        }
+        `${this.neynarBaseUrl}/user/bulk?fids=${fidsParam}`
       );
 
       if (!response.ok) {
@@ -326,25 +269,6 @@ class Web3SocialService {
    * Get comprehensive Web3 profile for a speaker (Farcaster focused)
    */
   async getWeb3SpeakerProfile(address: string): Promise<Web3SpeakerProfile> {
-    if (!this.neynarApiKey) {
-      return {
-        address,
-        error: 'Neynar API key not configured',
-        onChainStats: {
-          totalTipsReceived: '0',
-          totalBountiesCreated: 0,
-          totalBountiesClaimed: 0,
-          eventsParticipated: 0,
-          reputationScore: 0
-        },
-        socialMetrics: {
-          totalFollowers: 0,
-          totalEngagement: 0,
-          verifiedIdentity: false,
-          primaryPlatform: 'address'
-        }
-      };
-    }
     const [farcaster, ensName] = await Promise.all([
       this.getFarcasterProfile(address),
       this.getENSName(address)

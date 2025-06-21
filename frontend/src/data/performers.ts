@@ -35,7 +35,7 @@ export const PERFORMERS: Performer[] = [
     socialLinks: {
       twitter: 'https://twitter.com/VitalikButerin',
     },
-    wallet: '0x1234567890123456789012345678901234567890',
+    wallet: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
     events: ['devcon-7', 'ethcc-2025']
   },
   {
@@ -55,6 +55,7 @@ export const PERFORMERS: Performer[] = [
       twitter: 'https://bit.ly/3FHRTT5',
       youtube: 'https://youtube.com/c/papajams'
     },
+    wallet: '0x55A5705453Ee82c742274154136Fce8149597058',
     events: ['demo-venue']
   },
   {
@@ -74,6 +75,7 @@ export const PERFORMERS: Performer[] = [
       twitter: 'https://twitter.com/anatumusic',
       youtube: 'https://youtube.com/c/anatumusic'
     },
+    wallet: '0x49a2c363347935451343a53b7f82b5d1482f8a5c',
     events: ['demo-venue']
   },
   {
@@ -93,6 +95,7 @@ export const PERFORMERS: Performer[] = [
       twitter: 'https://twitter.com/andrewsongs',
       youtube: 'https://youtube.com/c/andrewsongs'
     },
+    wallet: '0x45556447e159BA214A462549E034E5737552903A',
     events: ['demo-venue']
   }
   // Add more performers as needed

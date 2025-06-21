@@ -143,49 +143,6 @@ export const CrossPlatformNav: React.FC<CrossPlatformNavProps> = ({
         </div>
       )}
 
-      {/* On-Chain Status */}
-      <div className="nav-section nav-section--status">
-        <div className="chain-status">
-          <div className={`status-indicator ${isConnected ? 'status-indicator--connected' : 'status-indicator--disconnected'}`}>
-            <span className="status-dot"></span>
-            <span className="status-text">
-              {isConnected ? '🟢 On-Chain Data Active' : '🔴 Demo Mode (Connect Wallet)'}
-            </span>
-          </div>
-          
-          {!isConnected && (
-            <p className="status-note">
-              Connect your wallet to see real on-chain data and participate in the economy
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Data Flow Visualization */}
-      <div className="nav-section nav-section--flow">
-        <h4>💫 Value Flow</h4>
-        <div className="flow-diagram">
-          <div className="flow-step">
-            <span className="flow-icon">👥</span>
-            <span className="flow-label">Discover</span>
-            <span className="flow-arrow">→</span>
-          </div>
-          <div className="flow-step">
-            <span className="flow-icon">💰</span>
-            <span className="flow-label">Tip</span>
-            <span className="flow-arrow">→</span>
-          </div>
-          <div className="flow-step">
-            <span className="flow-icon">🎯</span>
-            <span className="flow-label">Bounty</span>
-            <span className="flow-arrow">→</span>
-          </div>
-          <div className="flow-step">
-            <span className="flow-icon">🧠</span>
-            <span className="flow-label">Knowledge</span>
-          </div>
-        </div>
-      </div>
     </nav>
   );
 };

@@ -112,6 +112,14 @@ class ContractService {
     await tx.wait();
     return tx.hash;
   }
+
+  async tipSpeaker(recipient: string, message: string, eventId: string, speakerId: string, amount: string): Promise<string> {
+    if (!isAddress(recipient)) throw new Error('Invalid recipient address');
+    const contract = this.getTippingContract();
+    const tx = await contract.tipSpeaker(recipient, message, eventId, speakerId, { value: parseEther(amount) });
+    await tx.wait();
+    return tx.hash;
+  }
 }
 
 export default new ContractService();

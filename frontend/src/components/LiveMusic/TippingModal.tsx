@@ -5,8 +5,8 @@ import { AmountSelector } from '../common/AmountSelector';
 import { MessageComposer } from '../common/MessageComposer';
 import { TransactionPreview } from '../common/TransactionPreview';
 import { useWallet } from '../../contexts/WalletContext';
-import { api } from '../../services/api';
 import { walletService } from '../../services/walletService';
+import contractService from '../../services/contractService';
 import ModalErrorBanner from '../common/ModalErrorBanner';
 import './TippingModal.css';
 
@@ -154,43 +154,23 @@ export const TippingModal: React.FC<TippingModalProps> = ({
     setError(null);
 
     try {
-      // Create tip record in backend
-      const createResponse = await api.post('/api/tips/create', {
-        speakerId: speaker.id,
-        eventId: event.id,
-        amountUSD: amount,
-        message: message.trim(),
-      });
-
-      const { tipId, speakerWallet } = createResponse.data;
+      if (!speaker.walletAddress) {
+        throw new Error("Speaker's wallet address is not available.");
+      }
 
       // Convert USD to MNT
       const amountMNT = await walletService.convertUSDToMNT(amount);
 
-      // Send transaction
-      const txResult = await walletService.sendTip(
-        speakerWallet,
-        amountMNT,
+      // Send transaction via contractService
+      const txHash = await contractService.tipSpeaker(
+        speaker.walletAddress,
         message.trim(),
         event.id,
-        speaker.id
+        speaker.id,
+        amountMNT.toString()
       );
 
-      if (!txResult.success) {
-        throw new Error('Transaction failed');
-      }
-
-      setTxHash(txResult.txHash);
-
-      // Confirm tip in backend
-      await api.post('/api/tips/confirm', {
-        tipId: tipId,
-        txHash: txResult.txHash,
-        amountMNT: amountMNT,
-        blockNumber: txResult.blockNumber,
-        gasUsed: txResult.gasUsed,
-      });
-
+      setTxHash(txHash);
       setStep('success');
 
       // Auto-close after success

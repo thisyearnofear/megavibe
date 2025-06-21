@@ -280,29 +280,6 @@ export const TalentPage: React.FC<TalentPageProps> = ({
               </div>
             )}
 
-            {/* Integration CTA */}
-            <Card className="integration-cta">
-              <h3>🌐 Complete Web3 Integration</h3>
-              <p>This talent network seamlessly connects to:</p>
-              <div className="integration-features">
-                <div className="feature">
-                  <span className="feature-icon">💰</span>
-                  <strong>Live Tipping:</strong> Send real-time tips on Mantle
-                </div>
-                <div className="feature">
-                  <span className="feature-icon">🎯</span>
-                  <strong>Bounty Creation:</strong> Incentivize content creation
-                </div>
-                <div className="feature">
-                  <span className="feature-icon">🧠</span>
-                  <strong>Knowledge Graph:</strong> Track knowledge creation impact
-                </div>
-                <div className="feature">
-                  <span className="feature-icon">📱</span>
-                  <strong>Social Verification:</strong> Farcaster integration
-                </div>
-              </div>
-            </Card>
           </div>
         </div>
       </div>

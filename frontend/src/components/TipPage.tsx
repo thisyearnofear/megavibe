@@ -8,9 +8,10 @@ import '../styles/TipPage.css';
 import { PageLayout } from './Layout/PageLayout';
 import { Button } from './UI/Button';
 import { SkeletonGrid } from './Loading/SkeletonCard';
-import { PERFORMERS, Performer } from '../data/performers';
 import { useToast } from '../contexts/ToastContext';
 import { LoadingSpinner } from './Loading/LoadingSpinner';
+import { useProfile } from '../contexts/ProfileContext';
+import { Web3SpeakerProfile } from '../services/web3SocialService';
 
 const VenuePicker = lazy(() =>
   import('./LiveMusic/VenuePicker').then(module => ({
@@ -21,30 +22,45 @@ const VenuePicker = lazy(() =>
 export const TipPage: React.FC = () => {
   const { allEvents, isLoading: loading, error, loadEvent } = useEvent();
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [selectedSpeaker, setSelectedSpeaker] = useState<Performer | null>(null);
+  const [selectedSpeaker, setSelectedSpeaker] = useState<Web3SpeakerProfile | null>(null);
+  const [speakerProfiles, setSpeakerProfiles] = useState<Record<string, Web3SpeakerProfile>>({});
+  const [loadingProfiles, setLoadingProfiles] = useState(false);
   const [showVenuePicker, setShowVenuePicker] = useState(false);
   const [showTippingModal, setShowTippingModal] = useState(false);
   const [showBountyModal, setShowBountyModal] = useState(false);
 
   const { isConnected, isCorrectNetwork } = useWallet();
   const { showSuccess, showError, showWarning } = useToast();
+  const { getProfile, profiles } = useProfile();
 
-  const getSpeakersForEvent = (event: Event): Performer[] => {
-    // This is a placeholder. In a real app, you'd fetch speakers for the event.
-    return PERFORMERS.filter(p => p.type === 'speaker');
-  };
-
-  const handleEventSelect = (event: Event) => {
+  const handleEventSelect = async (event: Event) => {
     setSelectedEvent(event);
-    const speakers = getSpeakersForEvent(event);
-    event.speakers = speakers;
+    setLoadingProfiles(true);
+    // In a real app, you'd get speaker addresses from the event object.
+    // For now, we'll use the addresses from the old KNOWN_SPEAKERS array.
+    const speakerAddresses = [
+      '0xd8da6bf26964af9d7eed9e03e53415d37aa96045', // vitalik.eth
+      '0x55A5705453Ee82c742274154136Fce8149597058', // papajams.eth
+      '0x49a2c363347935451343a53b7f82b5d1482f8a5c', // greg.eth
+      '0x45556447e159BA214A462549E034E5737552903A', // brianjck.eth
+    ];
+
+    const fetchedProfiles: Record<string, Web3SpeakerProfile> = {};
+    for (const address of speakerAddresses) {
+      const profile = await getProfile(address);
+      if (profile) {
+        fetchedProfiles[address] = profile;
+      }
+    }
+    setSpeakerProfiles(fetchedProfiles);
+    setLoadingProfiles(false);
   };
 
   useEffect(() => {
     loadEvent('');
   }, [loadEvent]);
 
-  const handleSpeakerTip = (speaker: Performer) => {
+  const handleSpeakerTip = (speaker: Web3SpeakerProfile) => {
     if (!isConnected) {
       showWarning('Wallet Required', 'Please connect your wallet to send tips');
       return;
@@ -65,7 +81,7 @@ export const TipPage: React.FC = () => {
     showSuccess('Tip Sent!', 'Your tip has been successfully sent to the speaker');
   };
 
-  const handleSpeakerBounty = (speaker: Performer) => {
+  const handleSpeakerBounty = (speaker: Web3SpeakerProfile) => {
     if (!isConnected) {
       showWarning('Wallet Required', 'Please connect your wallet to create bounties');
       return;
@@ -167,40 +183,41 @@ export const TipPage: React.FC = () => {
               <div className="live-features-grid">
                 <div className="speakers-section">
                   <h4>🎤 Speakers You Can Tip</h4>
-                  <div className="speakers-grid">
-                    {selectedEvent.speakers.map(speaker => (
-                      <div
-                        key={speaker.id}
-                        className={`speaker-card ${speaker.isLive ? 'live' : ''}`}
-                      >
-                        <div className="speaker-info">
-                          <div className="speaker-header">
-                            <h5>{speaker.name}</h5>
-                            {speaker.isLive && (
-                              <span className="live-indicator">🔴 LIVE NOW</span>
-                            )}
+                  {loadingProfiles ? (
+                    <LoadingSpinner text="Loading speaker profiles..." />
+                  ) : (
+                    <div className="speakers-grid">
+                      {Object.values(speakerProfiles).map(profile => (
+                        <div
+                          key={profile.address}
+                          className="speaker-card"
+                        >
+                          <div className="speaker-info">
+                            <div className="speaker-header">
+                              <h5>{profile.farcaster?.displayName || profile.ensName || profile.address}</h5>
+                            </div>
+                            <p className="speaker-bio">{profile.farcaster?.bio}</p>
                           </div>
-                          <p className="speaker-bio">{speaker.bio}</p>
+                          <div className="speaker-actions">
+                            <button
+                              className={`btn btn-primary ${!isConnected || !isCorrectNetwork ? 'btn-disabled' : ''}`}
+                              onClick={() => handleSpeakerTip(profile)}
+                              disabled={!isConnected || !isCorrectNetwork}
+                            >
+                              💰 Tip Speaker
+                            </button>
+                            <button
+                              className={`btn btn-secondary ${!isConnected || !isCorrectNetwork ? 'btn-disabled' : ''}`}
+                              onClick={() => handleSpeakerBounty(profile)}
+                              disabled={!isConnected || !isCorrectNetwork}
+                            >
+                              🎯 Bounty
+                            </button>
+                          </div>
                         </div>
-                        <div className="speaker-actions">
-                          <button
-                            className={`btn ${speaker.isLive ? 'btn-primary' : 'btn-outline'} ${!isConnected || !isCorrectNetwork ? 'btn-disabled' : ''}`}
-                            onClick={() => handleSpeakerTip(speaker)}
-                            disabled={!isConnected || !isCorrectNetwork}
-                          >
-                            💰 Tip {speaker.isLive ? 'Now' : 'Speaker'}
-                          </button>
-                          <button
-                            className={`btn btn-secondary ${!isConnected || !isCorrectNetwork ? 'btn-disabled' : ''}`}
-                            onClick={() => handleSpeakerBounty(speaker)}
-                            disabled={!isConnected || !isCorrectNetwork}
-                          >
-                            🎯 Bounty
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="live-feed-section">
                   <LiveTipFeed eventId={selectedEvent.id} />
@@ -210,6 +227,32 @@ export const TipPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {showTippingModal && selectedSpeaker && selectedEvent && (
+        <TippingModal
+          speaker={{
+            id: selectedSpeaker.address,
+            name: selectedSpeaker.farcaster?.displayName || selectedSpeaker.ensName || selectedSpeaker.address,
+            walletAddress: selectedSpeaker.address,
+            avatar: selectedSpeaker.farcaster?.pfpUrl,
+          }}
+          event={selectedEvent}
+          onClose={() => setShowTippingModal(false)}
+          onSuccess={handleTipSuccess}
+          isOpen={showTippingModal}
+        />
+      )}
+
+      {showBountyModal && selectedSpeaker && selectedEvent && (
+        <BountyModal
+          speakerId={selectedSpeaker.address}
+          speakerName={selectedSpeaker.farcaster?.displayName || selectedSpeaker.ensName || selectedSpeaker.address}
+          eventId={selectedEvent.id}
+          onClose={() => setShowBountyModal(false)}
+          onSuccess={handleBountySuccess}
+          isOpen={showBountyModal}
+        />
+      )}
     </PageLayout>
   );
 };
