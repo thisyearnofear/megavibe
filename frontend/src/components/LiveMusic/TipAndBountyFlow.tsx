@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LiveTipFeed } from './LiveTipFeed';
 import { useWallet } from '../../contexts/WalletContext';
+import { useToast } from '../../contexts/ToastContext';
 import { useLiveTipFeed } from '../../hooks/useLiveTipFeed';
 import { api } from '../../services/api';
 import { walletService } from '../../services/walletService';
@@ -88,24 +89,26 @@ export const TipAndBountyFlow: React.FC<TipAndBountyFlowProps> = ({
   const [walletBalance, setWalletBalance] = useState<string>('0');
   const [showLiveFeed, setShowLiveFeed] = useState(false);
 
-  const { isConnected, isWalletReady } = useWallet();
+  const { isConnected, isCorrectNetwork, connectWallet } = useWallet();
+  const { showSuccess, showError, showWarning } = useToast();
   const { stats } = useLiveTipFeed(event?.id || '');
 
   // Load wallet balance
   useEffect(() => {
     const loadBalance = async () => {
-      if (isConnected) {
+      if (isConnected && isCorrectNetwork) {
         try {
           const balance = await walletService.getBalance();
           setWalletBalance(balance);
         } catch (error) {
           console.error('Failed to get balance:', error);
+          showError('Balance Error', 'Could not load wallet balance.');
         }
       }
     };
 
     loadBalance();
-  }, [isConnected]);
+  }, [isConnected, isCorrectNetwork]);
 
   // Reset form when modal opens/closes
   useEffect(() => {
@@ -158,13 +161,19 @@ export const TipAndBountyFlow: React.FC<TipAndBountyFlowProps> = ({
   };
 
   const handleSubmit = async () => {
-    if (!isWalletReady()) {
-      setError('Please connect your wallet first');
+    if (!isConnected) {
+      showWarning('Connect Wallet', 'Please connect your wallet to proceed.');
+      connectWallet(); // Or trigger a modal
+      return;
+    }
+
+    if (!isCorrectNetwork) {
+      showWarning('Wrong Network', 'Please switch to the correct network.');
       return;
     }
 
     if (!actionType) {
-      setError('Please select an action');
+      showError('Action Required', 'Please select either a tip or a bounty.');
       return;
     }
 
@@ -174,7 +183,6 @@ export const TipAndBountyFlow: React.FC<TipAndBountyFlowProps> = ({
 
     try {
       let result;
-
       if (actionType === 'tip') {
         result = await submitTip();
       } else {
@@ -184,17 +192,17 @@ export const TipAndBountyFlow: React.FC<TipAndBountyFlowProps> = ({
       if (result.success) {
         setTxHash(result.txHash);
         setStep('success');
-
-        // Show live feed after successful tip
+        showSuccess('Transaction Successful!', `Your ${actionType} has been submitted.`);
         if (actionType === 'tip') {
           setShowLiveFeed(true);
         }
       } else {
-        throw new Error('Transaction failed');
+        throw new Error(result.error || 'Transaction failed');
       }
     } catch (error: any) {
       console.error('Submission failed:', error);
-      setError(error.message || 'Transaction failed');
+      setError(error.message || 'An unexpected error occurred.');
+      showError('Transaction Failed', error.message || 'An unexpected error occurred.');
       setStep('confirm');
     } finally {
       setIsProcessing(false);

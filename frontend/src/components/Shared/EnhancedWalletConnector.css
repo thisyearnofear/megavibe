@@ -1,18 +1,18 @@
-.balance-info {
+.enhanced-wallet-container .balance-info {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   margin-top: 0.25rem;
 }
 
-.balance-label {
+.enhanced-wallet-container .balance-label {
   font-size: 0.85rem;
   color: var(--secondary);
   font-weight: 500;
   margin-bottom: 0.1rem;
 }
 
-.balance-value {
+.enhanced-wallet-container .balance-value {
   font-size: 1rem;
   font-weight: 600;
   color: var(--primary);
@@ -20,27 +20,35 @@
 }
 
 @media (max-width: 600px) {
-  .balance-info {
+  .enhanced-wallet-container .balance-info {
     align-items: flex-start;
   }
-  .balance-value {
+  .enhanced-wallet-container .balance-value {
     font-size: 0.95rem;
   }
 }
 
-.enhanced-wallet-container, .wallet-connected, .wallet-header, .wallet-details, .wallet-address-row, .chain-info, .balance-display, .balance-row, .user-info {
+.enhanced-wallet-container,
+.enhanced-wallet-container .wallet-connected,
+.enhanced-wallet-container .wallet-header,
+.enhanced-wallet-container .wallet-details,
+.enhanced-wallet-container .wallet-address-row,
+.enhanced-wallet-container .chain-info,
+.enhanced-wallet-container .balance-display,
+.enhanced-wallet-container .balance-row,
+.enhanced-wallet-container .user-info {
   color: var(--secondary);
 }
 
-.wallet-header {
+.enhanced-wallet-container .wallet-header {
   background: #fff;
   border-radius: var(--radius-lg);
   padding: 1rem 1.5rem 1rem 1rem;
   margin-bottom: 0.5rem;
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.05);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
 }
 
-.wallet-avatar {
+.enhanced-wallet-container .wallet-avatar {
   background: #f2f2f2;
   color: var(--primary);
   border-radius: 50%;
@@ -55,7 +63,7 @@
   box-shadow: none;
 }
 
-.wallet-address {
+.enhanced-wallet-container .wallet-address {
   font-family: 'WorkSans', monospace;
   font-size: 1.1rem;
   color: var(--primary);
@@ -65,7 +73,7 @@
   margin-right: 0.5rem;
 }
 
-.chain-info {
+.enhanced-wallet-container .chain-info {
   display: flex;
   align-items: center;
   font-size: 1rem;
@@ -73,12 +81,12 @@
   margin-top: 0.2rem;
 }
 
-.chain-icon {
+.enhanced-wallet-container .chain-icon {
   margin-right: 0.3rem;
   font-size: 1.1rem;
 }
 
-.balance-display {
+.enhanced-wallet-container .balance-display {
   margin-top: 0.5rem;
   background: #f7f7f7;
   border-radius: var(--radius-md);
@@ -90,22 +98,23 @@
   font-size: 1.05rem;
 }
 
-.balance-label, .balance-amount {
+.enhanced-wallet-container .balance-label,
+.enhanced-wallet-container .balance-amount {
   color: var(--primary);
 }
 
-.user-info {
+.enhanced-wallet-container .user-info {
   margin-top: 0.5rem;
   color: var(--secondary);
   font-size: 0.95rem;
 }
 
-.status-text {
+.enhanced-wallet-container .status-text {
   color: var(--success);
   font-weight: 600;
 }
 
-.disconnect-button {
+.enhanced-wallet-container .disconnect-button {
   background: var(--primary);
   color: #fff;
   border: none;
@@ -116,6 +125,6 @@
   cursor: pointer;
   transition: background 0.2s;
 }
-.disconnect-button:hover {
+.enhanced-wallet-container .disconnect-button:hover {
   background: var(--primary-dark, #333);
 }
