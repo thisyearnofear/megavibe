@@ -164,10 +164,11 @@
 
 /* Integration CTA */
 .integration-cta {
-  background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
   color: white;
   border: none;
   margin-top: var(--space-xl);
+  padding: var(--space-xl);
 }
 
 .integration-cta h3 {
@@ -193,8 +194,9 @@
   align-items: flex-start;
   gap: var(--space-sm);
   padding: var(--space-md);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   font-size: var(--text-sm);
   line-height: 1.4;
 }

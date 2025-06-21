@@ -15,12 +15,10 @@ import './TalentPage.css';
 
 // Known speaker addresses with verified Farcaster profiles
 const KNOWN_SPEAKERS = [
-  '0xd7029bdea1c17493893aafe29aad69ef892b8ff2', // dwr.eth (Dan Romero - Farcaster co-founder)
+  '0xd7029bdea1c17493893aafe29aad69ef892b8ff2', // dwr.eth (Dan Romero)
   '0xd8da6bf26964af9d7eed9e03e53415d37aa96045', // vitalik.eth
-  '0x50ec05ade8280758e2077fcbc08d878d4aef79c3', // balajis.eth
-  '0x182359B4129AC1bb7E7c51Ac8F65c4F87d3b3E9d', // jessepollak.eth (Jesse Pollak - Base)
-  '0x3ecA6B4e4b5f21Ad95B71df1B1E1a9C24bbc9F3d', // linda.eth
-  '0x1234567890123456789012345678901234567890', // Fallback demo address
+  '0x55A5705453Ee82c742274154136Fce8149597058', // papajams.eth (user)
+  '0x8f86b3a73D38af0c6700b3bEeCE7b7487222b949', // kellykim.eth
 ];
 
 interface TalentPageProps {

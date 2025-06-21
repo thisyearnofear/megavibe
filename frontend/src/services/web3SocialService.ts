@@ -106,12 +106,17 @@ export interface Web3SpeakerProfile {
 
 class Web3SocialService {
   private neynarApiKey: string;
+  private neynarClientId: string;
   private neynarBaseUrl = 'https://api.neynar.com/v2/farcaster';
 
   constructor() {
     this.neynarApiKey = import.meta.env.VITE_NEYNAR_API_KEY || import.meta.env.NEYNAR_API_KEY || '';
+    this.neynarClientId = import.meta.env.VITE_NEYNAR_CLIENT_ID || import.meta.env.NEYNAR_CLIENT_ID || '';
     if (!this.neynarApiKey) {
       console.warn('⚠️ VITE_NEYNAR_API_KEY or NEYNAR_API_KEY not configured. Farcaster profiles will not load.');
+    }
+     if (!this.neynarClientId) {
+      console.warn('⚠️ VITE_NEYNAR_CLIENT_ID or NEYNAR_CLIENT_ID not configured. Farcaster profiles might not load.');
     }
   }
 
@@ -131,7 +136,8 @@ class Web3SocialService {
           method: 'GET',
           headers: {
             'accept': 'application/json',
-            'x-api-key': this.neynarApiKey
+            'api_key': this.neynarApiKey,
+            'Neynar-Client-Id': this.neynarClientId
           }
         }
       );
@@ -174,7 +180,8 @@ class Web3SocialService {
           method: 'GET',
           headers: {
             'accept': 'application/json',
-            'x-api-key': this.neynarApiKey
+            'api_key': this.neynarApiKey,
+            'Neynar-Client-Id': this.neynarClientId
           }
         }
       );
@@ -208,7 +215,8 @@ class Web3SocialService {
           method: 'GET',
           headers: {
             'accept': 'application/json',
-            'x-api-key': this.neynarApiKey
+            'api_key': this.neynarApiKey,
+            'Neynar-Client-Id': this.neynarClientId
           }
         }
       );
@@ -246,7 +254,8 @@ class Web3SocialService {
           method: 'GET',
           headers: {
             'accept': 'application/json',
-            'x-api-key': this.neynarApiKey
+            'api_key': this.neynarApiKey,
+            'Neynar-Client-Id': this.neynarClientId
           }
         }
       );
