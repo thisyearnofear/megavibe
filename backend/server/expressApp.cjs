@@ -18,7 +18,6 @@ const reputationRoutes = require("./routes/reputationRoutes.cjs");
 const connectionRoutes = require("./routes/connectionRoutes.cjs");
 const eventRoutes = require("./routes/eventRoutes.cjs");
 const adminRoutes = require("./routes/adminRoutes.cjs");
-const neynarProxyRoutes = require("./routes/neynarProxyRoutes.cjs");
 
 function configureMiddleware(app) {
   // CORS configuration is handled in server.cjs
@@ -44,7 +43,6 @@ function createExpressApp(app) {
   app.use("/api/connection", connectionRoutes);
   app.use("/api/events", eventRoutes);
   app.use("/api/admin", adminRoutes);
-  app.use("/api/neynar-proxy", neynarProxyRoutes);
 
   // Define the /waitlist route
   app.post("/waitlist", (req, res) => {
@@ -80,7 +78,6 @@ function createExpressApp(app) {
         connection: "/api/connection",
         events: "/api/events",
         admin: "/api/admin",
-        neynarProxy: "/api/neynar-proxy",
       },
     });
   });
