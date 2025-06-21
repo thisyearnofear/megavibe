@@ -1,6 +1,6 @@
-const axios = require("axios");
+import axios from "axios";
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   const { addresses } = req.query;
   if (!addresses) {
     return res.status(400).json({ error: "Addresses are required" });
