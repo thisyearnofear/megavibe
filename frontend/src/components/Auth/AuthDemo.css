@@ -1,0 +1,378 @@
+/* MetaMask SDK Authentication Demo Styles */
+
+.auth-demo {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: 20px;
+  color: white;
+}
+
+.auth-demo-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.auth-demo-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.auth-demo-header h1 {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 0 0 16px;
+  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-demo-header p {
+  font-size: 18px;
+  color: #b0b0b0;
+  margin: 0;
+}
+
+.auth-demo-content {
+  display: grid;
+  gap: 30px;
+}
+
+/* Card Styles */
+.auth-status-card,
+.user-info-card,
+.auth-methods-card,
+.auth-button-demo,
+.features-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 30px;
+  backdrop-filter: blur(10px);
+}
+
+.auth-status-card h2,
+.user-info-card h2,
+.auth-methods-card h2,
+.auth-button-demo h2,
+.features-card h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 20px;
+  color: #ffffff;
+}
+
+/* Status Grid */
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-item.error {
+  border-color: rgba(255, 107, 107, 0.3);
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.status-label {
+  font-weight: 500;
+  color: #b0b0b0;
+}
+
+.status-value {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.status-value.success {
+  color: #4ecdc4;
+}
+
+.status-value.error {
+  color: #ff6b6b;
+}
+
+.status-value.warning {
+  color: #ffc107;
+}
+
+.status-value.neutral {
+  color: #888;
+}
+
+/* User Details Grid */
+.user-details-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.user-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-label {
+  font-weight: 500;
+  color: #b0b0b0;
+}
+
+.detail-value {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.detail-value.address {
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 12px;
+  color: #4ecdc4;
+}
+
+.detail-value.reputation {
+  color: #ffc107;
+}
+
+.detail-value.auth-method.metamask {
+  color: #ff6b6b;
+}
+
+.detail-value.auth-method.dynamic {
+  color: #4ecdc4;
+}
+
+.detail-value.auth-method.social {
+  color: #ffc107;
+}
+
+/* Auth Methods List */
+.auth-methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-method-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.auth-method-item.metamask {
+  border-color: rgba(255, 107, 107, 0.3);
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.auth-method-item.dynamic {
+  border-color: rgba(78, 205, 196, 0.3);
+  background: rgba(78, 205, 196, 0.05);
+}
+
+.auth-method-item.social {
+  border-color: rgba(255, 193, 7, 0.3);
+  background: rgba(255, 193, 7, 0.05);
+}
+
+.method-rank {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.method-info {
+  flex: 1;
+}
+
+.method-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.method-description {
+  font-size: 14px;
+  color: #b0b0b0;
+}
+
+.method-features {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feature {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(78, 205, 196, 0.2);
+  color: #4ecdc4;
+  text-align: center;
+}
+
+.feature.limited {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+}
+
+/* Button Variants Demo */
+.button-variants {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.button-variant {
+  text-align: center;
+}
+
+.button-variant h4 {
+  margin: 0 0 12px;
+  color: #b0b0b0;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Features Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  font-size: 32px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.feature-content h4 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.feature-content p {
+  margin: 0;
+  font-size: 14px;
+  color: #b0b0b0;
+  line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .auth-demo {
+    padding: 16px;
+  }
+  
+  .auth-demo-header h1 {
+    font-size: 36px;
+  }
+  
+  .auth-demo-header p {
+    font-size: 16px;
+  }
+  
+  .auth-status-card,
+  .user-info-card,
+  .auth-methods-card,
+  .auth-button-demo,
+  .features-card {
+    padding: 20px;
+  }
+  
+  .status-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .auth-method-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .method-features {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .button-variants {
+    grid-template-columns: 1fr;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-demo-header h1 {
+    font-size: 28px;
+  }
+  
+  .feature-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .user-detail,
+  .status-item {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}

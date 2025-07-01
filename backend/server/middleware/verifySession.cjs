@@ -7,22 +7,43 @@ const sessionCache = new Map();
 // Middleware to verify the session
 const verifySession = (req, res, next) => {
   try {
-    const sessionId = req.sessionID; // Access the session ID from the request
+    // For hackathon demo: simplified session verification
+    // Check for session ID in header or session
+    const sessionId = req.headers['x-session-id'] || req.sessionID;
+    
+    if (!sessionId) {
+      return res.status(401).json({ 
+        error: 'Unauthorized', 
+        message: 'No session ID provided' 
+      });
+    }
 
     // Check if the session data is already in the cache
     if (sessionCache.has(sessionId)) {
       req.session = sessionCache.get(sessionId);
+      req.user = req.session.user;
       return next();
     }
 
-    // If you don't find it in the cache, the session is managed by express-session
+    // Check express-session for active session
+    if (req.session && req.session.user) {
+      // Cache the session for performance
+      sessionCache.set(sessionId, req.session);
+      req.user = req.session.user;
+      return next();
+    }
 
-    // You can use `req.session` directly, and if it's not present, it means there's no session.
-
-    next();
+    // No valid session found
+    return res.status(401).json({ 
+      error: 'Unauthorized', 
+      message: 'Invalid or expired session' 
+    });
   } catch (error) {
-    console.error('Error retrieving session:', error);
-    res.status(500).send('Internal Server Error');
+    console.error('Error verifying session:', error);
+    res.status(500).json({ 
+      error: 'Internal Server Error',
+      message: 'Session verification failed' 
+    });
   }
 };
 

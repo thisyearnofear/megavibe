@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { EnhancedWalletConnector as WalletConnector } from '../Shared/EnhancedWalletConnector';
+import { AuthButton } from '../Auth/AuthButton';
 import '../../styles/design-system.css';
 import './global-nav.css';
 
@@ -29,9 +29,9 @@ export const GlobalNav: React.FC<GlobalNavProps> = ({ currentPage }) => {
             🎭 Talent
           </NavLink>
         </div>
-        <WalletConnector 
-          onConnect={() => {}}
-          onDisconnect={() => {}}
+        <AuthButton
+          variant="primary"
+          showReputation={true}
         />
       </div>
     </nav>

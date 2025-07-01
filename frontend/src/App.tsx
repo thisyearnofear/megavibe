@@ -4,7 +4,7 @@ import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import './styles/design-system.css';
 import './App.css';
-import { EnhancedWalletConnector as WalletConnector } from './components/Shared/EnhancedWalletConnector';
+// Removed old wallet connector - now using AuthButton in GlobalNav
 import { useWallet } from './contexts/WalletContext';
 import { useEvent, Speaker } from './contexts/EventContext';
 import { Venue } from './services/locationService';

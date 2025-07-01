@@ -9,6 +9,7 @@ import { SubmissionsPage } from './pages/Bounty/SubmissionsPage'; // Import the 
 import { TalentPage } from './components/Talent/TalentPage';
 import { AdminPage } from './components/Admin/AdminPage';
 import { FarcasterTest } from './components/Test/FarcasterTest';
+import { AuthDemo } from './components/Auth/AuthDemo';
 import { NotFound } from './components/Shared/NotFound';
 import { AppProviders } from './components/AppProviders';
 import { GlobalNav } from './components/Navigation/GlobalNav';
@@ -40,6 +41,7 @@ const AppWithNavigation: React.FC = () => {
         <Route path="/bounties/:bountyId/submissions" element={<SubmissionsPage />} />
         <Route path="/talent" element={<TalentPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/auth-demo" element={<AuthDemo />} />
         <Route path="/test-farcaster" element={<FarcasterTest />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

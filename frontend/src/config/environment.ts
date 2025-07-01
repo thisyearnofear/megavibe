@@ -18,6 +18,7 @@ export interface EnvironmentConfig {
   // Smart Contract Configuration
   tippingContractAddress: string;
   bountyContractAddress: string;
+  usdcContractAddress: string;
   tippingContractNetwork: string;
 
   // Fee Configuration
@@ -58,6 +59,7 @@ class Environment {
       // Smart Contract Configuration
       tippingContractAddress: import.meta.env.VITE_TIPPING_CONTRACT_ADDRESS || '0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F',
       bountyContractAddress: import.meta.env.VITE_BOUNTY_CONTRACT_ADDRESS || '0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F',
+      usdcContractAddress: import.meta.env.VITE_USDC_CONTRACT_ADDRESS || '0x09Bc4E0D864854c6aFB6eB9A9cdF58aC190D0dF9',
       tippingContractNetwork: import.meta.env.VITE_TIPPING_CONTRACT_NETWORK || 'mantleSepolia',
 
       // Fee Configuration
@@ -81,6 +83,7 @@ class Environment {
     console.log('Network Name:', this.config.mantleNetworkName);
     console.log('Tipping Contract:', this.config.tippingContractAddress);
     console.log('Bounty Contract:', this.config.bountyContractAddress);
+    console.log('USDC Contract:', this.config.usdcContractAddress);
     console.log('Fee Recipient:', this.config.feeRecipientAddress);
     console.log('Platform Fee:', `${this.config.platformFeePercentage}%`);
     console.log('Debug Mode:', this.config.debugMode);
@@ -118,6 +121,10 @@ class Environment {
       },
       bounty: {
         address: this.config.bountyContractAddress,
+        network: this.config.tippingContractNetwork,
+      },
+      usdc: {
+        address: this.config.usdcContractAddress,
         network: this.config.tippingContractNetwork,
       },
     };
@@ -158,6 +165,10 @@ class Environment {
 
     if (!this.config.feeRecipientAddress || !this.config.feeRecipientAddress.startsWith('0x')) {
       errors.push('VITE_FEE_RECIPIENT_ADDRESS must be a valid Ethereum address');
+    }
+
+    if (!this.config.usdcContractAddress || !this.config.usdcContractAddress.startsWith('0x')) {
+      errors.push('VITE_USDC_CONTRACT_ADDRESS must be a valid Ethereum address');
     }
 
     if (this.config.mantleChainId !== 5003) {

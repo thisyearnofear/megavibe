@@ -3,13 +3,15 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract MegaVibeBounties is ReentrancyGuard, Ownable {
+    IERC20 public usdcToken;
     uint256 public constant PLATFORM_FEE_BPS = 500;
     uint256 public constant BASIS_POINTS = 10000;
-    uint256 public constant MIN_BOUNTY_AMOUNT = 1e15;
+    uint256 public constant MIN_BOUNTY_AMOUNT = 1e3; // 0.001 USDC
     uint256 public constant MAX_DEADLINE_DURATION = 30 days;
-    uint256 public submissionStakeAmount = 1 ether; // Stake 1 MNT to submit
+    uint256 public submissionStakeAmount = 1e6; // Stake 1 USDC to submit
 
     enum SubmissionStatus { Pending, Approved, Rejected }
 
@@ -41,24 +43,32 @@ contract MegaVibeBounties is ReentrancyGuard, Ownable {
 
     uint256 public platformFeeCollected;
     address public feeRecipient;
+    address public reputationContract;
 
     event BountyCreated(uint256 indexed bountyId, address indexed sponsor, uint256 reward, string eventId, string speakerId);
     event SubmissionReceived(uint256 indexed bountyId, uint256 indexed submissionId, address indexed claimant, string submissionHash);
     event SubmissionApproved(uint256 indexed bountyId, uint256 indexed submissionId, address indexed claimant);
     event SubmissionRejected(uint256 indexed bountyId, uint256 indexed submissionId, address indexed claimant);
 
-    constructor(address _feeRecipient) Ownable(msg.sender) {
+    constructor(address _feeRecipient, address _usdcTokenAddress, address _reputationContract) Ownable(msg.sender) {
         require(_feeRecipient != address(0), "Invalid fee recipient");
+        require(_usdcTokenAddress != address(0), "Invalid USDC token address");
+        require(_reputationContract != address(0), "Invalid reputation contract address");
         feeRecipient = _feeRecipient;
+        usdcToken = IERC20(_usdcTokenAddress);
+        reputationContract = _reputationContract;
     }
 
-    function createBounty(string memory eventId, string memory speakerId, string memory description, uint256 deadline) external payable nonReentrant {
-        require(msg.value >= MIN_BOUNTY_AMOUNT, "Bounty amount too small");
+    function createBounty(uint256 bountyAmount, string memory eventId, string memory speakerId, string memory description, uint256 deadline) external nonReentrant {
+        require(bountyAmount >= MIN_BOUNTY_AMOUNT, "Bounty amount too small");
         require(deadline > block.timestamp, "Deadline must be in the future");
+
+        require(usdcToken.transferFrom(msg.sender, address(this), bountyAmount), "USDC transfer failed");
+
         uint256 bountyId = bounties.length;
         bounties.push(Bounty({
             sponsor: msg.sender,
-            reward: msg.value,
+            reward: bountyAmount,
             eventId: eventId,
             speakerId: speakerId,
             description: description,
@@ -71,15 +81,17 @@ contract MegaVibeBounties is ReentrancyGuard, Ownable {
         }));
         eventBounties[eventId].push(bountyId);
         sponsorBounties[msg.sender].push(bountyId);
-        emit BountyCreated(bountyId, msg.sender, msg.value, eventId, speakerId);
+        Reputation(reputationContract).increaseReputation(msg.sender, 10);
+        emit BountyCreated(bountyId, msg.sender, bountyAmount, eventId, speakerId);
     }
 
-    function submitForBounty(uint256 bountyId, string memory submissionHash) external payable nonReentrant {
+    function submitForBounty(uint256 bountyId, string memory submissionHash) external nonReentrant {
         require(bountyId < bounties.length, "Bounty does not exist");
-        require(msg.value == submissionStakeAmount, "Incorrect stake amount");
         Bounty storage bounty = bounties[bountyId];
         require(!bounty.claimed, "Bounty already claimed");
         require(block.timestamp <= bounty.deadline, "Bounty has expired");
+
+        require(usdcToken.transferFrom(msg.sender, address(this), submissionStakeAmount), "USDC stake transfer failed");
 
         uint submissionId = submissions[bountyId].length;
         submissions[bountyId].push(Submission({
@@ -108,12 +120,10 @@ contract MegaVibeBounties is ReentrancyGuard, Ownable {
         platformFeeCollected += platformFee;
         uint256 claimantAmount = bounty.reward - platformFee;
 
-        (bool success, ) = payable(submission.claimant).call{value: claimantAmount}("");
-        require(success, "Reward transfer failed");
+        require(usdcToken.transfer(submission.claimant, claimantAmount), "Reward transfer failed");
+        require(usdcToken.transfer(submission.claimant, submissionStakeAmount), "Stake refund failed");
 
-        (success, ) = payable(submission.claimant).call{value: submissionStakeAmount}("");
-        require(success, "Stake refund failed");
-
+        Reputation(reputationContract).increaseReputation(submission.claimant, 25);
         emit SubmissionApproved(bountyId, submissionId, submission.claimant);
     }
 
@@ -125,9 +135,9 @@ contract MegaVibeBounties is ReentrancyGuard, Ownable {
 
         submission.status = SubmissionStatus.Rejected;
 
-        (bool success, ) = payable(submission.claimant).call{value: submissionStakeAmount}("");
-        require(success, "Stake refund failed");
+        require(usdcToken.transfer(bounty.sponsor, submissionStakeAmount), "Stake refund to sponsor failed");
 
+        Reputation(reputationContract).decreaseReputation(bounty.sponsor, 5);
         emit SubmissionRejected(bountyId, submissionId, submission.claimant);
     }
     

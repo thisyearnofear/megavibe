@@ -5,6 +5,8 @@ import { createConfig, WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http } from 'viem';
 import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
+import { MetaMaskProvider } from '@metamask/sdk-react';
+import { AuthProvider } from '../contexts/AuthContext';
 import { WalletProvider } from '../contexts/WalletContext';
 import { EventProvider } from '../contexts/EventContext';
 import { ToastProvider } from '../contexts/ToastContext';
@@ -59,47 +61,69 @@ interface AppProvidersProps {
 
 export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
   return (
-    <DynamicContextProvider
-      settings={{
-        environmentId: import.meta.env.VITE_DYNAMIC_ENVIRONMENT_ID || 'cd08ffe6-e5d5-49d4-8cb3-f9419a7f5e4d',
-        walletConnectors: [EthereumWalletConnectors],
-        overrides: {
-          evmNetworks: [
-            {
-              blockExplorerUrls: ['https://explorer.sepolia.mantle.xyz'],
-              chainId: 5003,
-              chainName: 'Mantle Sepolia',
-              iconUrls: ['https://icons.llamao.fi/icons/chains/rsz_mantle.jpg'],
-              name: 'Mantle Sepolia',
-              nativeCurrency: {
-                decimals: 18,
-                name: 'MNT',
-                symbol: 'MNT',
-              },
-              networkId: 5003,
-              rpcUrls: ['https://rpc.sepolia.mantle.xyz'],
-              vanityName: 'Mantle Sepolia',
-            },
-          ],
+    <MetaMaskProvider
+      debug={import.meta.env.VITE_DEBUG_MODE === 'true'}
+      sdkOptions={{
+        dappMetadata: {
+          name: 'MegaVibe',
+          url: window.location.origin,
+          iconUrl: `${window.location.origin}/images/megavibe.png`,
         },
-        initialAuthenticationMode: 'connect-only',
+        preferDesktop: false,
+        extensionOnly: false,
+        checkInstallationImmediately: false,
+        storage: {
+          enabled: true,
+        },
+        logging: {
+          developerMode: import.meta.env.VITE_DEBUG_MODE === 'true',
+        },
       }}
     >
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <DynamicWagmiConnector>
-            <ToastProvider>
-              <WalletProvider>
-                <ProfileProvider>
-                  <EventProvider>
-                    {children}
-                  </EventProvider>
-                </ProfileProvider>
-              </WalletProvider>
-            </ToastProvider>
-          </DynamicWagmiConnector>
-        </QueryClientProvider>
-      </WagmiProvider>
-    </DynamicContextProvider>
+      <DynamicContextProvider
+        settings={{
+          environmentId: import.meta.env.VITE_DYNAMIC_ENVIRONMENT_ID || 'cd08ffe6-e5d5-49d4-8cb3-f9419a7f5e4d',
+          walletConnectors: [EthereumWalletConnectors],
+          overrides: {
+            evmNetworks: [
+              {
+                blockExplorerUrls: ['https://explorer.sepolia.mantle.xyz'],
+                chainId: 5003,
+                chainName: 'Mantle Sepolia',
+                iconUrls: ['https://icons.llamao.fi/icons/chains/rsz_mantle.jpg'],
+                name: 'Mantle Sepolia',
+                nativeCurrency: {
+                  decimals: 18,
+                  name: 'MNT',
+                  symbol: 'MNT',
+                },
+                networkId: 5003,
+                rpcUrls: ['https://rpc.sepolia.mantle.xyz'],
+                vanityName: 'Mantle Sepolia',
+              },
+            ],
+          },
+          initialAuthenticationMode: 'connect-only',
+        }}
+      >
+        <WagmiProvider config={config}>
+          <QueryClientProvider client={queryClient}>
+            <DynamicWagmiConnector>
+              <AuthProvider>
+                <ToastProvider>
+                  <WalletProvider>
+                    <ProfileProvider>
+                      <EventProvider>
+                        {children}
+                      </EventProvider>
+                    </ProfileProvider>
+                  </WalletProvider>
+                </ToastProvider>
+              </AuthProvider>
+            </DynamicWagmiConnector>
+          </QueryClientProvider>
+        </WagmiProvider>
+      </DynamicContextProvider>
+    </MetaMaskProvider>
   );
 };

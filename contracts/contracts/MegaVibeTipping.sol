@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title MegaVibeTipping
@@ -10,12 +11,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * Optimized for Mantle Network's low gas fees
  */
 contract MegaVibeTipping is ReentrancyGuard, Ownable {
+    // USDC token address
+    IERC20 public usdcToken;
+
     // Platform fee percentage (5% = 500 basis points)
     uint256 public constant PLATFORM_FEE_BPS = 500;
     uint256 public constant BASIS_POINTS = 10000;
 
-    // Minimum tip amount to prevent spam (0.001 MNT)
-    uint256 public constant MIN_TIP_AMOUNT = 1e15;
+    // Minimum tip amount to prevent spam (0.001 USDC)
+    uint256 public constant MIN_TIP_AMOUNT = 1e3;
 
     // Maximum message length
     uint256 public constant MAX_MESSAGE_LENGTH = 200;
@@ -43,6 +47,7 @@ contract MegaVibeTipping is ReentrancyGuard, Ownable {
     // Platform fee collection
     uint256 public platformFeeCollected;
     address public feeRecipient;
+    address public reputationContract;
 
     // Events
     event TipSent(
@@ -73,9 +78,13 @@ contract MegaVibeTipping is ReentrancyGuard, Ownable {
         address indexed newRecipient
     );
 
-    constructor(address _feeRecipient) Ownable(msg.sender) {
+    constructor(address _feeRecipient, address _usdcTokenAddress, address _reputationContract) Ownable(msg.sender) {
         require(_feeRecipient != address(0), "Invalid fee recipient");
+        require(_usdcTokenAddress != address(0), "Invalid USDC token address");
+        require(_reputationContract != address(0), "Invalid reputation contract address");
         feeRecipient = _feeRecipient;
+        usdcToken = IERC20(_usdcTokenAddress);
+        reputationContract = _reputationContract;
     }
 
     /**
@@ -87,27 +96,31 @@ contract MegaVibeTipping is ReentrancyGuard, Ownable {
      */
     function tipSpeaker(
         address recipient,
+        uint256 usdcAmount,
         string memory message,
         string memory eventId,
         string memory speakerId
-    ) external payable nonReentrant {
-        require(msg.value >= MIN_TIP_AMOUNT, "Tip amount too small");
+    ) external nonReentrant {
+        require(usdcAmount >= MIN_TIP_AMOUNT, "Tip amount too small");
         require(recipient != address(0), "Invalid recipient address");
         require(recipient != msg.sender, "Cannot tip yourself");
         require(bytes(eventId).length > 0, "Event ID required");
         require(bytes(speakerId).length > 0, "Speaker ID required");
         require(bytes(message).length <= MAX_MESSAGE_LENGTH, "Message too long");
 
+        // Transfer USDC from tipper to this contract
+        require(usdcToken.transferFrom(msg.sender, address(this), usdcAmount), "USDC transfer failed");
+
         // Calculate platform fee
-        uint256 platformFee = (msg.value * PLATFORM_FEE_BPS) / BASIS_POINTS;
-        uint256 speakerAmount = msg.value - platformFee;
+        uint256 platformFee = (usdcAmount * PLATFORM_FEE_BPS) / BASIS_POINTS;
+        uint256 speakerAmount = usdcAmount - platformFee;
 
         // Create tip record
         uint256 tipId = tips.length;
         tips.push(Tip({
             tipper: msg.sender,
             recipient: recipient,
-            amount: msg.value,
+            amount: usdcAmount,
             message: message,
             timestamp: block.timestamp,
             eventId: eventId,
@@ -116,8 +129,8 @@ contract MegaVibeTipping is ReentrancyGuard, Ownable {
         }));
 
         // Update mappings
-        eventTotals[eventId] += msg.value;
-        speakerTotals[speakerId] += msg.value;
+        eventTotals[eventId] += usdcAmount;
+        speakerTotals[speakerId] += usdcAmount;
         userTipCount[msg.sender]++;
         speakerBalances[recipient] += speakerAmount;
         eventTipIds[eventId].push(tipId);
@@ -126,11 +139,14 @@ contract MegaVibeTipping is ReentrancyGuard, Ownable {
         // Collect platform fee
         platformFeeCollected += platformFee;
 
+        Reputation(reputationContract).increaseReputation(msg.sender, 1);
+        Reputation(reputationContract).increaseReputation(recipient, 5);
+
         emit TipSent(
             tipId,
             msg.sender,
             recipient,
-            msg.value,
+            usdcAmount,
             message,
             eventId,
             speakerId,
@@ -147,8 +163,7 @@ contract MegaVibeTipping is ReentrancyGuard, Ownable {
 
         speakerBalances[msg.sender] = 0;
 
-        (bool success, ) = payable(msg.sender).call{value: balance}("");
-        require(success, "Withdrawal failed");
+        require(usdcToken.transfer(msg.sender, balance), "Withdrawal failed");
 
         emit TipWithdrawn(msg.sender, balance, block.timestamp);
     }
@@ -162,8 +177,7 @@ contract MegaVibeTipping is ReentrancyGuard, Ownable {
 
         platformFeeCollected = 0;
 
-        (bool success, ) = payable(feeRecipient).call{value: amount}("");
-        require(success, "Fee withdrawal failed");
+        require(usdcToken.transfer(feeRecipient, amount), "Fee withdrawal failed");
 
         emit PlatformFeeWithdrawn(feeRecipient, amount, block.timestamp);
     }
@@ -254,43 +268,4 @@ contract MegaVibeTipping is ReentrancyGuard, Ownable {
         return tips.length;
     }
 
-    /**
-     * @dev Get platform statistics
-     * @return totalVolume Total tip volume processed
-     * @return totalTips Total number of tips
-     * @return platformFees Total platform fees collected
-     */
-    function getPlatformStats()
-        external
-        view
-        returns (uint256 totalVolume, uint256 totalTips, uint256 platformFees)
-    {
-        totalVolume = address(this).balance + platformFeeCollected;
-        totalTips = tips.length;
-        platformFees = platformFeeCollected;
 
-        // Add all withdrawn speaker balances to total volume
-        for (uint256 i = 0; i < tips.length; i++) {
-            if (tips[i].isWithdrawn) {
-                totalVolume += tips[i].amount;
-            }
-        }
-    }
-
-    /**
-     * @dev Emergency function to pause contract (owner only)
-     * This is a safety mechanism in case of critical issues
-     */
-    function pause() external onlyOwner {
-        // Implementation would depend on using OpenZeppelin's Pausable
-        // For now, owner can call this to signal contract should be avoided
-        // Frontend should check for events or owner announcements
-    }
-
-    /**
-     * @dev Fallback function to reject direct ETH deposits
-     */
-    receive() external payable {
-        revert("Direct deposits not allowed. Use tipSpeaker function.");
-    }
-}

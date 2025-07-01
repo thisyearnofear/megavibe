@@ -8,7 +8,7 @@ const audioRoutes = require("./routes/audioRoutes.cjs");
 const venueRoutes = require("./routes/venueRoutes.cjs");
 const usersRoutes = require("./routes/usersRoutes.cjs");
 const tipRoutes = require("./routes/tipRoutes.cjs");
-const bountyRoutes = require("./controllers/bountyController.cjs");
+const bountyRoutes = require("./routes/bountyRoutes.cjs");
 const reactionRoutes = require("./routes/reactionRoutes.cjs");
 const paymentsRoutes = require("./routes/paymentsRoutes.cjs");
 const healthRoutes = require("./routes/health.cjs");
@@ -19,6 +19,7 @@ const connectionRoutes = require("./routes/connectionRoutes.cjs");
 const eventRoutes = require("./routes/eventRoutes.cjs");
 const adminRoutes = require("./routes/adminRoutes.cjs");
 const neynarProxyRoutes = require("./routes/neynarProxyRoutes.cjs");
+const authRoutes = require("./routes/authRoutes.cjs");
 
 function configureMiddleware(app) {
   // CORS configuration is handled in server.cjs
@@ -30,6 +31,7 @@ function createExpressApp(app) {
   configureMiddleware(app);
 
   // API Routes
+  app.use("/api/auth", authRoutes); // MetaMask SDK Primary Authentication
   app.use("/api/audio", audioRoutes);
   app.use("/api/venues", venueRoutes);
   app.use("/api/users", usersRoutes);
