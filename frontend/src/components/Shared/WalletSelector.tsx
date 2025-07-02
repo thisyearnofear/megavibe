@@ -65,14 +65,14 @@ export const WalletSelector: React.FC<WalletSelectorProps> = ({
       </div>
 
       <div className="wallet-options">
-        {/* MetaMask SDK Option - For Hackathon Bonus */}
+        {/* MetaMask SDK Option */}
         <div className="wallet-option metamask-option">
           <div className="wallet-info">
             <div className="wallet-icon">🦊</div>
             <div className="wallet-details">
               <h4>MetaMask</h4>
               <p>Connect directly with MetaMask browser extension</p>
-              <span className="bonus-badge">Hackathon Bonus Eligible</span>
+              <span className="bonus-badge">Recommended</span>
             </div>
           </div>
           
@@ -107,9 +107,6 @@ export const WalletSelector: React.FC<WalletSelectorProps> = ({
       <div className="wallet-selector-footer">
         <p className="security-note">
           🔒 Your wallet connection is secure. MegaVibe never stores your private keys.
-        </p>
-        <p className="hackathon-note">
-          💡 This demo uses MetaMask SDK for the MetaMask Card Hackathon
         </p>
       </div>
     </div>

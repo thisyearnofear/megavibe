@@ -130,7 +130,7 @@ export const AuthDemo: React.FC = () => {
                   <div className="method-features">
                     {method === 'metamask' && (
                       <>
-                        <span className="feature">Hackathon Bonus</span>
+                        <span className="feature">Recommended</span>
                         <span className="feature">Gas Sponsorship</span>
                         <span className="feature">Instant Auth</span>
                       </>
@@ -177,14 +177,14 @@ export const AuthDemo: React.FC = () => {
 
           {/* Features Showcase */}
           <div className="features-card">
-            <h2>🚀 Hackathon Features</h2>
-            
+            <h2>🚀 Platform Features</h2>
+
             <div className="features-grid">
               <div className="feature-item">
                 <div className="feature-icon">🦊</div>
                 <div className="feature-content">
                   <h4>MetaMask SDK Primary</h4>
-                  <p>Direct MetaMask integration for $2k bonus eligibility</p>
+                  <p>Direct MetaMask integration for optimal experience</p>
                 </div>
               </div>
               

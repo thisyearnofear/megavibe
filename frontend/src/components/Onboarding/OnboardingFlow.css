@@ -1,0 +1,502 @@
+/* Onboarding Flow - Modern, engaging user onboarding */
+
+.onboarding-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.onboarding-modal {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideInUp 0.4s ease;
+}
+
+/* Header */
+.onboarding-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 0;
+}
+
+.step-indicator {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.skip-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.skip-btn:hover {
+  color: #374151;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Progress Bar */
+.progress-bar {
+  height: 4px;
+  background: #e5e7eb;
+  margin: 16px 24px 0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Content */
+.onboarding-content {
+  flex: 1;
+  padding: 32px 24px;
+  overflow-y: auto;
+}
+
+.step-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.step-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.step-header p {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.step-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Welcome Step */
+.onboarding-welcome {
+  text-align: center;
+  width: 100%;
+}
+
+.welcome-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.onboarding-welcome h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 24px 0;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(59, 130, 246, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.feature-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.feature-item span:last-child {
+  font-size: 16px;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Wallet Step */
+.onboarding-wallet {
+  text-align: center;
+  width: 100%;
+}
+
+.wallet-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.onboarding-wallet h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 24px 0;
+}
+
+.benefit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+  margin: 0 auto 32px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.check-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.benefit-item span:last-child {
+  font-size: 16px;
+  color: #374151;
+}
+
+.connect-wallet-btn {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.connect-wallet-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.connect-wallet-btn:disabled {
+  background: #10b981;
+  cursor: default;
+  transform: none;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Ready Step */
+.onboarding-ready {
+  text-align: center;
+  width: 100%;
+}
+
+.success-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.onboarding-ready h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 16px 0;
+}
+
+.onboarding-ready p {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0 0 24px 0;
+}
+
+.action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(16, 185, 129, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  text-align: left;
+}
+
+.action-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.action-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.action-content strong {
+  font-size: 16px;
+  color: #111827;
+  font-weight: 600;
+}
+
+.action-content span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Footer */
+.onboarding-footer {
+  padding: 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.step-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d1d5db;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.step-dot.active {
+  background: #3b82f6;
+  transform: scale(1.2);
+}
+
+.step-dot.completed {
+  background: #10b981;
+}
+
+.footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.prev-btn,
+.next-btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.prev-btn {
+  background: none;
+  border: 1px solid #d1d5db;
+  color: #6b7280;
+}
+
+.prev-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.next-btn {
+  background: #3b82f6;
+  border: none;
+  color: white;
+}
+
+.next-btn:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.next-btn:disabled {
+  background: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.final-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.action-btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
+}
+
+.action-btn.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.action-btn.secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.action-btn.secondary:hover {
+  background: #e5e7eb;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .onboarding-overlay {
+    padding: 16px;
+  }
+
+  .onboarding-modal {
+    max-height: 95vh;
+  }
+
+  .onboarding-content {
+    padding: 24px 20px;
+  }
+
+  .step-header h1 {
+    font-size: 24px;
+  }
+
+  .step-header p {
+    font-size: 14px;
+  }
+
+  .welcome-icon,
+  .wallet-icon,
+  .success-icon {
+    font-size: 48px;
+  }
+
+  .feature-list,
+  .benefit-list,
+  .action-list {
+    max-width: none;
+  }
+
+  .final-actions {
+    flex-direction: column;
+  }
+
+  .footer-actions {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .prev-btn,
+  .next-btn,
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Focus styles for accessibility */
+.skip-btn:focus-visible,
+.connect-wallet-btn:focus-visible,
+.prev-btn:focus-visible,
+.next-btn:focus-visible,
+.action-btn:focus-visible,
+.step-dot:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .onboarding-overlay,
+  .onboarding-modal,
+  .progress-fill,
+  .step-dot,
+  .connect-wallet-btn,
+  .next-btn,
+  .action-btn {
+    animation: none;
+    transition: none;
+  }
+
+  .connect-wallet-btn:hover:not(:disabled),
+  .next-btn:hover:not(:disabled),
+  .action-btn:hover {
+    transform: none;
+  }
+}

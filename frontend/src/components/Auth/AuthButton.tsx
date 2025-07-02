@@ -139,8 +139,6 @@ export const AuthButton: React.FC<AuthButtonProps> = ({
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        title="Connect to MegaVibe"
-        subtitle="Choose your preferred authentication method"
       />
     </>
   );

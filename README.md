@@ -1,45 +1,73 @@
 # MEGAVIBE 🎭
 
-**The Live Performance Economy Platform**
+**The Cross-Chain Live Performance Economy Platform**
 
-Transform any live event into a collaborative content creation and monetization ecosystem
+Transform any live event into a collaborative content creation and monetization ecosystem with **cross-chain USDC tipping** and **onchain reputation**.
+
+## 🏆 MetaMask Card Hackathon Submission
+
+**Primary Track**: Identity & OnChain Reputation ($6k)  
+**Bonus Prizes**: MetaMask SDK ($2k) + USDC Payments ($2k) + LI.FI Integration ($2k)  
+**Total Prize Potential**: **$12,000**
+
+### 🚀 Innovation Highlights
+
+#### Cross-Chain USDC Tipping via LI.FI
+- Tip speakers from **any supported chain to any chain**
+- Seamless USDC bridging with optimal routes via LI.FI SDK
+- Real-time cross-chain reputation tracking
+- Support for Ethereum, Arbitrum, Optimism, Linea, and Base
+
+#### MetaMask SDK Integration
+- Wallet-first authentication with signature verification
+- Advanced features: deep linking, mobile support, network switching
+- Seamless integration across 5+ EVM chains
+
+#### Behavioral Reputation Engine
+- **Real-world event attendance → onchain reputation**
+- Multi-dimensional scoring: tips, engagement, cross-chain activity
+- Verifiable credentials for speakers and attendees
+- Cross-chain reputation synchronization
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Hackathon Quick Start
 
 **Prerequisites:**
+- Node.js 18+, MongoDB, Web3 wallet (MetaMask), Testnet tokens
+- LI.FI API Key ([Get here](https://li.fi/developers))
+- Dynamic.xyz Environment ID ([Get here](https://app.dynamic.xyz/))
 
-- Node.js 18+, MongoDB, Web3 wallet (MetaMask), Mantle Sepolia testnet tokens
-
-**Install & Run:**
-
+**One-Command Setup:**
 ```bash
 git clone [repository-url]
 cd megavibe
-npm install
-
-# Backend
-cd backend
-cp .env.example .env  # Edit with your MongoDB URI
-npm install
-
-# Frontend
-cd ../frontend
-cp .env.example .env  # Edit with your config
-npm install
+chmod +x scripts/hackathon-setup.sh
+./scripts/hackathon-setup.sh
 ```
 
-**Start:**
-
+**Manual Setup:**
 ```bash
-# Start MongoDB if not running
+# Install dependencies
+npm install
+cd frontend && npm install
+cd ../backend && npm install
+
+# Setup environment files
+cp frontend/.env.example frontend/.env
+cp backend/.env.example backend/.env
+# Edit .env files with your API keys
+```
+
+**Start Development:**
+```bash
+# Start MongoDB (if local)
 mongod
 
 # Terminal 1: Backend
 cd backend && npm run dev
 
-# Terminal 2: Frontend
+# Terminal 2: Frontend  
 cd frontend && npm run dev
 ```
 

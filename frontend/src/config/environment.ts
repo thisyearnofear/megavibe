@@ -10,6 +10,9 @@ export interface EnvironmentConfig {
   // Dynamic.xyz Configuration
   dynamicEnvironmentId: string;
 
+  // LI.FI Configuration
+  lifiApiKey: string;
+
   // Mantle Network Configuration
   mantleRpcUrl: string;
   mantleChainId: number;
@@ -50,6 +53,9 @@ class Environment {
 
       // Dynamic.xyz Configuration
       dynamicEnvironmentId: import.meta.env.VITE_DYNAMIC_ENVIRONMENT_ID || 'cd08ffe6-e5d5-49d4-8cb3-f9419a7f5e4d',
+
+      // LI.FI Configuration
+      lifiApiKey: import.meta.env.VITE_LIFI_API_KEY || '',
 
       // Mantle Network Configuration
       mantleRpcUrl: import.meta.env.VITE_MANTLE_RPC_URL || 'https://rpc.sepolia.mantle.xyz',
@@ -101,6 +107,12 @@ class Environment {
   get dynamic() {
     return {
       environmentId: this.config.dynamicEnvironmentId,
+    };
+  }
+
+  get lifi() {
+    return {
+      apiKey: this.config.lifiApiKey,
     };
   }
 

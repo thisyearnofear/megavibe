@@ -4,7 +4,10 @@ import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import './styles/design-system.css';
 import './App.css';
-// Removed old wallet connector - now using AuthButton in GlobalNav
+// Updated navigation and security
+import { IconNav } from './components/Navigation/IconNav';
+import { OnboardingFlow } from './components/Onboarding/OnboardingFlow';
+import { SecurityValidator } from './utils/securityValidation';
 import { useWallet } from './contexts/WalletContext';
 import { useEvent, Speaker } from './contexts/EventContext';
 import { Venue } from './services/locationService';
