@@ -1,18 +1,7 @@
 import { ethers, Contract, JsonRpcProvider, BrowserProvider, formatEther, parseEther, parseUnits, isAddress } from 'ethers';
 import MegaVibeTippingABI from '../contracts/MegaVibeTipping.json';
 import MegaVibeBountiesABI from '../contracts/MegaVibeBounties.json';
-
-// Standard ERC20 ABI for USDC
-const ERC20_ABI = [
-  'function balanceOf(address owner) view returns (uint256)',
-  'function transfer(address to, uint256 amount) returns (bool)',
-  'function transferFrom(address from, address to, uint256 amount) returns (bool)',
-  'function approve(address spender, uint256 amount) returns (bool)',
-  'function allowance(address owner, address spender) view returns (uint256)',
-  'function decimals() view returns (uint8)',
-  'function symbol() view returns (string)',
-  'function name() view returns (string)'
-];
+import { USDCService, USDC_ABI } from './usdcService';
 
 export interface Bounty {
   id: string;
@@ -28,8 +17,6 @@ export interface Bounty {
 
 const TIPPING_CONTRACT_ADDRESS = import.meta.env.VITE_TIPPING_CONTRACT_ADDRESS;
 const BOUNTY_CONTRACT_ADDRESS = "0x59854F1DCc03E6d65E9C4e148D5635Fb56d3d892";
-// USDC on Mantle Sepolia (for hackathon demo - replace with actual USDC address)
-const USDC_CONTRACT_ADDRESS = import.meta.env.VITE_USDC_CONTRACT_ADDRESS || "0x09Bc4E0D864854c6aFB6eB9A9cdF58aC190D0dF9";
 
 const MANTLE_SEPOLIA = {
   id: 5003,
@@ -44,14 +31,21 @@ class ContractService {
   private tippingContract: Contract | null = null;
   private bountyContract: Contract | null = null;
   private bountyContractReadOnly: Contract | null = null;
-  private usdcContract: Contract | null = null;
-  private usdcContractReadOnly: Contract | null = null;
+  private currentChainId: number = 5003; // Default to Mantle Sepolia
 
-  async initialize(walletClient?: any): Promise<boolean> {
+  async initialize(walletClient?: any, chainId?: number): Promise<boolean> {
     try {
+      if (chainId) {
+        this.currentChainId = chainId;
+      }
+
       if (walletClient) {
         this.provider = new BrowserProvider(walletClient);
         this.signer = await this.provider.getSigner();
+        
+        // Get the actual chain ID from the provider
+        const network = await this.provider.getNetwork();
+        this.currentChainId = Number(network.chainId);
       } else {
         this.provider = new JsonRpcProvider(MANTLE_SEPOLIA.rpcUrl);
       }
@@ -59,12 +53,10 @@ class ContractService {
       if (this.signer) {
         this.tippingContract = new Contract(TIPPING_CONTRACT_ADDRESS, MegaVibeTippingABI.abi, this.signer);
         this.bountyContract = new Contract(BOUNTY_CONTRACT_ADDRESS, MegaVibeBountiesABI.abi, this.signer);
-        this.usdcContract = new Contract(USDC_CONTRACT_ADDRESS, ERC20_ABI, this.signer);
       }
       
       const readOnlyProvider = new JsonRpcProvider(MANTLE_SEPOLIA.rpcUrl);
       this.bountyContractReadOnly = new Contract(BOUNTY_CONTRACT_ADDRESS, MegaVibeBountiesABI.abi, readOnlyProvider);
-      this.usdcContractReadOnly = new Contract(USDC_CONTRACT_ADDRESS, ERC20_ABI, readOnlyProvider);
 
       return true;
     } catch (error) {
@@ -88,18 +80,23 @@ class ContractService {
   }
 
   private getUsdcContract(): Contract {
-    if (!this.usdcContract) throw new Error('USDC Contract not initialized. Is the wallet connected?');
-    return this.usdcContract;
+    if (!this.signer) throw new Error('Wallet not connected');
+    return USDCService.getUSDCContract(this.currentChainId, this.signer);
+  }
+
+  private getUsdcContractReadOnly(): Contract {
+    if (!this.provider) throw new Error('Provider not initialized');
+    return USDCService.getUSDCContract(this.currentChainId, this.provider);
   }
 
   // Helper to convert USD amount to USDC units (6 decimals)
   private usdToUsdc(usdAmount: string): bigint {
-    return parseUnits(usdAmount, 6); // USDC has 6 decimals
+    return USDCService.parseUSDC(usdAmount);
   }
 
   // Helper to convert USDC units to USD
   private usdcToUsd(usdcAmount: bigint): string {
-    return ethers.formatUnits(usdcAmount, 6);
+    return USDCService.formatUSDC(usdcAmount);
   }
 
   async getActiveBountiesForEvent(eventId: string): Promise<any[]> {
@@ -163,6 +160,12 @@ class ContractService {
 
   async tipSpeaker(recipient: string, usdAmount: string, message: string, eventId: string, speakerId: string): Promise<string> {
     if (!isAddress(recipient)) throw new Error('Invalid recipient address');
+    
+    // Check if USDC is supported on current chain
+    if (!USDCService.isUSDCSupported(this.currentChainId)) {
+      throw new Error(`USDC not supported on chain ${this.currentChainId}`);
+    }
+
     const tippingContract = this.getTippingContract();
     const usdcContract = this.getUsdcContract();
     const usdcAmount = this.usdToUsdc(usdAmount);
@@ -180,23 +183,33 @@ class ContractService {
   // Get USDC balance for connected wallet
   async getUsdcBalance(): Promise<string> {
     if (!this.signer) throw new Error('Wallet not connected');
-    const userAddress = await this.signer.getAddress();
-    const contract = this.usdcContractReadOnly || this.usdcContract;
-    if (!contract) throw new Error('USDC contract not initialized');
+    if (!USDCService.isUSDCSupported(this.currentChainId)) {
+      return '0';
+    }
     
-    const balance = await contract.balanceOf(userAddress);
-    return this.usdcToUsd(balance);
+    const userAddress = await this.signer.getAddress();
+    return await USDCService.getBalance(this.currentChainId, userAddress, this.provider!);
   }
 
   // Check USDC allowance
   async getUsdcAllowance(spenderAddress: string): Promise<string> {
     if (!this.signer) throw new Error('Wallet not connected');
-    const userAddress = await this.signer.getAddress();
-    const contract = this.usdcContractReadOnly || this.usdcContract;
-    if (!contract) throw new Error('USDC contract not initialized');
+    if (!USDCService.isUSDCSupported(this.currentChainId)) {
+      return '0';
+    }
     
-    const allowance = await contract.allowance(userAddress, spenderAddress);
-    return this.usdcToUsd(allowance);
+    const userAddress = await this.signer.getAddress();
+    return await USDCService.getAllowance(this.currentChainId, userAddress, spenderAddress, this.provider!);
+  }
+
+  // Get current chain ID
+  getCurrentChainId(): number {
+    return this.currentChainId;
+  }
+
+  // Check if current chain supports USDC
+  isUSDCSupported(): boolean {
+    return USDCService.isUSDCSupported(this.currentChainId);
   }
 }
 

@@ -59,6 +59,12 @@ const PerformerDashboard = lazy(() =>
   })).catch(() => ({ default: () => <div>Error loading PerformerDashboard</div> }))
 );
 
+const HackathonDemo = lazy(() =>
+  import('./components/Demo/HackathonDemo').then(module => ({
+    default: module.default,
+  })).catch(() => ({ default: () => <div>Error loading HackathonDemo</div> }))
+);
+
 const ArtistSupport = lazy(() =>
   import('./components/LiveMusic/ArtistSupport').then(module => ({
     default: module.default,
@@ -103,6 +109,7 @@ function App() {
   const [tutorialStep, setTutorialStep] = useState<number>(0);
   const [showPerformerDashboard, setShowPerformerDashboard] = useState(false);
   const [showPowerfulLanding, setShowPowerfulLanding] = useState(false);
+  const [showHackathonDemo, setShowHackathonDemo] = useState(false);
 
   const [selectedFeatureType, setSelectedFeatureType] = useState<'connection' | 'bounty' | 'tokenization' | 'influence' | 'reputation' | 'demo'>('demo');
   const [currentEventId] = useState<string>('devcon-7-bangkok');
@@ -300,7 +307,25 @@ function App() {
             </div>
           </div>
 
-          <div className="feature-card demo-feature-card featured" onClick={() => navigate('/talent')}>
+          <div className="feature-card demo-feature-card featured" onClick={() => setShowHackathonDemo(true)}>
+            <div className="feature-status">
+              <span className="status-badge featured">🏆 HACKATHON</span>
+            </div>
+            <div className="feature-icon-wrapper">
+              <div className="hackathon-icon">
+                <span style={{ fontSize: '2rem' }}>🦊</span>
+                <span style={{ fontSize: '1.5rem', marginLeft: '0.5rem' }}>💰</span>
+                <span style={{ fontSize: '1.5rem', marginLeft: '0.5rem' }}>🌉</span>
+              </div>
+            </div>
+            <h3>🏆 MetaMask Card Hackathon</h3>
+            <p>Identity & OnChain Reputation + USDC + LI.FI + MetaMask SDK Integration Demo</p>
+            <div className="feature-cta">
+              <span>View Demo →</span>
+            </div>
+          </div>
+
+          <div className="feature-card demo-feature-card" onClick={() => navigate('/talent')}>
             <div className="feature-status">
               <span className="status-badge featured">🎯 FEATURED</span>
             </div>
@@ -480,6 +505,14 @@ function App() {
                 setShowPowerfulLanding(false);
                 setShowVenuePicker(true);
               }}
+            />
+          </Suspense>
+        )}
+
+        {showHackathonDemo && (
+          <Suspense fallback={<LoadingSpinner fullScreen text="Loading Hackathon Demo..." />}>
+            <HackathonDemo
+              onClose={() => setShowHackathonDemo(false)}
             />
           </Suspense>
         )}

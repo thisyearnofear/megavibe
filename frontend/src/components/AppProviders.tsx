@@ -11,36 +11,27 @@ import { WalletProvider } from '../contexts/WalletContext';
 import { EventProvider } from '../contexts/EventContext';
 import { ToastProvider } from '../contexts/ToastContext';
 import { ProfileProvider } from '../contexts/ProfileContext';
+import { supportedChains } from '../config/wagmi';
 
-// Simple Mantle Sepolia configuration
-const mantleSepolia = {
-  id: 5003,
-  name: 'Mantle Sepolia',
-  nativeCurrency: {
-    name: 'MNT',
-    symbol: 'MNT',
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ['https://rpc.sepolia.mantle.xyz'],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: 'Mantle Sepolia Explorer',
-      url: 'https://explorer.sepolia.mantle.xyz',
-    },
-  },
-  testnet: true,
-} as const;
-
-// Wagmi configuration
+// Wagmi configuration using the comprehensive chain setup
 const config = createConfig({
-  chains: [mantleSepolia],
+  chains: supportedChains,
   multiInjectedProviderDiscovery: false,
   transports: {
-    [mantleSepolia.id]: http(),
+    // Mainnets
+    1: http(), // Ethereum
+    42161: http(), // Arbitrum
+    10: http(), // Optimism
+    8453: http(), // Base
+    59144: http(), // Linea
+    
+    // Testnets
+    11155111: http(), // Sepolia
+    421614: http(), // Arbitrum Sepolia
+    11155420: http(), // OP Sepolia
+    84532: http(), // Base Sepolia
+    59141: http(), // Linea Sepolia
+    5003: http('https://rpc.sepolia.mantle.xyz'), // Mantle Sepolia
   },
 });
 
@@ -86,6 +77,7 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
           walletConnectors: [EthereumWalletConnectors],
           overrides: {
             evmNetworks: [
+              // Mantle Sepolia
               {
                 blockExplorerUrls: ['https://explorer.sepolia.mantle.xyz'],
                 chainId: 5003,
@@ -100,6 +92,38 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
                 networkId: 5003,
                 rpcUrls: ['https://rpc.sepolia.mantle.xyz'],
                 vanityName: 'Mantle Sepolia',
+              },
+              // Linea Sepolia (Required for hackathon)
+              {
+                blockExplorerUrls: ['https://sepolia.lineascan.build'],
+                chainId: 59141,
+                chainName: 'Linea Sepolia',
+                iconUrls: ['https://icons.llamao.fi/icons/chains/rsz_linea.jpg'],
+                name: 'Linea Sepolia',
+                nativeCurrency: {
+                  decimals: 18,
+                  name: 'ETH',
+                  symbol: 'ETH',
+                },
+                networkId: 59141,
+                rpcUrls: ['https://rpc.sepolia.linea.build'],
+                vanityName: 'Linea Sepolia',
+              },
+              // Base Sepolia
+              {
+                blockExplorerUrls: ['https://sepolia.basescan.org'],
+                chainId: 84532,
+                chainName: 'Base Sepolia',
+                iconUrls: ['https://icons.llamao.fi/icons/chains/rsz_base.jpg'],
+                name: 'Base Sepolia',
+                nativeCurrency: {
+                  decimals: 18,
+                  name: 'ETH',
+                  symbol: 'ETH',
+                },
+                networkId: 84532,
+                rpcUrls: ['https://sepolia.base.org'],
+                vanityName: 'Base Sepolia',
               },
             ],
           },

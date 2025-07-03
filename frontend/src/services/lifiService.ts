@@ -12,14 +12,21 @@ import {
 } from '@lifi/sdk';
 import { env } from '../config/environment';
 
-// USDC token addresses across supported chains
+// USDC token addresses across supported chains (using testnet addresses for hackathon)
 const USDC_ADDRESSES = {
+  // Mainnets (for future use)
   [ChainId.ETH]: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // Ethereum
   [ChainId.ARB]: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', // Arbitrum
   [ChainId.OPT]: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85', // Optimism
-  // [ChainId.LIN]: '0x176211869cA2b568f2A7D4EE941E073a821EE1ff', // Linea - commented out if not available
   [ChainId.BAS]: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', // Base
-  [ChainId.POL]: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // Polygon
+  
+  // Testnets for hackathon
+  1115511: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238', // Sepolia
+  421614: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d', // Arbitrum Sepolia
+  11155420: '0x5fd84259d66Cd46123540766Be93DFE6D43130D7', // OP Sepolia
+  84532: '0x036CbD53842c5426634e7929541eC2318f3dCF7e', // Base Sepolia
+  59141: '0xFEce4462D57bD51A6A552365A011b95f0E16d9B7', // Linea Sepolia
+  5003: '0x4ea6ccef1215d9479f1024dff70fc055ca538215d2c8c348beddffd54583d0e8', // Mantle Sepolia
 };
 
 // Supported chains for the hackathon

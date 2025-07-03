@@ -4,6 +4,7 @@ import { SimpleAdminForm } from './SimpleAdminForm';
 import { Button } from '../UI/Button';
 import { Card } from '../UI/Card';
 import { useToast } from '../../contexts/ToastContext';
+import FilCDNDashboard from './FilCDNDashboard';
 import './AdminPage.css';
 
 interface AdminStats {
@@ -16,6 +17,7 @@ interface AdminStats {
 export const AdminPage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [activeTab, setActiveTab] = useState<'speakers' | 'filcdn'>('speakers');
   const [stats, setStats] = useState<AdminStats>({
     totalSpeakers: 0,
     farcasterSpeakers: 0,
@@ -162,11 +164,33 @@ export const AdminPage: React.FC = () => {
           </Card>
         </div>
 
+        {/* Tab Navigation */}
+        <div className="admin-tabs">
+          <button 
+            className={`tab-button ${activeTab === 'speakers' ? 'active' : ''}`}
+            onClick={() => setActiveTab('speakers')}
+          >
+            👥 Speaker Management
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'filcdn' ? 'active' : ''}`}
+            onClick={() => setActiveTab('filcdn')}
+          >
+            🌐 FilCDN Migration
+          </button>
+        </div>
+
         {/* Main Content */}
         <div className="admin-content">
-          <div className="admin-main">
-            <SimpleAdminForm onSuccess={handleSpeakerAdded} />
-          </div>
+          {activeTab === 'speakers' ? (
+            <div className="admin-main">
+              <SimpleAdminForm onSuccess={handleSpeakerAdded} />
+            </div>
+          ) : (
+            <div className="admin-main">
+              <FilCDNDashboard />
+            </div>
+          )}
 
           <div className="admin-sidebar">
             <Card>

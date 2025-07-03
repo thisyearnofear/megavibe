@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ChainId } from '@lifi/sdk';
 import { 
   lifiService, 
   SUPPORTED_CHAINS, 
@@ -10,8 +9,10 @@ import {
   getChainName,
   getChainIcon
 } from '../../services/lifiService';
+import { USDCService } from '../../services/usdcService';
 import { useWallet } from '../../contexts/WalletContext';
 import { LoadingSpinner } from '../Loading/LoadingSpinner';
+import { ChainSelector } from './ChainSelector';
 import './CrossChainTipForm.css';
 
 interface CrossChainTipFormProps {
@@ -34,8 +35,8 @@ export const CrossChainTipForm: React.FC<CrossChainTipFormProps> = ({
   const { address: userAddress, isConnected } = useWallet();
   
   // Form state
-  const [fromChain, setFromChain] = useState<ChainId>(ChainId.ETH);
-  const [toChain, setToChain] = useState<ChainId>(ChainId.ARB);
+  const [fromChain, setFromChain] = useState<number>(5003); // Default to Mantle Sepolia
+  const [toChain, setToChain] = useState<number>(59141); // Default to Linea Sepolia
   const [amount, setAmount] = useState('');
   const [message, setMessage] = useState('');
   
@@ -190,39 +191,25 @@ export const CrossChainTipForm: React.FC<CrossChainTipFormProps> = ({
       </div>
 
       <div className="chain-selection">
-        <div className="chain-selector">
-          <label>From Chain:</label>
-          <select 
-            value={fromChain} 
-            onChange={(e) => setFromChain(Number(e.target.value) as ChainId)}
-            disabled={isExecuting}
-          >
-            {SUPPORTED_CHAINS.map(chain => (
-              <option key={chain.id} value={chain.id}>
-                {chain.icon} {chain.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <ChainSelector
+          selectedChainId={fromChain}
+          onChainSelect={setFromChain}
+          label="From Chain"
+          excludeChainId={toChain}
+          testnetOnly={true}
+        />
         
         <div className="chain-arrow">
           <span>→</span>
         </div>
         
-        <div className="chain-selector">
-          <label>To Chain:</label>
-          <select 
-            value={toChain} 
-            onChange={(e) => setToChain(Number(e.target.value) as ChainId)}
-            disabled={isExecuting}
-          >
-            {SUPPORTED_CHAINS.map(chain => (
-              <option key={chain.id} value={chain.id}>
-                {chain.icon} {chain.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <ChainSelector
+          selectedChainId={toChain}
+          onChainSelect={setToChain}
+          label="To Chain"
+          excludeChainId={fromChain}
+          testnetOnly={true}
+        />
       </div>
 
       {fromChain === toChain && (
@@ -282,11 +269,11 @@ export const CrossChainTipForm: React.FC<CrossChainTipFormProps> = ({
           <div className="quote-details">
             <div className="quote-row">
               <span>You send:</span>
-              <span>{costs.grossAmount.toFixed(2)} USDC on {getChainName(fromChain)}</span>
+              <span>{costs.grossAmount.toFixed(2)} USDC on {USDCService.getChainInfo(fromChain).name}</span>
             </div>
             <div className="quote-row">
               <span>Speaker receives:</span>
-              <span>{costs.netAmount.toFixed(2)} USDC on {getChainName(toChain)}</span>
+              <span>{costs.netAmount.toFixed(2)} USDC on {USDCService.getChainInfo(toChain).name}</span>
             </div>
             <div className="quote-row fees">
               <span>Total fees:</span>

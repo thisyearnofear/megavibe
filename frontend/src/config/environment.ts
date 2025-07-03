@@ -13,6 +13,12 @@ export interface EnvironmentConfig {
   // LI.FI Configuration
   lifiApiKey: string;
 
+  // FilCDN Configuration
+  filecoinPrivateKey: string;
+  filecoinRpcUrl: string;
+  filecoinWsUrl: string;
+  filcdnEnabled: boolean;
+
   // Mantle Network Configuration
   mantleRpcUrl: string;
   mantleChainId: number;
@@ -56,6 +62,12 @@ class Environment {
 
       // LI.FI Configuration
       lifiApiKey: import.meta.env.VITE_LIFI_API_KEY || '',
+
+      // FilCDN Configuration
+      filecoinPrivateKey: import.meta.env.VITE_FILECOIN_PRIVATE_KEY || '',
+      filecoinRpcUrl: import.meta.env.VITE_FILECOIN_RPC_URL || 'https://api.calibration.node.glif.io/rpc/v1',
+      filecoinWsUrl: import.meta.env.VITE_FILECOIN_WS_URL || 'wss://wss.calibration.node.glif.io/apigw/lotus/rpc/v1',
+      filcdnEnabled: import.meta.env.VITE_FILCDN_ENABLED === 'true',
 
       // Mantle Network Configuration
       mantleRpcUrl: import.meta.env.VITE_MANTLE_RPC_URL || 'https://rpc.sepolia.mantle.xyz',
@@ -113,6 +125,15 @@ class Environment {
   get lifi() {
     return {
       apiKey: this.config.lifiApiKey,
+    };
+  }
+
+  get filcdn() {
+    return {
+      privateKey: this.config.filecoinPrivateKey,
+      rpcUrl: this.config.filecoinRpcUrl,
+      wsUrl: this.config.filecoinWsUrl,
+      enabled: this.config.filcdnEnabled,
     };
   }
 

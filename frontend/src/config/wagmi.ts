@@ -1,16 +1,26 @@
 // Wagmi configuration for MegaVibe
 import { createConfig, http } from 'wagmi';
-import { mainnet, arbitrum, optimism, base } from 'wagmi/chains';
+import { mainnet, arbitrum, optimism, base, sepolia, arbitrumSepolia, optimismSepolia, baseSepolia, linea, lineaSepolia } from 'wagmi/chains';
 import { injected, metaMask, walletConnect } from 'wagmi/connectors';
 import { env } from './environment';
 
-// Define supported chains
+// Define supported chains for hackathon
 export const supportedChains = [
+  // Mainnets
   mainnet,
   arbitrum, 
   optimism,
   base,
-  // Add Mantle Sepolia testnet
+  linea,
+  
+  // Testnets for hackathon
+  sepolia,
+  arbitrumSepolia,
+  optimismSepolia,
+  baseSepolia,
+  lineaSepolia,
+  
+  // Mantle Sepolia testnet
   {
     id: 5003,
     name: 'Mantle Sepolia',
@@ -45,10 +55,19 @@ export const wagmiConfig = createConfig({
     }),
   ],
   transports: {
+    // Mainnets
     [mainnet.id]: http(),
     [arbitrum.id]: http(),
     [optimism.id]: http(),
     [base.id]: http(),
+    [linea.id]: http(),
+    
+    // Testnets
+    [sepolia.id]: http(),
+    [arbitrumSepolia.id]: http(),
+    [optimismSepolia.id]: http(),
+    [baseSepolia.id]: http(),
+    [lineaSepolia.id]: http(),
     [5003]: http('https://rpc.sepolia.mantle.xyz'), // Mantle Sepolia
   },
 });
