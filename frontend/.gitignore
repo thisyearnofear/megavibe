@@ -9,12 +9,8 @@ dist/
 build/
 
 # Environment variables (NEVER commit these)
-.env
-.env.local
-.env.development
-.env.production
-.env.development.local
-.env.production.local
+.env*
+!.env*.example
 
 # Deployment
 .vercel
