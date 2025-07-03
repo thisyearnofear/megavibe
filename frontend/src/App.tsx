@@ -257,7 +257,7 @@ function App() {
         </div>
 
         <div className="welcome-features main-features">
-          <div className="feature-card implemented featured" onClick={() => navigate('/tip')}>
+          <div className="feature-card implemented featured" onClick={() => navigate('/tipping')}>
             <div className="feature-status">
               <span className="status-badge implemented">✅ LIVE NOW</span>
             </div>
@@ -271,7 +271,7 @@ function App() {
               </div>
             </div>
             <h3>💰 Live Tipping</h3>
-            <p>Send crypto tips to speakers in real-time during conferences and events</p>
+            <p>Send crypto tips to speakers in real-time during conferences and events using our new service architecture</p>
             <div className="feature-cta">
               <span>Start Tipping Now →</span>
             </div>

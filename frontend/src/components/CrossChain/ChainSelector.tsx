@@ -1,113 +1,127 @@
-import React, { useState } from 'react';
-import { USDCService, CHAIN_INFO } from '../../services/usdcService';
-import './ChainSelector.css';
+import React, { useState, useEffect } from 'react';
+import { lifiService } from '../../services/lifiService';
+import './crossChainTransfer.css';
 
-interface ChainSelectorProps {
-  selectedChainId: number | null;
-  onChainSelect: (chainId: number) => void;
-  label: string;
-  excludeChainId?: number; // Exclude a specific chain (e.g., source chain when selecting destination)
-  testnetOnly?: boolean; // Show only testnet chains for hackathon
+interface ChainData {
+  id: number;
+  name: string;
+  logoUrl?: string;
+  isTestnet?: boolean;
 }
 
+// Known chain data mapping
+const CHAIN_DATA: Record<number, ChainData> = {
+  1: { id: 1, name: 'Ethereum', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_ethereum.jpg' },
+  5: { id: 5, name: 'Goerli', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_ethereum.jpg', isTestnet: true },
+  137: { id: 137, name: 'Polygon', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_polygon.jpg' },
+  80001: { id: 80001, name: 'Mumbai', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_polygon.jpg', isTestnet: true },
+  42161: { id: 42161, name: 'Arbitrum', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_arbitrum.jpg' },
+  421613: { id: 421613, name: 'Arbitrum Goerli', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_arbitrum.jpg', isTestnet: true },
+  10: { id: 10, name: 'Optimism', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_optimism.jpg' },
+  420: { id: 420, name: 'Optimism Goerli', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_optimism.jpg', isTestnet: true },
+  8453: { id: 8453, name: 'Base', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_base.jpg' },
+  84531: { id: 84531, name: 'Base Goerli', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_base.jpg', isTestnet: true },
+  5000: { id: 5000, name: 'Mantle', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_mantle.jpg' },
+  5001: { id: 5001, name: 'Mantle Testnet', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_mantle.jpg', isTestnet: true },
+  5003: { id: 5003, name: 'Mantle Sepolia', logoUrl: 'https://icons.llamao.fi/icons/chains/rsz_mantle.jpg', isTestnet: true },
+};
+
+export interface ChainSelectorProps {
+  label?: string;
+  value: number | null;
+  onChange: (chainId: number) => void;
+  showTestnets?: boolean;
+  disabled?: boolean;
+  placeholder?: string;
+  className?: string;
+  filterFn?: (chainData: ChainData) => boolean;
+}
+
+/**
+ * ChainSelector Component
+ * 
+ * A reusable dropdown component for selecting blockchain networks.
+ * It can be configured to show/hide testnets and apply custom filters.
+ */
 export const ChainSelector: React.FC<ChainSelectorProps> = ({
-  selectedChainId,
-  onChainSelect,
   label,
-  excludeChainId,
-  testnetOnly = true, // Default to testnet for hackathon
+  value,
+  onChange,
+  showTestnets = false,
+  disabled = false,
+  placeholder = 'Select Chain',
+  className = '',
+  filterFn,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [supportedChains, setSupportedChains] = useState<number[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
-  const availableChains = USDCService.getSupportedChains()
-    .filter(chainId => {
-      if (excludeChainId && chainId === excludeChainId) return false;
-      if (testnetOnly) {
-        const chainInfo = USDCService.getChainInfo(chainId);
-        return chainInfo.testnet;
+  // Load supported chains from LifiService
+  useEffect(() => {
+    const loadChains = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        const chains = await lifiService.getSupportedChains();
+        setSupportedChains(chains);
+      } catch (err) {
+        setError('Failed to load chains');
+        console.error('Error loading chains:', err);
+      } finally {
+        setLoading(false);
       }
-      return true;
-    })
-    .map(chainId => ({
-      id: chainId,
-      ...USDCService.getChainInfo(chainId),
-    }));
-
-  const selectedChain = selectedChainId ? USDCService.getChainInfo(selectedChainId) : null;
-
-  const getChainIcon = (chainId: number): string => {
-    const icons: Record<number, string> = {
-      1: '🔷', // Ethereum
-      42161: '🔵', // Arbitrum
-      10: '🔴', // Optimism
-      8453: '🔵', // Base
-      59144: '🟢', // Linea
-      11155111: '🔷', // Sepolia
-      421614: '🔵', // Arbitrum Sepolia
-      11155420: '🔴', // OP Sepolia
-      84532: '🔵', // Base Sepolia
-      59141: '🟢', // Linea Sepolia
-      5003: '🟡', // Mantle Sepolia
-      324: '⚪', // ZKsync Era Testnet
     };
-    return icons[chainId] || '❓';
-  };
 
-  const handleChainSelect = (chainId: number) => {
-    onChainSelect(chainId);
-    setIsOpen(false);
+    loadChains();
+  }, []);
+
+  // Filter chains based on showTestnets flag and custom filterFn
+  const filteredChains = supportedChains.filter(chainId => {
+    const chainData = CHAIN_DATA[chainId] || { id: chainId, name: `Chain ${chainId}`, isTestnet: false };
+    
+    // Skip testnets if not showing them
+    if (!showTestnets && chainData.isTestnet) {
+      return false;
+    }
+    
+    // Apply custom filter if provided
+    if (filterFn && !filterFn(chainData)) {
+      return false;
+    }
+    
+    return true;
+  });
+
+  // Get human-readable chain name
+  const getChainName = (chainId: number): string => {
+    const chainData = CHAIN_DATA[chainId];
+    return chainData ? chainData.name : `Chain ${chainId}`;
   };
 
   return (
-    <div className="chain-selector">
-      <label className="chain-selector-label">{label}</label>
+    <div className={`chain-selector ${className}`}>
+      {label && <label>{label}</label>}
       
-      <div className="chain-selector-dropdown">
-        <button
-          className={`chain-selector-button ${isOpen ? 'open' : ''}`}
-          onClick={() => setIsOpen(!isOpen)}
-          type="button"
+      <div className="select-container">
+        <select
+          value={value || ''}
+          onChange={(e) => onChange(Number(e.target.value))}
+          disabled={disabled || loading}
         >
-          {selectedChain ? (
-            <div className="selected-chain">
-              <span className="chain-icon">{getChainIcon(selectedChainId!)}</span>
-              <span className="chain-name">{selectedChain.name}</span>
-              {selectedChain.testnet && <span className="testnet-badge">Testnet</span>}
-            </div>
-          ) : (
-            <span className="placeholder">Select a chain</span>
-          )}
-          <span className={`dropdown-arrow ${isOpen ? 'up' : 'down'}`}>▼</span>
-        </button>
-
-        {isOpen && (
-          <div className="chain-selector-options">
-            {availableChains.map((chain) => (
-              <button
-                key={chain.id}
-                className={`chain-option ${selectedChainId === chain.id ? 'selected' : ''}`}
-                onClick={() => handleChainSelect(chain.id)}
-                type="button"
-              >
-                <span className="chain-icon">{getChainIcon(chain.id)}</span>
-                <div className="chain-details">
-                  <span className="chain-name">{chain.name}</span>
-                  {chain.testnet && <span className="testnet-badge">Testnet</span>}
-                </div>
-                <span className="chain-symbol">{chain.symbol}</span>
-              </button>
-            ))}
-          </div>
-        )}
+          <option value="">{placeholder}</option>
+          
+          {filteredChains.map(chainId => (
+            <option key={chainId} value={chainId}>
+              {getChainName(chainId)} {CHAIN_DATA[chainId]?.isTestnet ? '(Testnet)' : ''}
+            </option>
+          ))}
+        </select>
+        
+        {loading && <div className="loading-indicator">Loading...</div>}
       </div>
-
-      {/* Close dropdown when clicking outside */}
-      {isOpen && (
-        <div 
-          className="chain-selector-overlay" 
-          onClick={() => setIsOpen(false)}
-        />
-      )}
+      
+      {error && <div className="error-message">{error}</div>}
     </div>
   );
 };

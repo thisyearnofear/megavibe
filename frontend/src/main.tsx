@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import App from './App';
 import { TipPage } from './components/TipPage';
+import TippingPage from './pages/TippingPage';
 import { KnowledgeFlywheelPage } from './components/Knowledge/KnowledgeFlywheelPage';
 import { BountyMarketplacePage } from './components/Bounty/BountyMarketplacePage';
 import { SubmissionsPage } from './pages/Bounty/SubmissionsPage';
@@ -35,6 +36,7 @@ const AppWithNavigation: React.FC = () => {
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/tip" element={<TipPage />} />
+        <Route path="/tipping" element={<TippingPage />} />
         <Route path="/infonomy" element={<KnowledgeFlywheelPage />} />
         <Route path="/bounties" element={<BountyMarketplacePage />} />
         <Route path="/bounties/:bountyId/submissions" element={<SubmissionsPage />} />

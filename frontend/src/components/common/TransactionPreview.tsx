@@ -1,7 +1,7 @@
 import React from 'react';
 import './TransactionPreview.css';
 
-interface TransactionPreviewProps {
+export interface TransactionPreviewProps {
   amountUSD?: number;
   amountMNT?: number;
   platformFeePct?: number;
@@ -9,6 +9,10 @@ interface TransactionPreviewProps {
   networkName?: string;
   showBreakdown?: boolean;
   className?: string;
+  isCrossChain?: boolean;
+  bridgeFeeUSD?: number;
+  sourceChain?: string;
+  targetChain?: string;
 }
 
 export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
@@ -18,7 +22,11 @@ export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
   gasEstimateUSD = 0.01,
   networkName = 'Mantle Sepolia',
   showBreakdown = true,
-  className = ''
+  className = '',
+  isCrossChain = false,
+  bridgeFeeUSD = 0,
+  sourceChain,
+  targetChain = 'Mantle Sepolia'
 }) => {
   const isMNT = amountMNT !== undefined;
   const amount = isMNT ? amountMNT : amountUSD || 0;
@@ -26,8 +34,9 @@ export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
 
   const platformFee = amount * (platformFeePct / 100);
   const recipientAmount = amount - platformFee;
-  // Note: Gas is still estimated in USD for simplicity. A real app would use an oracle.
-  const totalCost = amount + (isMNT ? 0 : gasEstimateUSD); 
+  
+  // Include bridge fee in total cost for cross-chain transactions
+  const totalCost = amount + (isMNT ? 0 : gasEstimateUSD) + (isCrossChain ? bridgeFeeUSD : 0);
 
   return (
     <div className={`transaction-preview ${className}`}>
@@ -36,8 +45,16 @@ export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
         <div className="network-badge">
           <span className="network-dot"></span>
           {networkName}
+          {isCrossChain && <span className="bridge-badge">→ {targetChain}</span>}
         </div>
       </div>
+
+      {isCrossChain && (
+        <div className="cross-chain-alert">
+          <span className="alert-icon">🌉</span>
+          <span>Cross-chain transfer via LI.FI Bridge</span>
+        </div>
+      )}
 
       <div className="preview-content">
         {showBreakdown && (
@@ -58,6 +75,18 @@ export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
               </span>
             </div>
 
+            {isCrossChain && bridgeFeeUSD > 0 && (
+              <div className="breakdown-item">
+                <span className="breakdown-label">
+                  Bridge Fee
+                  <span className="bridge-fee-badge">LI.FI</span>
+                </span>
+                <span className="breakdown-value">
+                  ~${bridgeFeeUSD.toFixed(2)} USD
+                </span>
+              </div>
+            )}
+
             <div className="breakdown-item highlight">
               <span className="breakdown-label">Recipient Receives</span>
               <span className="breakdown-value">
@@ -70,10 +99,10 @@ export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
             <div className="breakdown-item">
               <span className="breakdown-label">
                 Network Fee
-                <span className="fee-badge">Ultra-low</span>
+                <span className="fee-badge">{isCrossChain ? 'Variable' : 'Ultra-low'}</span>
               </span>
               <span className="breakdown-value">
-                ~${gasEstimateUSD.toFixed(3)} USD
+                ~${gasEstimateUSD.toFixed(isCrossChain ? 2 : 3)} USD
               </span>
             </div>
           </div>
@@ -90,18 +119,37 @@ export const TransactionPreview: React.FC<TransactionPreviewProps> = ({
         </div>
 
         <div className="preview-features">
-          <div className="feature-item">
-            <span className="feature-icon">⚡</span>
-            <span className="feature-text">Instant settlement</span>
-          </div>
-          <div className="feature-item">
-            <span className="feature-icon">🔒</span>
-            <span className="feature-text">Secure on-chain</span>
-          </div>
-          <div className="feature-item">
-            <span className="feature-icon">💚</span>
-            <span className="feature-text">Low carbon footprint</span>
-          </div>
+          {isCrossChain ? (
+            <>
+              <div className="feature-item">
+                <span className="feature-icon">🌉</span>
+                <span className="feature-text">Cross-chain bridge</span>
+              </div>
+              <div className="feature-item">
+                <span className="feature-icon">⏱️</span>
+                <span className="feature-text">5-15 minute settlement</span>
+              </div>
+              <div className="feature-item">
+                <span className="feature-icon">🔒</span>
+                <span className="feature-text">Secure LI.FI protocol</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="feature-item">
+                <span className="feature-icon">⚡</span>
+                <span className="feature-text">Instant settlement</span>
+              </div>
+              <div className="feature-item">
+                <span className="feature-icon">🔒</span>
+                <span className="feature-text">Secure on-chain</span>
+              </div>
+              <div className="feature-item">
+                <span className="feature-icon">💚</span>
+                <span className="feature-text">Low carbon footprint</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
