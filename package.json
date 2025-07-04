@@ -7,25 +7,38 @@
     "dev:backend": "cd backend && npm run dev",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "build:frontend": "cd frontend && npm run build",
-    "build:production": "cd frontend && npm run build:production",
     "start:backend": "cd backend && npm start",
     "clean": "rm -rf node_modules frontend/node_modules backend/node_modules",
     "install:all": "cd frontend && npm install --legacy-peer-deps && cd ../backend && npm install --legacy-peer-deps",
     "deploy:contracts": "cd contracts && npm run deploy:mainnet",
     "verify:contracts": "cd contracts && npm run verify:mainnet",
     "deploy:production": "node scripts/deploy-production.js",
-    "setup:production": "cp frontend/env.production.template frontend/.env.production && cp backend/env.production.template backend/.env.production",
-    "health:check": "node scripts/health-check.js"
+    "setup:production": "cp frontend/.env.example frontend/.env.local && cp backend/env.production.template backend/.env.production",
+    "health:check": "node scripts/health-check.js",
+    "upload:events": "node scripts/uploadEventsToFilCDN.js",
+    "upload:events:example": "node scripts/uploadEventsToFilCDN.js --file ./data/example-events.json --verbose",
+    "filcdn:diagnose": "node scripts/filcdn-diagnostic.js",
+    "filcdn:setup": "node scripts/filcdn-setup.js",
+    "filcdn:test": "node scripts/test-filcdn.js",
+    "filcdn:download-test": "node scripts/test/test-filcdn-download.js"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@types/node": "^24.0.10",
+    "commander": "^11.1.0",
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.3.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "@filoz/synapse-sdk": "^0.16.0",
     "@reduxjs/toolkit": "^2.8.2",
+    "ethers": "^6.8.1",
     "react-redux": "^9.2.0",
     "redux-logger": "^3.0.6"
-  }
+  },
+  "type": "module"
 }

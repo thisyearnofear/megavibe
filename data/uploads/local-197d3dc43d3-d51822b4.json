@@ -1,0 +1,113 @@
+[
+  {
+    "id": "event-001",
+    "title": "Web3 Developers Conference 2025",
+    "description": "Join the largest gathering of Web3 developers in the region for talks, workshops, and networking.",
+    "startDate": "2025-07-15T09:00:00Z",
+    "endDate": "2025-07-17T18:00:00Z",
+    "venue": {
+      "name": "Tech Conference Center",
+      "address": "123 Innovation Street, San Francisco, CA",
+      "coordinates": {
+        "lat": 37.7749,
+        "lng": -122.4194
+      }
+    },
+    "speakers": [
+      {
+        "id": "speaker-001",
+        "name": "Alex Morgan",
+        "walletAddress": "0x1234567890123456789012345678901234567890",
+        "profileImage": "https://example.com/speakers/alex-morgan.jpg"
+      },
+      {
+        "id": "speaker-002",
+        "name": "Jamie Lee",
+        "walletAddress": "0x2345678901234567890123456789012345678901",
+        "profileImage": "https://example.com/speakers/jamie-lee.jpg"
+      },
+      {
+        "id": "speaker-003",
+        "name": "Sam Johnson",
+        "walletAddress": "0x3456789012345678901234567890123456789012",
+        "profileImage": "https://example.com/speakers/sam-johnson.jpg"
+      }
+    ],
+    "imageUrl": "https://example.com/events/web3-conf-2025.jpg",
+    "categories": [
+      "blockchain",
+      "development",
+      "web3"
+    ]
+  },
+  {
+    "id": "event-002",
+    "title": "DeFi Summit 2025",
+    "description": "Explore the latest innovations in decentralized finance with industry leaders and pioneers.",
+    "startDate": "2025-08-10T10:00:00Z",
+    "endDate": "2025-08-11T17:00:00Z",
+    "venue": {
+      "name": "Blockchain Center",
+      "address": "456 Finance Ave, New York, NY",
+      "coordinates": {
+        "lat": 40.7128,
+        "lng": -74.006
+      }
+    },
+    "speakers": [
+      {
+        "id": "speaker-004",
+        "name": "Taylor Smith",
+        "walletAddress": "0x4567890123456789012345678901234567890123",
+        "profileImage": "https://example.com/speakers/taylor-smith.jpg"
+      },
+      {
+        "id": "speaker-005",
+        "name": "Jordan Reyes",
+        "walletAddress": "0x5678901234567890123456789012345678901234",
+        "profileImage": "https://example.com/speakers/jordan-reyes.jpg"
+      }
+    ],
+    "imageUrl": "https://example.com/events/defi-summit-2025.jpg",
+    "categories": [
+      "defi",
+      "finance",
+      "blockchain"
+    ]
+  },
+  {
+    "id": "event-003",
+    "title": "NFT & Digital Art Exhibition",
+    "description": "Experience the intersection of blockchain technology and digital art with live demonstrations and artist talks.",
+    "startDate": "2025-09-05T11:00:00Z",
+    "endDate": "2025-09-07T20:00:00Z",
+    "venue": {
+      "name": "Digital Art Gallery",
+      "address": "789 Creative Blvd, Los Angeles, CA",
+      "coordinates": {
+        "lat": 34.0522,
+        "lng": -118.2437
+      }
+    },
+    "speakers": [
+      {
+        "id": "speaker-006",
+        "name": "Riley Chen",
+        "walletAddress": "0x6789012345678901234567890123456789012345",
+        "profileImage": "https://example.com/speakers/riley-chen.jpg"
+      },
+      {
+        "id": "speaker-007",
+        "name": "Casey Wong",
+        "walletAddress": "0x7890123456789012345678901234567890123456",
+        "profileImage": "https://example.com/speakers/casey-wong.jpg"
+      }
+    ],
+    "imageUrl": "https://example.com/events/nft-exhibition-2025.jpg",
+    "categories": [
+      "nft",
+      "art",
+      "digital"
+    ]
+  }
+]

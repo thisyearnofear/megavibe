@@ -1,0 +1,57 @@
+{
+  "SimpleReputation": {
+    "1": {
+      "address": "",
+      "deployedBlock": 0,
+      "deployedDate": "",
+      "notes": "Ethereum Mainnet - To be deployed"
+    },
+    "1301": {
+      "address": "0x53628a5d15cfFac8C8F6c95b76b4FA436C7eaD1A",
+      "deployedBlock": 0,
+      "deployedDate": "2025-07-04",
+      "notes": "Unichain Sepolia - Deployed standalone implementation"
+    },
+    "5000": {
+      "address": "",
+      "deployedBlock": 0,
+      "deployedDate": "",
+      "notes": "Mantle Mainnet - To be deployed"
+    },
+    "5003": {
+      "address": "",
+      "deployedBlock": 0,
+      "deployedDate": "",
+      "notes": "Mantle Sepolia - To be deployed"
+    },
+    "84532": {
+      "address": "",
+      "deployedBlock": 0,
+      "deployedDate": "",
+      "notes": "Base Sepolia - To be deployed"
+    },
+    "421614": {
+      "address": "",
+      "deployedBlock": 0,
+      "deployedDate": "",
+      "notes": "Arbitrum Sepolia - To be deployed"
+    },
+    "11155111": {
+      "address": "0x4B7F67dBe2731E462A4047a19B2fdF14C910afEa",
+      "deployedBlock": 5678910,
+      "deployedDate": "2025-04-06",
+      "notes": "Sepolia Testnet - Primary reputation contract"
+    },
+    "11155420": {
+      "address": "0x7877Ac5C8158AB46ad608CB6990eCcB2A5265718",
+      "deployedBlock": 0,
+      "deployedDate": "2025-07-04",
+      "notes": "Optimism Sepolia - Deployed standalone implementation"
+    }
+  },
+  "simpleReputation": {
+    "sepolia": "0x4B7F67dBe2731E462A4047a19B2fdF14C910afEa",
+    "optimismSepolia": "0x7877Ac5C8158AB46ad608CB6990eCcB2A5265718",
+    "unichainSepolia": "0x53628a5d15cfFac8C8F6c95b76b4FA436C7eaD1A"
+  }
+}

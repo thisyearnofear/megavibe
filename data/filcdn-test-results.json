@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "timestamp": 1751622126705,
+  "uploadDuration": 88009,
+  "downloadDuration": 1176,
+  "testDataSize": 342,
+  "cid": {
+    "/": "baga6ea4seaqjdv6kkqf2ny4fdz6fbnazrj3ft7auoxae3yxiboofu5pjttldmpa"
+  },
+  "rootId": 0,
+  "provider": "0x9f5087A1821eb3Ed8a137be368E5e451166EFAAe",
+  "proofSetId": "435",
+  "verified": true
+}

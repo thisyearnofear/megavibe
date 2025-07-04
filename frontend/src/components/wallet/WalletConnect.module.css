@@ -1,0 +1,252 @@
+.walletContainer {
+  position: relative;
+}
+
+/* Button States */
+.connectButton,
+.disconnectButton,
+.switchNetworkBtn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.connectButton {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.connectButton:hover {
+  background-color: var(--primary-color-dark);
+  transform: translateY(-1px);
+}
+
+.disconnectButton {
+  background-color: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.disconnectButton:hover {
+  background-color: var(--background-color-light);
+}
+
+.switchNetworkBtn {
+  background-color: var(--warning-color);
+  color: white;
+  border: none;
+  margin-top: 8px;
+}
+
+.switchNetworkBtn:hover {
+  background-color: var(--warning-color-dark);
+}
+
+/* Connected State */
+.connectedState {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.walletInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-bottom: 8px;
+}
+
+.walletAddress {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.addressLabel {
+  color: var(--text-color-secondary);
+  margin-right: 6px;
+}
+
+.addressValue {
+  font-family: var(--font-mono);
+  color: var(--text-color);
+  background-color: var(--background-color-light);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.walletBalance {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.balanceValue {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.balanceUnit {
+  color: var(--text-color-secondary);
+}
+
+.networkWarning {
+  background-color: var(--warning-background);
+  border: 1px solid var(--warning-border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  text-align: center;
+  width: 100%;
+}
+
+.networkWarning p {
+  color: var(--warning-text);
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background-color: var(--background-color);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  max-width: 90vw;
+  overflow: hidden;
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modalTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.modalCloseBtn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--text-color-secondary);
+  transition: color 0.2s;
+}
+
+.modalCloseBtn:hover {
+  color: var(--text-color);
+}
+
+/* Wallet Options */
+.walletOptions {
+  padding: 16px 20px;
+}
+
+.walletOption {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 8px;
+}
+
+.walletOption:hover {
+  background-color: var(--background-color-light);
+}
+
+.walletIconWrapper {
+  margin-right: 16px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background-color-light);
+  border-radius: 8px;
+}
+
+.walletIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.walletDetails {
+  flex: 1;
+}
+
+.walletName {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.walletDescription {
+  font-size: 0.85rem;
+  color: var(--text-color-secondary);
+  margin: 0;
+}
+
+/* Loading indicator */
+.connectingIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(var(--primary-color-rgb), 0.2);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s ease infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

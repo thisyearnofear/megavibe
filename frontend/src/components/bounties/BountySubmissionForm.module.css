@@ -1,0 +1,327 @@
+.submissionContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 12px;
+  background-color: var(--background-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.submissionTitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.submissionSubtitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  color: var(--text-color-secondary);
+}
+
+.bountyInfoCard {
+  background-color: var(--background-color-light);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+}
+
+.bountyInfoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.bountyInfoTitle {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--text-color);
+}
+
+.bountyReward {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-color-light);
+  border-radius: 8px;
+  color: var(--primary-color-dark);
+  font-weight: 600;
+}
+
+.bountyRewardIcon {
+  margin-right: 0.5rem;
+}
+
+.bountyDescription {
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+.bountyMetadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.metadataItem {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-color-secondary);
+}
+
+.metadataIcon {
+  margin-right: 0.5rem;
+}
+
+.bountyTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.bountyTag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: var(--primary-color-light);
+  color: var(--primary-color-dark);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.submissionForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formSection {
+  background-color: var(--background-color-light);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.sectionTitle {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: var(--text-color);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.formGroup:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.input,
+.textarea {
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.fileUploadArea {
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fileUploadArea:hover {
+  border-color: var(--primary-color);
+  background-color: var(--background-color);
+}
+
+.fileUploadIcon {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.fileUploadTitle {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.fileUploadSubtitle {
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadedFiles {
+  margin-top: 1.5rem;
+}
+
+.uploadedFileItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.fileInfo {
+  display: flex;
+  align-items: center;
+}
+
+.fileIcon {
+  margin-right: 0.75rem;
+  color: var(--primary-color);
+}
+
+.fileName {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.fileSize {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-color-secondary);
+}
+
+.removeFileButton {
+  background: none;
+  border: none;
+  color: var(--error-text);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.removeFileButton:hover {
+  background-color: var(--error-background);
+}
+
+.termsCheckbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.checkbox {
+  margin-top: 0.25rem;
+}
+
+.termsText {
+  font-size: 0.9rem;
+  color: var(--text-color-secondary);
+  line-height: 1.5;
+}
+
+.termsLink {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.termsLink:hover {
+  text-decoration: underline;
+}
+
+.formActions {
+  margin-top: 2rem;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.submitButton:hover {
+  background-color: var(--primary-color-dark);
+  transform: translateY(-2px);
+}
+
+.submitButton:disabled {
+  background-color: var(--disabled-color);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.errorMessage {
+  padding: 1rem;
+  background-color: var(--error-background);
+  color: var(--error-text);
+  border-radius: 8px;
+  border-left: 4px solid var(--error-border);
+}
+
+.successMessage {
+  padding: 1rem;
+  background-color: var(--success-background);
+  color: var(--success-text);
+  border-radius: 8px;
+  border-left: 4px solid var(--success-border);
+}
+
+.walletWarning {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--warning-text);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .bountyInfoHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .bountyReward {
+    align-self: flex-start;
+  }
+}

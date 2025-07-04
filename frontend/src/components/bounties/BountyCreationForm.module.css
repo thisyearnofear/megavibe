@@ -1,0 +1,341 @@
+.formContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 12px;
+  background-color: var(--background-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.formTitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+/* Bounty Type Selection */
+.bountyTypeSelection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.typeButton {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: var(--background-color-light);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.typeButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.typeButton.active {
+  border-color: var(--primary-color);
+  background-color: var(--primary-color-light);
+}
+
+.typeIcon {
+  font-size: 2rem;
+  margin-right: 1rem;
+}
+
+.typeInfo h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.typeInfo p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-color-secondary);
+}
+
+/* AI Assistant Section */
+.aiAssistantSection {
+  background-color: var(--background-color-light);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+}
+
+.sectionTitle {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: var(--text-color);
+}
+
+.aiInputArea {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.aiInput {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  font-size: 1rem;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.aiInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.processButton {
+  align-self: flex-end;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.processButton:hover {
+  background-color: var(--primary-color-dark);
+}
+
+.processButton:disabled {
+  background-color: var(--disabled-color);
+  cursor: not-allowed;
+}
+
+/* AI Suggestions */
+.aiSuggestions {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.aiSuggestions h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.suggestionItem {
+  margin-bottom: 1rem;
+}
+
+.suggestionLabel {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-color-secondary);
+}
+
+.suggestionValue {
+  display: block;
+  color: var(--text-color);
+}
+
+.suggestionTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.suggestionTag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: var(--primary-color-light);
+  color: var(--primary-color-dark);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.applySuggestionsButton {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.applySuggestionsButton:hover {
+  background-color: var(--secondary-color-dark);
+}
+
+/* Main Form */
+.bountyForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.label {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.input,
+.textarea {
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.textarea {
+  resize: vertical;
+}
+
+/* Tags */
+.tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tagButton {
+  padding: 0.5rem 1rem;
+  background-color: var(--background-color-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tagButton:hover {
+  background-color: var(--primary-color-light);
+}
+
+.tagButton.activeTag {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Advanced Options */
+.advancedToggle {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  align-self: flex-start;
+}
+
+.advancedToggle:hover {
+  text-decoration: underline;
+}
+
+.advancedOptions {
+  padding: 1rem;
+  background-color: var(--background-color-light);
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  border: 1px solid var(--border-color);
+}
+
+/* Form Actions */
+.formActions {
+  margin-top: 1rem;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.submitButton:hover {
+  background-color: var(--primary-color-dark);
+  transform: translateY(-2px);
+}
+
+.submitButton:disabled {
+  background-color: var(--disabled-color);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Messages */
+.errorMessage {
+  padding: 1rem;
+  background-color: var(--error-background);
+  color: var(--error-text);
+  border-radius: 8px;
+  border-left: 4px solid var(--error-border);
+}
+
+.successMessage {
+  padding: 1rem;
+  background-color: var(--success-background);
+  color: var(--success-text);
+  border-radius: 8px;
+  border-left: 4px solid var(--success-border);
+}
+
+.walletWarning {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--warning-text);
+  text-align: center;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .bountyTypeSelection {
+    grid-template-columns: 1fr;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}
