@@ -1,10 +1,13 @@
 {
-  "name": "megavibe-cross-chain-scripts",
+  "name": "megavibe-scripts",
   "version": "1.0.0",
-  "description": "Scripts for testing MegaVibe cross-chain functionality",
-  "main": "test-cross-chain-reputation.js",
+  "description": "Scripts for MegaVibe platform functionality",
+  "main": "index.js",
   "scripts": {
-    "test-cross-chain": "node test-cross-chain-reputation.js"
+    "test-cross-chain": "node testing/test-cross-chain-reputation.js",
+    "test-filcdn": "node filcdn/test-filcdn.js",
+    "seed-db-bounties": "node database/seed-bounties.js",
+    "seed-blockchain-bounties": "node blockchain/seed-bounties.js"
   },
   "dependencies": {
     "dotenv": "^16.0.3",

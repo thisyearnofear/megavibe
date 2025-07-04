@@ -22,9 +22,14 @@ megavibe/
 │   │   └── services/     # Service layer for blockchain interaction
 │   └── .env.local        # Frontend environment configuration
 │
-├── scripts/              # Cross-chain testing scripts
-│   ├── test-cross-chain-reputation.js  # Multi-chain test script
-│   └── .env              # Testing environment configuration
+├── scripts/              # Project utilities and scripts
+│   ├── blockchain/       # Scripts for blockchain interactions
+│   ├── database/         # Scripts for database operations
+│   ├── deployment/       # Scripts for deploying to various environments
+│   ├── filcdn/           # FilCDN related scripts
+│   ├── testing/          # Testing scripts including cross-chain tests
+│   ├── utils/            # Utility scripts
+│   └── README.md         # Documentation for scripts
 │
 ├── isolated-deploy/      # Standalone deployment environment
 │   ├── contracts/        # Simplified contract versions
@@ -102,7 +107,15 @@ To test the cross-chain functionality:
 ```
 cd scripts
 npm install
-npm run test-cross-chain
+node testing/test-cross-chain-reputation.js
+```
+
+For FilCDN testing:
+
+```
+cd scripts
+npm install
+node filcdn/test-filcdn.js
 ```
 
 ## Next Steps: FilCDN Integration
@@ -121,6 +134,14 @@ To get started with FilCDN integration:
 FILECOIN_PRIVATE_KEY=your_filecoin_private_key_here
 NEXT_PUBLIC_FILECOIN_RPC_URL=https://api.calibration.node.glif.io/rpc/v1
 NEXT_PUBLIC_FILCDN_ENABLED=true
+```
+
+Run the FilCDN diagnostic tool:
+
+```
+cd scripts
+npm install
+node filcdn/filcdn-diagnostic.js
 ```
 
 See [docs/filcdn-integration.md](docs/filcdn-integration.md) for detailed implementation guides.
