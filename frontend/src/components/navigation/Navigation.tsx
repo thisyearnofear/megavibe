@@ -19,6 +19,8 @@ export default function Navigation() {
     { name: "Performers", path: "/performers" },
     { name: "Content", path: "/content" },
     { name: "Bounties", path: "/bounties" },
+    { name: "Creator Studio", path: "/create" },
+    { name: "Gallery", path: "/gallery" },
     { name: "File Upload", path: "/upload" },
   ];
 
@@ -52,12 +54,7 @@ export default function Navigation() {
           ))}
 
           <div className={styles.walletContainer}>
-            <WalletConnect
-              onConnect={(address) =>
-                console.log(`Wallet connected: ${address}`)
-              }
-              onDisconnect={() => console.log("Wallet disconnected")}
-            />
+            <WalletConnect />
           </div>
         </div>
       </div>

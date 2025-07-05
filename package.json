@@ -34,11 +34,15 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@filoz/synapse-sdk": "^0.16.0",
+    "@mui/material": "^7.2.0",
     "@reduxjs/toolkit": "^2.8.2",
     "ethers": "^6.8.1",
     "react-redux": "^9.2.0",
-    "redux-logger": "^3.0.6"
+    "redux-logger": "^3.0.6",
+    "zod": "^3.25.74"
   },
   "type": "module"
 }

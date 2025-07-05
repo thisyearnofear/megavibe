@@ -1,5 +1,10 @@
 {
-  "/page": "app/page.js",
   "/not-found": "app/not-found.js",
-  "/bounties/page": "app/bounties/page.js"
+  "/api/filcdn/auth/route": "app/api/filcdn/auth/route.js",
+  "/api/filcdn/retrieve/route": "app/api/filcdn/retrieve/route.js",
+  "/page": "app/page.js",
+  "/api/gallery/submit/route": "app/api/gallery/submit/route.js",
+  "/create/page": "app/create/page.js",
+  "/api/filcdn/stats/route": "app/api/filcdn/stats/route.js",
+  "/api/venice/generate/route": "app/api/venice/generate/route.js"
 }

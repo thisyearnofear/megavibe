@@ -25,6 +25,7 @@ export const metadata: Metadata = {
 import { FilCDNProvider } from "@/contexts/FilCDNContext";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { BlockchainProvider } from "@/components/layout/BlockchainProvider";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 export default function RootLayout({
   children,
@@ -34,15 +35,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
       <body>
-        <FilCDNProvider>
-          <WalletProvider>
-            <BlockchainProvider>
-              <Navigation />
-              {children}
-              <Footer />
-            </BlockchainProvider>
-          </WalletProvider>
-        </FilCDNProvider>
+        <ErrorBoundary>
+          <FilCDNProvider>
+            <WalletProvider>
+              <BlockchainProvider>
+                <Navigation />
+                {children}
+                <Footer />
+              </BlockchainProvider>
+            </WalletProvider>
+          </FilCDNProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

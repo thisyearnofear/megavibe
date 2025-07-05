@@ -1,0 +1,294 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+/* Hero Section Styles */
+.heroSection {
+  padding: var(--space-2xl) 0;
+  background-color: var(--background-secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+.heroSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(138, 43, 226, 0.2) 0%, transparent 70%);
+  opacity: 0.5;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: var(--space-md);
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+.description {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: 0 auto var(--space-lg);
+  position: relative;
+}
+
+.audiencePerformerTabs {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+}
+
+.tabButton {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tabButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.activeTab {
+  background: linear-gradient(90deg, rgba(138, 43, 226, 0.2), rgba(30, 144, 255, 0.2));
+  color: var(--text-primary);
+  border-color: var(--primary);
+}
+
+/* Tools Section Styles */
+.toolsSection {
+  padding: var(--space-2xl) 0;
+  background-color: var(--background);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: var(--space-md);
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sectionDescription {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: 0 auto var(--space-2xl);
+}
+
+.toolsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+}
+
+.toolCard {
+  background-color: var(--background-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-xl);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.toolHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.toolTitle {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.toolBadge {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-md);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.toolDescription {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-lg);
+  line-height: 1.6;
+}
+
+.forPerformers, .forAudiences {
+  display: block;
+  padding: var(--space-sm);
+  margin-bottom: var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  line-height: 1.6;
+}
+
+.forPerformers {
+  background-color: rgba(138, 43, 226, 0.1);
+  border-left: 3px solid var(--primary);
+}
+
+.forAudiences {
+  background-color: rgba(30, 144, 255, 0.1);
+  border-left: 3px solid var(--secondary);
+}
+
+.storageInfo {
+  display: block;
+  margin-top: var(--space-md);
+  padding: var(--space-sm);
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: var(--border-radius-sm);
+  font-style: italic;
+}
+
+.comingSoonCard {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-xl);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.comingSoonIcon {
+  font-size: 3rem;
+  margin-bottom: var(--space-md);
+  opacity: 0.7;
+}
+
+.comingSoonTitle {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+  opacity: 0.7;
+}
+
+.comingSoonDescription {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  opacity: 0.7;
+}
+
+/* Resources Section Styles */
+.resourcesSection {
+  padding: var(--space-2xl) 0;
+  background-color: var(--background-secondary);
+}
+
+.resourcesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-lg);
+}
+
+.resourceCard {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-lg);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.resourceCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.resourceIcon {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-md);
+}
+
+.resourceTitle {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+}
+
+.resourceDescription {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-lg);
+  flex-grow: 1;
+}
+
+.resourceButton {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.resourceButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+}
+
+/* Responsive Adjustments */
+@media (min-width: 768px) {
+  .toolsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+  
+  .toolCard {
+    grid-column: 1 / -1; /* Make the AI image generator card span full width */
+  }
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2.5rem;
+  }
+  
+  .sectionTitle {
+    font-size: 2rem;
+  }
+  
+  .resourcesGrid {
+    grid-template-columns: 1fr;
+  }
+}

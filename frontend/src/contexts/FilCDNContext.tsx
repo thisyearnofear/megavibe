@@ -8,11 +8,11 @@ import React, {
   ReactNode,
 } from "react";
 import {
-  createFilCDNService,
   FilCDNService,
   StorageResult,
   RetrievalResult,
 } from "@/services/filcdn/filcdnService";
+import { createFilCDNAdapter } from "@/services/filcdn/filcdnAdapter";
 
 // FilCDN Context State Interface
 interface FilCDNContextState {
@@ -86,11 +86,12 @@ export const FilCDNProvider: React.FC<FilCDNProviderProps> = ({ children }) => {
       setError(null);
 
       // Get private key from environment
-      // Create and initialize FilCDN service
+      // Create and initialize FilCDN service using the adapter
       // Private key is now handled securely on the server side
-      const filcdnService = createFilCDNService({
+      const filcdnService = createFilCDNAdapter({
         rpcURL: env.filcdn.rpcUrl,
         withCDN: true,
+        useReal: env.filcdn.useReal,
       });
 
       await filcdnService.initialize();
