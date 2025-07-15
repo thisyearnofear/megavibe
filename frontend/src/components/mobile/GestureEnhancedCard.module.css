@@ -1,0 +1,165 @@
+.container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+  position: relative;
+  z-index: 2;
+  background: white;
+  border-radius: 16px;
+  padding: 1rem;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+  will-change: transform;
+}
+
+.card.longPressed {
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.card.doubleTapped {
+  animation: doubleTapPulse 0.3s ease;
+}
+
+@keyframes doubleTapPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.swipeAction {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.swipeLeft {
+  right: 0;
+  background: linear-gradient(90deg, transparent 0%, var(--color, #ef4444) 100%);
+}
+
+.swipeRight {
+  left: 0;
+  background: linear-gradient(90deg, var(--color, #10b981) 0%, transparent 100%);
+}
+
+.swipeIcon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.swipeLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.longPressIndicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.longPressProgress {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.1s linear;
+}
+
+.touchIndicator {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(102, 126, 234, 0.3);
+  border: 2px solid rgba(102, 126, 234, 0.6);
+  pointer-events: none;
+  animation: touchRipple 0.6s ease-out;
+  z-index: 5;
+}
+
+@keyframes touchRipple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* Gesture feedback animations */
+.card[data-gesture="swipe-left"] {
+  animation: swipeLeftFeedback 0.3s ease;
+}
+
+.card[data-gesture="swipe-right"] {
+  animation: swipeRightFeedback 0.3s ease;
+}
+
+@keyframes swipeLeftFeedback {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-20px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes swipeRightFeedback {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(20px); }
+  100% { transform: translateX(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card {
+    padding: 0.75rem;
+  }
+  
+  .swipeAction {
+    width: 80px;
+  }
+  
+  .swipeIcon {
+    font-size: 1.25rem;
+  }
+  
+  .swipeLabel {
+    font-size: 0.625rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: #1a202c;
+  }
+  
+  .card {
+    background: #1a202c;
+    color: #e2e8f0;
+  }
+  
+  .longPressIndicator {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}

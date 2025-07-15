@@ -1,0 +1,24 @@
+.container {
+  min-height: 100vh;
+  background: #f7fafc;
+  
+  /* Mobile-first design */
+  padding: 0;
+  margin: 0;
+  
+  /* Prevent scrolling issues on mobile */
+  overflow-x: hidden;
+  
+  /* Safe area support for mobile devices */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Ensure full viewport on mobile */
+@media (max-width: 768px) {
+  .container {
+    min-height: 100dvh; /* Dynamic viewport height for mobile */
+  }
+}
