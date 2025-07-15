@@ -53,37 +53,6 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "claimant",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "submissionHash",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "timestamp",
-          "type": "uint256"
-        }
-      ],
-      "name": "BountyClaimed",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "bountyId",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
           "name": "sponsor",
           "type": "address"
         },
@@ -104,40 +73,9 @@
           "internalType": "string",
           "name": "speakerId",
           "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "description",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "deadline",
-          "type": "uint256"
         }
       ],
       "name": "BountyCreated",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "bountyId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "timestamp",
-          "type": "uint256"
-        }
-      ],
-      "name": "BountyExpired",
       "type": "event"
     },
     {
@@ -164,24 +102,80 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "uint256",
+          "name": "bountyId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "submissionId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
           "internalType": "address",
-          "name": "recipient",
+          "name": "claimant",
+          "type": "address"
+        }
+      ],
+      "name": "SubmissionApproved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "bountyId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "submissionId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "claimant",
           "type": "address"
         },
         {
           "indexed": false,
+          "internalType": "string",
+          "name": "submissionHash",
+          "type": "string"
+        }
+      ],
+      "name": "SubmissionReceived",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
           "internalType": "uint256",
-          "name": "amount",
+          "name": "bountyId",
           "type": "uint256"
         },
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
-          "name": "timestamp",
+          "name": "submissionId",
           "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "claimant",
+          "type": "address"
         }
       ],
-      "name": "PlatformFeeWithdrawn",
+      "name": "SubmissionRejected",
       "type": "event"
     },
     {
@@ -244,14 +238,83 @@
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "submissionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "approveSubmission",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "bounties",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "sponsor",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reward",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "eventId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "speakerId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "deadline",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "claimed",
+          "type": "bool"
+        },
+        {
+          "internalType": "address",
+          "name": "claimant",
+          "type": "address"
+        },
+        {
           "internalType": "string",
           "name": "submissionHash",
           "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "createdAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "submissionCount",
+          "type": "uint256"
         }
       ],
-      "name": "claimBounty",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -280,6 +343,43 @@
       "name": "createBounty",
       "outputs": [],
       "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "eventBounties",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feeRecipient",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -342,6 +442,11 @@
             {
               "internalType": "uint256",
               "name": "createdAt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "submissionCount",
               "type": "uint256"
             }
           ],
@@ -414,6 +519,11 @@
               "internalType": "uint256",
               "name": "createdAt",
               "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "submissionCount",
+              "type": "uint256"
             }
           ],
           "internalType": "struct MegaVibeBounties.Bounty",
@@ -427,17 +537,39 @@
     {
       "inputs": [
         {
-          "internalType": "string",
-          "name": "eventId",
-          "type": "string"
+          "internalType": "uint256",
+          "name": "bountyId",
+          "type": "uint256"
         }
       ],
-      "name": "getEventBounties",
+      "name": "getSubmissionsForBounty",
       "outputs": [
         {
-          "internalType": "uint256[]",
+          "components": [
+            {
+              "internalType": "address",
+              "name": "claimant",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "submissionHash",
+              "type": "string"
+            },
+            {
+              "internalType": "enum MegaVibeBounties.SubmissionStatus",
+              "name": "status",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "submittedAt",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct MegaVibeBounties.Submission[]",
           "name": "",
-          "type": "uint256[]"
+          "type": "tuple[]"
         }
       ],
       "stateMutability": "view",
@@ -445,30 +577,160 @@
     },
     {
       "inputs": [],
-      "name": "getPlatformStats",
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "platformFeeCollected",
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "totalVolume",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "totalBounties",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "activeBounties",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "platformFees",
+          "name": "",
           "type": "uint256"
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "bountyId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "submissionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "rejectSubmission",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "sponsorBounties",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "submissionStakeAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "submissions",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "claimant",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "submissionHash",
+          "type": "string"
+        },
+        {
+          "internalType": "enum MegaVibeBounties.SubmissionStatus",
+          "name": "status",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "submittedAt",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "bountyId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "submissionHash",
+          "type": "string"
+        }
+      ],
+      "name": "submitForBounty",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     }
   ]
