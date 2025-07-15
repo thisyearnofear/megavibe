@@ -187,13 +187,14 @@ export default function Hero() {
       <div className={styles.container}>
         <div className={styles.content}>
           <h1 ref={titleRef} className={styles.title}>
-            Welcome to <span className={styles.highlight}>The Stage</span>
+            Welcome <span className={styles.highlight}>Viber</span>
           </h1>
 
           <p ref={descriptionRef} className={styles.description}>
             MegaVibe brings creators and audiences together in a reimagined live
-            performance economy. Discover performers, support their work, and be
-            part of the experience.
+            performance economy. Discover performers, micro-tip their work IRL,
+            leverage it to earn bounties, attract attention & enrich the
+            experience.
           </p>
 
           <div className={styles.cta}>

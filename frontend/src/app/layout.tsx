@@ -26,6 +26,7 @@ import { FilCDNProvider } from "@/contexts/FilCDNContext";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { BlockchainProvider } from "@/components/layout/BlockchainProvider";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import MobileLayout from "@/components/mobile/MobileLayout";
 
 export default function RootLayout({
   children,
@@ -39,9 +40,11 @@ export default function RootLayout({
           <FilCDNProvider>
             <WalletProvider>
               <BlockchainProvider>
-                <Navigation />
-                {children}
-                <Footer />
+                <MobileLayout>
+                  <Navigation />
+                  {children}
+                  <Footer />
+                </MobileLayout>
               </BlockchainProvider>
             </WalletProvider>
           </FilCDNProvider>

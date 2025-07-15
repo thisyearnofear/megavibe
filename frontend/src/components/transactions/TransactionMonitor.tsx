@@ -132,8 +132,8 @@ export function useTransactionMonitor() {
   // Open transaction in block explorer
   const viewOnExplorer = useCallback((hash: string, chainId: number) => {
     const network = getNetworkConfig(chainId);
-    if (network && network.blockExplorer) {
-      window.open(`${network.blockExplorer}/tx/${hash}`, "_blank");
+    if (network && network.blockExplorerUrl) {
+      window.open(`${network.blockExplorerUrl}/tx/${hash}`, "_blank");
     }
   }, []);
 

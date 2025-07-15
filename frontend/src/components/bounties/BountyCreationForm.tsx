@@ -5,7 +5,7 @@ import styles from "./BountyCreationForm.module.css";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { bountyService, BountyCreationData } from "@/services/blockchain";
 import { aiService, BountyAIResponse } from "@/services/ai/aiService";
-import { DEFAULT_NETWORK } from "@/contracts/config";
+import { DEFAULT_CHAIN_ID } from "@/contracts/addresses";
 
 type BountyType = "audience-to-performer" | "performer-to-audience";
 
@@ -106,7 +106,7 @@ export default function BountyCreationForm({
     }
 
     if (!isNetworkSupported) {
-      switchNetwork(DEFAULT_NETWORK.chainId);
+      switchNetwork(DEFAULT_CHAIN_ID);
       return;
     }
 

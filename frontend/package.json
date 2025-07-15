@@ -15,10 +15,13 @@
   "dependencies": {
     "@gsap/react": "^2.0.2",
     "@tanstack/react-query": "^5.8.4",
+    "@types/qrcode": "^1.5.5",
     "ethers": "^6.8.1",
     "framer-motion": "^10.18.0",
     "gsap": "^3.12.2",
+    "jsqr": "^1.4.0",
     "next": "14.0.3",
+    "qrcode": "^1.5.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icon": "^1.0.0",

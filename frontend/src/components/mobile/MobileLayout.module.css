@@ -1,0 +1,29 @@
+.mobileContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--background);
+  overflow: hidden;
+}
+
+.mobileContent {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure smooth scrolling on iOS */
+.mobileContent::-webkit-scrollbar {
+  display: none;
+}
+
+/* Handle safe areas for notched devices */
+@supports (padding: max(0px)) {
+  .mobileContainer {
+    padding-top: max(env(safe-area-inset-top), 0px);
+    padding-left: max(env(safe-area-inset-left), 0px);
+    padding-right: max(env(safe-area-inset-right), 0px);
+  }
+}

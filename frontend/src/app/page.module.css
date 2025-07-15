@@ -4,6 +4,14 @@
   min-height: 100vh;
 }
 
+.mobileMain {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--background);
+  padding: 0;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;

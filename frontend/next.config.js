@@ -16,12 +16,7 @@ const nextConfig = {
     NEXT_PUBLIC_APP_DESCRIPTION: "The Stage for Live Performance Economy",
   },
   experimental: {
-    // Enable server components
-    serverComponents: true,
-    // Enable app directory
-    appDir: true,
-    // Enable middleware
-    middleware: true,
+    // Modern Next.js features are enabled by default in v14
   },
   webpack: (config) => {
     // Enable WebAssembly support

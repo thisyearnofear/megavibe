@@ -3,7 +3,8 @@
  * Handles wallet connections and provides access to blockchain
  */
 import { ethers } from 'ethers';
-import { DEFAULT_NETWORK, getNetworkConfig, isNetworkSupported } from '@/contracts/config';
+import { getNetworkConfig, isNetworkSupported } from '@/contracts/config';
+import { DEFAULT_CHAIN_ID } from '@/contracts/addresses';
 import { BlockchainError, BlockchainErrorType, ProviderType, WalletInfo } from './types';
 
 // TypeScript declarations for Ethereum in window object
@@ -14,7 +15,7 @@ declare global {
 }
 
 // Get fallback RPC URL from environment variables
-const FALLBACK_RPC_URL = process.env.NEXT_PUBLIC_MANTLE_RPC_URL || 'https://rpc.sepolia.mantle.xyz';
+const FALLBACK_RPC_URL = getNetworkConfig(DEFAULT_CHAIN_ID).rpcUrl || 'https://rpc.sepolia.mantle.xyz';
 
 class ProviderService {
   private provider: ethers.BrowserProvider | null = null;
@@ -237,10 +238,10 @@ class ProviderService {
               params: [
                 {
                   chainId: `0x${chainId.toString(16)}`,
-                  chainName: networkConfig.name,
+                  chainName: networkConfig.networkName,
                   nativeCurrency: networkConfig.nativeCurrency,
                   rpcUrls: [networkConfig.rpcUrl],
-                  blockExplorerUrls: [networkConfig.blockExplorer],
+                  blockExplorerUrls: [networkConfig.blockExplorerUrl],
                 },
               ],
             });
@@ -283,7 +284,7 @@ class ProviderService {
         this.signer = null;
         this.walletInfo = null;
         
-        console.log(`Switched to read-only mode for network: ${networkConfig.name}`);
+        console.log(`Switched to read-only mode for network: ${networkConfig.networkName}`);
       } catch (error) {
         throw this.createError(
           BlockchainErrorType.NETWORK_ERROR,

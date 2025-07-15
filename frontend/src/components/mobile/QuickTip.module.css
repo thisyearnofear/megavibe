@@ -1,0 +1,556 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  animation: overlayFadeIn 0.2s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.bottomSheet {
+  background: var(--background);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.handleBar {
+  width: 40px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  margin: 12px auto 8px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.closeButton {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.closeButton:active {
+  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.headerSpacer {
+  width: 32px;
+}
+
+.performerInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--background-secondary);
+  margin: 0 20px 20px;
+  border-radius: 12px;
+}
+
+.performerAvatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.performerAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  font-size: 24px;
+  color: white;
+}
+
+.performerDetails {
+  flex: 1;
+  min-width: 0;
+}
+
+.performerName {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+}
+
+.performerType {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 2px 0;
+}
+
+.performerLocation {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.amountSection,
+.messageSection {
+  padding: 0 20px 20px;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 12px 0;
+}
+
+.presetAmounts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.amountButton {
+  padding: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: var(--background-secondary);
+  color: var(--text-primary);
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 56px;
+}
+
+.amountButton:active {
+  transform: scale(0.95);
+}
+
+.selectedAmount {
+  border-color: var(--primary);
+  background: rgba(138, 43, 226, 0.15);
+  color: var(--primary);
+}
+
+.customAmountButton {
+  padding: 16px;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 56px;
+}
+
+.customAmountButton:active {
+  transform: scale(0.95);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.customAmountInput {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dollarSign {
+  position: absolute;
+  left: 16px;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  z-index: 1;
+}
+
+.amountInput {
+  width: 100%;
+  padding: 16px 16px 16px 40px;
+  background: var(--background-secondary);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.amountInput:focus {
+  border-color: var(--primary);
+}
+
+.backToPresets {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: all 0.2s ease;
+}
+
+.backToPresets:active {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.quickMessages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.quickMessageButton {
+  padding: 8px 12px;
+  background: var(--background-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border-radius: 16px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quickMessageButton:active {
+  transform: scale(0.95);
+}
+
+.selectedMessage {
+  background: rgba(138, 43, 226, 0.15);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.messageInput {
+  width: 100%;
+  padding: 12px;
+  background: var(--background-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.messageInput:focus {
+  border-color: var(--primary);
+}
+
+.messageInput::placeholder {
+  color: var(--text-secondary);
+}
+
+.characterCount {
+  text-align: right;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.walletPrompt {
+  padding: 12px 20px;
+  background: rgba(138, 43, 226, 0.1);
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  border-radius: 8px;
+  margin: 0 20px 20px;
+}
+
+.walletPrompt p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--primary);
+  text-align: center;
+}
+
+.walletInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.insufficientFunds {
+  color: #ff4444;
+  font-weight: 500;
+}
+
+.sendButton {
+  width: calc(100% - 40px);
+  margin: 0 20px 20px;
+  padding: 18px;
+  background: linear-gradient(135deg, #00ff88, #00cc6a);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sendButton:active {
+  transform: scale(0.98);
+}
+
+.disabledButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+.disabledButton:active {
+  transform: none;
+}
+
+.sendingState {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Gas Estimate Styles */
+.gasEstimate {
+  padding: 12px 20px;
+  background: rgba(30, 144, 255, 0.1);
+  border: 1px solid rgba(30, 144, 255, 0.3);
+  border-radius: 8px;
+  margin: 0 20px 16px;
+}
+
+.gasInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--secondary);
+  margin-bottom: 4px;
+}
+
+.gasUSD {
+  opacity: 0.8;
+}
+
+.totalCost {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* Error Container Styles */
+.errorContainer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  border-radius: 8px;
+  margin: 0 20px 16px;
+}
+
+.errorIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.errorContent {
+  flex: 1;
+}
+
+.errorTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff4444;
+  margin: 0 0 4px 0;
+}
+
+.errorMessage {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0 0 4px 0;
+  line-height: 1.4;
+}
+
+.errorAction {
+  font-size: 11px;
+  color: #ff4444;
+  margin: 0 0 8px 0;
+  font-style: italic;
+}
+
+.retryButton {
+  padding: 6px 12px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retryButton:active {
+  transform: scale(0.95);
+  background: #cc3333;
+}
+
+/* Success Container Styles */
+.successContainer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 8px;
+  margin: 0 20px 16px;
+}
+
+.successIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.successContent {
+  flex: 1;
+}
+
+.successTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #00ff88;
+  margin: 0 0 4px 0;
+}
+
+.successMessage {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.txLink {
+  font-size: 11px;
+  color: #00ff88;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.txLink:hover {
+  color: #00cc6a;
+}
+
+/* Success Button State */
+.successButton {
+  background: #00ff88 !important;
+  color: white !important;
+}
+
+.successButton:active {
+  background: #00cc6a !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 320px) {
+  .presetAmounts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .performerInfo {
+    padding: 16px;
+    margin: 0 16px 16px;
+  }
+  
+  .amountSection,
+  .messageSection {
+    padding: 0 16px 16px;
+  }
+  
+  .sendButton {
+    width: calc(100% - 32px);
+    margin: 0 16px 16px;
+  }
+}

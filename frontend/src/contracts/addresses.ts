@@ -1,65 +1,64 @@
-/**
- * Deployed contract addresses for MegaVibe
- */
-import { NetworkConfig } from './config';
+// Contract addresses for different networks
+// This file will be auto-updated by deployment scripts
 
-export interface ContractAddresses {
-  MegaVibeBounties: string;
-  MegaVibeTipping: string;
-  EventContract: string;
-}
+export const CONTRACTS = {
+  MegaVibeTipping: process.env.NEXT_PUBLIC_CONTRACT_TIPPING_ADDRESS || "",
+  MegaVibeBounties: process.env.NEXT_PUBLIC_CONTRACT_BOUNTIES_ADDRESS || "",
+  SimpleReputation: process.env.NEXT_PUBLIC_CONTRACT_REPUTATION_ADDRESS || "",
+} as const;
 
-// Contract addresses by network ID
-// These will need to be updated with the actual deployed addresses
-const CONTRACT_ADDRESSES: Record<number, ContractAddresses> = {
-  // Mantle Sepolia (Chain ID: 5003)
-  5003: {
-    MegaVibeBounties: '0xf6D9428094bD1EF3427c8f0bBce6A4068B900b5F',
-    MegaVibeTipping: '0xa226c82f1b6983aBb7287Cd4d83C2aEC802A183F',
-    EventContract: '0x0000000000000000000000000000000000000000', // Not deployed yet or not needed
+// Multi-network contract addresses
+export const CONTRACT_ADDRESSES: Record<number, Partial<typeof CONTRACTS>> = {
+  // Sepolia Testnet (Development)
+  11155111: {
+    MegaVibeTipping: process.env.NEXT_PUBLIC_CONTRACT_TIPPING_ADDRESS,
+    MegaVibeBounties: process.env.NEXT_PUBLIC_CONTRACT_BOUNTIES_ADDRESS,
+    SimpleReputation: process.env.NEXT_PUBLIC_CONTRACT_REPUTATION_ADDRESS,
   },
-  // Add more networks as they're supported
+  
+  // Base Mainnet (Production)
+  8453: {
+    MegaVibeTipping: process.env.NEXT_PUBLIC_BASE_CONTRACT_TIPPING_ADDRESS,
+    MegaVibeBounties: process.env.NEXT_PUBLIC_BASE_CONTRACT_BOUNTIES_ADDRESS,
+    SimpleReputation: process.env.NEXT_PUBLIC_BASE_CONTRACT_REPUTATION_ADDRESS,
+  },
+  
+  // Arbitrum One (Alternative)
+  42161: {
+    MegaVibeTipping: process.env.NEXT_PUBLIC_ARB_CONTRACT_TIPPING_ADDRESS,
+    MegaVibeBounties: process.env.NEXT_PUBLIC_ARB_CONTRACT_BOUNTIES_ADDRESS,
+    SimpleReputation: process.env.NEXT_PUBLIC_ARB_CONTRACT_REPUTATION_ADDRESS,
+  },
 };
 
-/**
- * Get contract addresses for a specific network
- * @param chainId The blockchain network ID
- * @returns Contract addresses for the specified network, or undefined if not supported
- */
-export function getContractAddresses(chainId: number): ContractAddresses | undefined {
-  return CONTRACT_ADDRESSES[chainId];
-}
+// Default network configuration
+export const DEFAULT_CHAIN_ID = parseInt(
+  process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID || 
+  (process.env.NODE_ENV === 'production' ? "8453" : "11155111")
+);
 
-/**
- * Get a specific contract address
- * @param chainId The blockchain network ID
- * @param contractName The name of the contract
- * @returns The contract address or undefined if not found
- */
+export const SUPPORTED_CHAINS = [
+  11155111, // Sepolia
+  8453,     // Base
+  42161,    // Arbitrum
+  10,       // Optimism
+  84532,    // Base Sepolia
+  421614,   // Arbitrum Sepolia
+  11155420, // Optimism Sepolia
+];
+
+// Helper function to get contract address for current network
 export function getContractAddress(
-  chainId: number,
-  contractName: keyof ContractAddresses
-): string | undefined {
-  const addresses = getContractAddresses(chainId);
-  return addresses ? addresses[contractName] : undefined;
-}
-
-/**
- * Check if a network has all required contract addresses configured
- * @param chainId The blockchain network ID
- * @returns True if all required contracts are configured
- */
-export function isNetworkConfigured(chainId: number): boolean {
-  const addresses = getContractAddresses(chainId);
-  if (!addresses) return false;
+  contractName: keyof typeof CONTRACTS, 
+  chainId?: number
+): string {
+  const targetChainId = chainId || DEFAULT_CHAIN_ID;
+  const networkAddresses = CONTRACT_ADDRESSES[targetChainId];
   
-  // Check that all addresses are defined and not the zero address
-  return (
-    !!addresses.MegaVibeBounties &&
-    addresses.MegaVibeBounties !== '0x0000000000000000000000000000000000000000' &&
-    !!addresses.MegaVibeTipping &&
-    addresses.MegaVibeTipping !== '0x0000000000000000000000000000000000000000' &&
-    !!addresses.EventContract &&
-    addresses.EventContract !== '0x0000000000000000000000000000000000000000'
-  );
+  if (networkAddresses && networkAddresses[contractName]) {
+    return networkAddresses[contractName]!;
+  }
+  
+  // Fallback to default
+  return CONTRACTS[contractName];
 }

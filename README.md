@@ -36,9 +36,9 @@ megavibe/
 │   └── scripts/          # Network-specific deployment scripts
 │
 └── docs/                 # Project documentation
-    ├── cross-chain-reputation.md    # Architecture documentation
-    ├── cross-chain-deployment.md    # Deployment guide
-    └── technical.md                 # Technical overview
+    ├── TECHNICAL_OVERVIEW.md        # Comprehensive technical architecture
+    ├── PROJECT_PLANNING.md          # Development roadmap and strategic planning
+    └── GETTING_STARTED.md           # Deployment guide and UI concepts
 ```
 
 ## Features
@@ -92,13 +92,13 @@ For the MetaMask Card Hackathon, we've implemented:
 2. **LI.FI SDK Integration**: For cross-chain transfers
 3. **MetaMask SDK**: For seamless wallet connections
 
-See [docs/cross-chain-reputation.md](docs/cross-chain-reputation.md) for details on the implementation.
+See [docs/TECHNICAL_OVERVIEW.md](docs/TECHNICAL_OVERVIEW.md) for details on the implementation.
 
 ## Deployment
 
 For instructions on deploying the contracts to various networks, see:
 
-- [Cross-Chain Deployment Guide](docs/cross-chain-deployment.md)
+- [Getting Started Guide](docs/GETTING_STARTED.md)
 
 ## Testing
 
@@ -143,8 +143,6 @@ cd scripts
 npm install
 node filcdn/filcdn-diagnostic.js
 ```
-
-See [docs/filcdn-integration.md](docs/filcdn-integration.md) for detailed implementation guides.
 
 ## License
 

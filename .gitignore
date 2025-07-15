@@ -60,3 +60,32 @@ pids
 *.pid
 *.seed
 *.pid.lock
+
+# Next.js
+.next/
+out/
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+
+# Package manager
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Testing
+/coverage
+.nyc_output
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/

@@ -1,7 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Hero from "@/components/hero/Hero";
+import QuickDiscovery from "@/components/mobile/QuickDiscovery";
+import QuickTip from "@/components/mobile/QuickTip";
+import QuickRequest from "@/components/mobile/QuickRequest";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import styles from "./page.module.css";
 
 // Feature section component
@@ -104,7 +108,77 @@ const HowItWorksSection = () => {
 };
 
 // Home page component
+import { PerformerProfile } from "@/services/api/performerService";
+
+interface Performer extends PerformerProfile {
+  distance?: string;
+  distanceKm?: number;
+}
+
 export default function Home() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [selectedPerformer, setSelectedPerformer] = useState<Performer | null>(
+    null
+  );
+  const [showTipModal, setShowTipModal] = useState(false);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+
+  const handleQuickTip = (performer: Performer) => {
+    setSelectedPerformer(performer);
+    setShowTipModal(true);
+  };
+
+  const handleQuickRequest = (performer: Performer) => {
+    setSelectedPerformer(performer);
+    setShowRequestModal(true);
+  };
+
+  const handleTipComplete = () => {
+    setShowTipModal(false);
+    setSelectedPerformer(null);
+    // Show success feedback
+    console.log("Tip completed successfully!");
+  };
+
+  const handleRequestComplete = () => {
+    setShowRequestModal(false);
+    setSelectedPerformer(null);
+    // Show success feedback
+    console.log("Request created successfully!");
+  };
+
+  // Mobile-first IRL engagement experience
+  if (isMobile) {
+    return (
+      <main className={styles.mobileMain}>
+        <QuickDiscovery
+          onQuickTip={handleQuickTip}
+          onQuickRequest={handleQuickRequest}
+        />
+
+        {/* Quick Action Modals */}
+        {selectedPerformer && (
+          <>
+            <QuickTip
+              performer={selectedPerformer}
+              isOpen={showTipModal}
+              onClose={() => setShowTipModal(false)}
+              onComplete={handleTipComplete}
+            />
+
+            <QuickRequest
+              performer={selectedPerformer}
+              isOpen={showRequestModal}
+              onClose={() => setShowRequestModal(false)}
+              onComplete={handleRequestComplete}
+            />
+          </>
+        )}
+      </main>
+    );
+  }
+
+  // Desktop experience remains unchanged
   return (
     <main className={styles.main}>
       <Hero />
@@ -123,3 +197,5 @@ export default function Home() {
     </main>
   );
 }
+
+// Minor change to trigger type re-evaluation

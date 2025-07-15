@@ -1,47 +1,97 @@
-/**
- * Blockchain network configuration for MegaVibe
- */
+// Blockchain configuration for MegaVibe
+import { DEFAULT_CHAIN_ID, SUPPORTED_CHAINS } from './addresses';
 
-export interface NetworkConfig {
-  chainId: number;
-  name: string;
-  rpcUrl: string;
-  blockExplorer: string;
-  nativeCurrency: {
-    name: string;
-    symbol: string;
-    decimals: number;
-  };
-}
-
-// Primary network configuration - Mantle Sepolia
-export const MANTLE_SEPOLIA_CONFIG: NetworkConfig = {
-  chainId: Number(process.env.NEXT_PUBLIC_MANTLE_CHAIN_ID || '5003'),
-  name: process.env.NEXT_PUBLIC_MANTLE_NETWORK_NAME || 'Mantle Sepolia',
-  rpcUrl: process.env.NEXT_PUBLIC_MANTLE_RPC_URL || 'https://rpc.sepolia.mantle.xyz',
-  blockExplorer: 'https://explorer.sepolia.mantle.xyz',
-  nativeCurrency: {
-    name: 'Mantle Network Token',
-    symbol: 'MNT',
-    decimals: 18,
+export const BLOCKCHAIN_CONFIG = {
+  defaultChainId: DEFAULT_CHAIN_ID,
+  supportedChains: SUPPORTED_CHAINS,
+  
+  // RPC URLs with fallbacks
+  rpcUrls: {
+    // Ethereum Mainnet & Testnet
+    1: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY 
+      ? `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+      : 'https://eth.llamarpc.com',
+    11155111: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
+      ? `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+      : 'https://ethereum-sepolia.blockpi.network/v1/rpc/public',
+    
+    // Base
+    8453: 'https://mainnet.base.org',
+    84532: 'https://sepolia.base.org',
+    
+    // Arbitrum
+    42161: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
+      ? `https://arb-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+      : 'https://arbitrum.llamarpc.com',
+    421614: 'https://sepolia-rollup.arbitrum.io/rpc',
+    
+    // Optimism
+    10: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
+      ? `https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+      : 'https://optimism.llamarpc.com',
+    11155420: 'https://sepolia.optimism.io',
+  },
+  
+  // Block explorers
+  blockExplorers: {
+    1: 'https://etherscan.io',
+    11155111: 'https://sepolia.etherscan.io',
+    8453: 'https://basescan.org',
+    84532: 'https://sepolia.basescan.org',
+    42161: 'https://arbiscan.io',
+    421614: 'https://sepolia.arbiscan.io',
+    10: 'https://optimistic.etherscan.io',
+    11155420: 'https://sepolia-optimism.etherscan.io',
+  },
+  
+  // Network names
+  networkNames: {
+    1: 'Ethereum',
+    11155111: 'Sepolia',
+    8453: 'Base',
+    84532: 'Base Sepolia',
+    42161: 'Arbitrum',
+    421614: 'Arbitrum Sepolia',
+    10: 'Optimism',
+    11155420: 'Optimism Sepolia',
+  },
+  
+  // Native currencies
+  nativeCurrencies: {
+    1: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    11155111: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
+    8453: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    84532: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
+    42161: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    421614: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
+    10: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    11155420: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
   },
 };
 
-// Future support for other networks
-export const SUPPORTED_NETWORKS: NetworkConfig[] = [
-  MANTLE_SEPOLIA_CONFIG,
-  // Additional networks can be added here in the future
-];
-
-// Default network to use
-export const DEFAULT_NETWORK = MANTLE_SEPOLIA_CONFIG;
-
-// Check if a chain ID is supported
-export function isNetworkSupported(chainId: number): boolean {
-  return SUPPORTED_NETWORKS.some(network => network.chainId === chainId);
+// Helper functions
+export function getNetworkName(chainId: number): string {
+  return BLOCKCHAIN_CONFIG.networkNames[chainId as keyof typeof BLOCKCHAIN_CONFIG.networkNames] || `Network ${chainId}`;
 }
 
-// Get network config by chain ID
-export function getNetworkConfig(chainId: number): NetworkConfig | undefined {
-  return SUPPORTED_NETWORKS.find(network => network.chainId === chainId);
+export function getBlockExplorerUrl(chainId: number, hash: string, type: 'tx' | 'address' = 'tx'): string {
+  const explorer = BLOCKCHAIN_CONFIG.blockExplorers[chainId as keyof typeof BLOCKCHAIN_CONFIG.blockExplorers];
+  return explorer ? `${explorer}/${type}/${hash}` : '';
+}
+
+export function getRpcUrl(chainId: number): string {
+  return BLOCKCHAIN_CONFIG.rpcUrls[chainId as keyof typeof BLOCKCHAIN_CONFIG.rpcUrls] || '';
+}
+
+export function isNetworkSupported(chainId: number): boolean {
+  return BLOCKCHAIN_CONFIG.supportedChains.includes(chainId);
+}
+
+export function getNetworkConfig(chainId: number) {
+  return {
+    rpcUrl: getRpcUrl(chainId),
+    blockExplorerUrl: BLOCKCHAIN_CONFIG.blockExplorers[chainId as keyof typeof BLOCKCHAIN_CONFIG.blockExplorers],
+    networkName: getNetworkName(chainId),
+    nativeCurrency: BLOCKCHAIN_CONFIG.nativeCurrencies[chainId as keyof typeof BLOCKCHAIN_CONFIG.nativeCurrencies],
+  };
 }

@@ -27,7 +27,7 @@ class TippingService {
       return null;
     }
     
-    const contractAddress = getContractAddress(walletInfo.chainId, 'MegaVibeTipping');
+    const contractAddress = getContractAddress('MegaVibeTipping', walletInfo.chainId);
     if (!contractAddress) {
       return null;
     }

@@ -107,7 +107,7 @@ export default function FilCDNDemo() {
           name: file.name,
           type: file.type,
           size: result.size,
-          timestamp: result.timestamp,
+          timestamp: Date.now(),
         };
 
         setStoredFiles((prev) => [newStoredFile, ...prev]);

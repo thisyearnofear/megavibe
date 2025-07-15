@@ -34,7 +34,7 @@ class BountyService {
       return null;
     }
     
-    const contractAddress = getContractAddress(walletInfo.chainId, 'MegaVibeBounties');
+    const contractAddress = getContractAddress('MegaVibeBounties', walletInfo.chainId);
     if (!contractAddress) {
       return null;
     }

@@ -1,0 +1,184 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+  min-height: 100vh;
+}
+
+.mobileContainer {
+  padding: var(--space-md);
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header h1 {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.roleSelector {
+  display: flex;
+  gap: var(--space-sm);
+  background: var(--background-secondary);
+  padding: 4px;
+  border-radius: var(--border-radius-md);
+}
+
+.mobileContainer .roleSelector {
+  margin-bottom: var(--space-xl);
+}
+
+.mobileContainer .roleSelector h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-md) 0;
+}
+
+.roleButtons {
+  display: flex;
+  gap: var(--space-xs);
+  background: var(--background-secondary);
+  padding: 4px;
+  border-radius: var(--border-radius-md);
+}
+
+.roleButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: calc(var(--border-radius-md) - 2px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.roleButton:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.roleButton.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(138, 43, 226, 0.3);
+}
+
+.roleIcon {
+  font-size: 1rem;
+}
+
+.roleLabel {
+  font-weight: 600;
+}
+
+.connectPrompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 60vh;
+  gap: var(--space-lg);
+}
+
+.promptIcon {
+  font-size: 4rem;
+  opacity: 0.7;
+}
+
+.connectPrompt h2 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.connectPrompt p {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  max-width: 500px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-md);
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: var(--space-lg);
+    align-items: flex-start;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .roleSelector {
+    width: 100%;
+  }
+  
+  .roleButtons {
+    width: 100%;
+  }
+  
+  .roleButton {
+    flex: 1;
+    justify-content: center;
+    padding: var(--space-md);
+  }
+  
+  .connectPrompt {
+    min-height: 50vh;
+    padding: var(--space-xl);
+  }
+  
+  .promptIcon {
+    font-size: 3rem;
+  }
+  
+  .connectPrompt h2 {
+    font-size: 1.5rem;
+  }
+  
+  .connectPrompt p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .roleButton {
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-sm);
+  }
+  
+  .roleIcon {
+    font-size: 1.25rem;
+  }
+  
+  .roleLabel {
+    font-size: 0.75rem;
+  }
+}
