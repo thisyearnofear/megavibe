@@ -3,7 +3,7 @@ node_modules
 .pnpm-store
 
 # Build outputs
-.next
+# .next (commented out - needed for Vercel deployment)
 out
 dist
 

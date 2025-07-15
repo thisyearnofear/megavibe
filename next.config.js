@@ -2,20 +2,20 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  
+
   // Build optimizations
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
-  
+
   // Performance optimizations
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    removeConsole: process.env.NODE_ENV === "production",
   },
-  
+
   // Static optimization
-  output: 'standalone',
-  
+  // output: 'standalone', // Commented out for Vercel deployment
+
   images: {
     domains: [
       "calibration.filcdn.io", // For FilCDN hosted images
@@ -23,21 +23,21 @@ const nextConfig = {
       "avatars.githubusercontent.com", // For GitHub avatars
       "images.unsplash.com", // For Unsplash images
     ],
-    formats: ['image/webp', 'image/avif'],
+    formats: ["image/webp", "image/avif"],
     minimumCacheTTL: 60,
   },
-  
+
   env: {
     // Public environment variables
     NEXT_PUBLIC_APP_NAME: "MegaVibe",
     NEXT_PUBLIC_APP_DESCRIPTION: "The Stage for Live Performance Economy",
   },
-  
+
   experimental: {
     // Performance optimizations
-    optimizePackageImports: ['react-icons', 'ethers'],
+    optimizePackageImports: ["react-icons", "ethers"],
   },
-  
+
   webpack: (config, { dev, isServer }) => {
     // Enable WebAssembly support
     config.experiments = {
@@ -56,17 +56,17 @@ const nextConfig = {
       config.optimization = {
         ...config.optimization,
         splitChunks: {
-          chunks: 'all',
+          chunks: "all",
           cacheGroups: {
             vendor: {
               test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              chunks: 'all',
+              name: "vendors",
+              chunks: "all",
             },
             ethers: {
               test: /[\\/]node_modules[\\/]ethers[\\/]/,
-              name: 'ethers',
-              chunks: 'all',
+              name: "ethers",
+              chunks: "all",
             },
           },
         },
