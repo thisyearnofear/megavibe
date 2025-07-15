@@ -1,8 +1,6 @@
 {
-  "buildCommand": "cd frontend && npm ci && npm run build",
-  "outputDirectory": "frontend/.next",
-  "installCommand": "cd frontend && npm ci",
-  "framework": "nextjs",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": ".next",
   "headers": [
     {
       "source": "/(.*)",
@@ -30,9 +28,5 @@
         }
       ]
     }
-  ],
-  "env": {
-    "NODE_OPTIONS": "--max-old-space-size=4096",
-    "NEXT_TELEMETRY_DISABLED": "1"
-  }
+  ]
 }

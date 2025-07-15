@@ -3,7 +3,7 @@
  * Properly implements FilCDN integration using the Synapse SDK
  */
 
-import { Synapse, RPC_URLS, StorageService, TOKENS, CONTRACT_ADDRESSES, PandoraService } from '@filoz/synapse-sdk';
+import { Synapse, RPC_URLS, StorageService, TOKENS, CONTRACT_ADDRESSES, PandoraService } from './mockSynapseSDK';
 import { ethers } from 'ethers';
 
 // Constants
