@@ -31,12 +31,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": [
-    "node_modules",
-    "scripts",
-    "contracts",
-    "docs",
-    "data",
-    "isolated-deploy"
-  ]
+  "exclude": ["node_modules", "scripts", "docs", "data", "isolated-deploy"]
 }
