@@ -2,6 +2,20 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  
+  // Build optimizations
+  compress: true,
+  poweredByHeader: false,
+  generateEtags: false,
+  
+  // Performance optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  
+  // Static optimization
+  output: 'standalone',
+  
   images: {
     domains: [
       "calibration.filcdn.io", // For FilCDN hosted images
@@ -9,16 +23,22 @@ const nextConfig = {
       "avatars.githubusercontent.com", // For GitHub avatars
       "images.unsplash.com", // For Unsplash images
     ],
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 60,
   },
+  
   env: {
     // Public environment variables
     NEXT_PUBLIC_APP_NAME: "MegaVibe",
     NEXT_PUBLIC_APP_DESCRIPTION: "The Stage for Live Performance Economy",
   },
+  
   experimental: {
-    // Modern Next.js features are enabled by default in v14
+    // Performance optimizations
+    optimizePackageImports: ['react-icons', 'ethers'],
   },
-  webpack: (config) => {
+  
+  webpack: (config, { dev, isServer }) => {
     // Enable WebAssembly support
     config.experiments = {
       ...config.experiments,
@@ -30,6 +50,28 @@ const nextConfig = {
       test: /\.wasm$/,
       type: "webassembly/async",
     });
+
+    // Production optimizations
+    if (!dev && !isServer) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+            },
+            ethers: {
+              test: /[\\/]node_modules[\\/]ethers[\\/]/,
+              name: 'ethers',
+              chunks: 'all',
+            },
+          },
+        },
+      };
+    }
 
     return config;
   },

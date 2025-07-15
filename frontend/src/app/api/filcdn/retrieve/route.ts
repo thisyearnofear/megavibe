@@ -34,14 +34,14 @@ async function ensureInitialized() {
   await initializationPromise;
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
   try {
     await ensureInitialized();
 
-    // Get CID from query parameter
-    const url = new URL(req.url);
-    const cid = url.searchParams.get('cid');
-    const format = url.searchParams.get('format') || 'json';
+    // Get CID from query parameter using nextUrl (static-friendly)
+    const { searchParams } = req.nextUrl;
+    const cid = searchParams.get('cid');
+    const format = searchParams.get('format') || 'json';
 
     if (!cid) {
       return NextResponse.json(
