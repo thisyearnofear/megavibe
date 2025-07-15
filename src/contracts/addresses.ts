@@ -34,6 +34,16 @@ export const NETWORK_ADDRESSES: Record<number, Partial<ContractAddresses>> = {
   },
 };
 
+// Legacy exports for backward compatibility
+export const CONTRACT_ADDRESSES = NETWORK_ADDRESSES;
+
+// Default contract addresses (fallback to Mantle Sepolia)
+export const CONTRACTS = {
+  MegaVibeBounties: process.env.NEXT_PUBLIC_BOUNTY_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
+  MegaVibeTipping: process.env.NEXT_PUBLIC_TIPPING_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
+  SimpleReputation: process.env.NEXT_PUBLIC_SIMPLE_REPUTATION_MANTLE_SEPOLIA || '0x0000000000000000000000000000000000000000',
+};
+
 // Default chain ID (Mantle Sepolia)
 export const DEFAULT_CHAIN_ID = 5003;
 

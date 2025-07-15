@@ -81,6 +81,12 @@ export const NETWORK_CONFIGS: Record<number, NetworkConfig> = {
 // Default network (Mantle Sepolia)
 export const DEFAULT_NETWORK = NETWORK_CONFIGS[5003];
 
+// Blockchain configuration
+export const BLOCKCHAIN_CONFIG = {
+  defaultChainId: 5003, // Mantle Sepolia
+  supportedChains: [5003, 84532, 11155420, 421614, 1301], // All configured networks
+};
+
 /**
  * Get network configuration by chain ID
  * @param chainId Chain ID
@@ -95,7 +101,7 @@ export function getNetworkConfig(chainId: number): NetworkConfig | null {
  * @param chainId Chain ID
  * @returns True if supported
  */
-export function isSupportedNetwork(chainId: number): boolean {
+export function isNetworkSupported(chainId: number): boolean {
   return chainId in NETWORK_CONFIGS;
 }
 

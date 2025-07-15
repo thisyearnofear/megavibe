@@ -15,7 +15,7 @@ declare global {
 }
 
 // Get fallback RPC URL from environment variables
-const FALLBACK_RPC_URL = getNetworkConfig(DEFAULT_CHAIN_ID).rpcUrl || 'https://rpc.sepolia.mantle.xyz';
+const FALLBACK_RPC_URL = getNetworkConfig(DEFAULT_CHAIN_ID)?.rpcUrl || 'https://rpc.sepolia.mantle.xyz';
 
 class ProviderService {
   private provider: ethers.BrowserProvider | null = null;
@@ -238,7 +238,7 @@ class ProviderService {
               params: [
                 {
                   chainId: `0x${chainId.toString(16)}`,
-                  chainName: networkConfig.networkName,
+                  chainName: networkConfig.name,
                   nativeCurrency: networkConfig.nativeCurrency,
                   rpcUrls: [networkConfig.rpcUrl],
                   blockExplorerUrls: [networkConfig.blockExplorerUrl],
@@ -284,7 +284,7 @@ class ProviderService {
         this.signer = null;
         this.walletInfo = null;
         
-        console.log(`Switched to read-only mode for network: ${networkConfig.networkName}`);
+        console.log(`Switched to read-only mode for network: ${networkConfig.name}`);
       } catch (error) {
         throw this.createError(
           BlockchainErrorType.NETWORK_ERROR,
