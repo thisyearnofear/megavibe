@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { PerformerProfile } from "@/services/api/performerService";
-import MobileBottomTabs from "./MobileBottomTabs";
+import OptimizedMobileNavigation from "../navigation/OptimizedMobileNavigation";
 import MobileTopBar from "./MobileTopBar";
 import FloatingActionButton from "./FloatingActionButton";
 import OneTapTip from "./OneTapTip";
@@ -56,7 +56,7 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
     <div className={styles.mobileContainer}>
       <MobileTopBar />
       <main className={styles.mobileContent}>{children}</main>
-      <MobileBottomTabs />
+      <OptimizedMobileNavigation />
 
       {/* Floating Action Button */}
       <FloatingActionButton

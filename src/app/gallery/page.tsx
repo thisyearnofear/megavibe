@@ -13,7 +13,7 @@ import {
   Skeleton,
   Button,
 } from "@mui/material";
-import Navigation from "@/components/navigation/Navigation";
+import OptimizedNavigation from "@/components/navigation/OptimizedNavigation";
 import styles from "./page.module.css";
 
 type GalleryItem = {
@@ -64,7 +64,7 @@ export default function GalleryPage() {
 
   return (
     <>
-      <Navigation />
+      <OptimizedNavigation />
       <Container
         maxWidth="lg"
         sx={{ mt: 4, mb: 8 }}

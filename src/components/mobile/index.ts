@@ -1,6 +1,5 @@
 // Mobile component exports
 export { default as MobileLayout } from './MobileLayout';
-export { default as MobileBottomTabs } from './MobileBottomTabs';
 export { default as MobileTopBar } from './MobileTopBar';
 export { default as QuickDiscovery } from './QuickDiscovery';
 export { default as QuickTip } from './QuickTip';

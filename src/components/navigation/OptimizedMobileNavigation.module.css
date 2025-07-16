@@ -1,0 +1,256 @@
+.bottomTabs {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(26, 26, 46, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+  z-index: 1000;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0.5rem;
+  border-radius: 1rem;
+  position: relative;
+  min-height: 60px;
+  max-width: 80px;
+}
+
+.tab:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.tab.active {
+  color: #4ecdc4;
+  background-color: rgba(78, 205, 196, 0.1);
+  transform: translateY(-2px);
+}
+
+.tab.disabled {
+  color: rgba(255, 255, 255, 0.3);
+  cursor: not-allowed;
+}
+
+.tab.disabled:hover {
+  background-color: transparent;
+  transform: none;
+}
+
+.tabContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  position: relative;
+  width: 100%;
+}
+
+.iconContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.icon {
+  font-size: 1.5rem;
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.tab.active .icon {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 8px rgba(78, 205, 196, 0.4));
+}
+
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 0.15rem 0.3rem;
+  border-radius: 0.5rem;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+  animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.lockIcon {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  font-size: 0.8rem;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.tab.active .label {
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(78, 205, 196, 0.4);
+}
+
+.activeIndicator {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #4ecdc4;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(78, 205, 196, 0.6);
+  animation: indicatorGlow 2s infinite;
+}
+
+@keyframes indicatorGlow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 375px) {
+  .bottomTabs {
+    padding: 0.25rem 0 calc(0.25rem + env(safe-area-inset-bottom));
+  }
+  
+  .tab {
+    min-height: 50px;
+    padding: 0.25rem;
+  }
+  
+  .icon {
+    font-size: 1.3rem;
+  }
+  
+  .label {
+    font-size: 0.65rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .bottomTabs {
+    display: none; /* Hide on desktop/tablet */
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .bottomTabs {
+    background: #000000;
+    border-top: 2px solid #ffffff;
+  }
+  
+  .tab {
+    color: #ffffff;
+  }
+  
+  .tab.active {
+    color: #00ffff;
+    background-color: rgba(0, 255, 255, 0.2);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .icon,
+  .label,
+  .activeIndicator,
+  .badge {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .bottomTabs {
+    background: rgba(0, 0, 0, 0.95);
+  }
+}
+
+/* Focus styles for accessibility */
+.tab:focus {
+  outline: 2px solid #4ecdc4;
+  outline-offset: 2px;
+}
+
+.tab:focus-visible {
+  outline: 2px solid #4ecdc4;
+  outline-offset: 2px;
+}
+
+/* Touch target optimization */
+@media (pointer: coarse) {
+  .tab {
+    min-height: 64px; /* Larger touch targets on touch devices */
+  }
+}
+
+/* Landscape phone adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .bottomTabs {
+    padding: 0.25rem 0 calc(0.25rem + env(safe-area-inset-bottom));
+  }
+  
+  .tab {
+    min-height: 45px;
+  }
+  
+  .label {
+    font-size: 0.6rem;
+  }
+}
+
+/* Support for notched devices */
+@supports (padding: max(0px)) {
+  .bottomTabs {
+    padding-left: max(0.5rem, env(safe-area-inset-left));
+    padding-right: max(0.5rem, env(safe-area-inset-right));
+  }
+}

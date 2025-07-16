@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Montserrat } from "next/font/google";
-import Navigation from "@/components/navigation/Navigation";
+import OptimizedNavigation from "@/components/navigation/OptimizedNavigation";
 import Footer from "@/components/footer/Footer";
 import "@/styles/globals.css";
 
@@ -41,7 +41,7 @@ export default function RootLayout({
             <WalletProvider>
               <BlockchainProvider>
                 <MobileLayout>
-                  <Navigation />
+                  <OptimizedNavigation />
                   {children}
                   <Footer />
                 </MobileLayout>

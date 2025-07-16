@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useWallet } from '@/contexts/WalletContext';
-import styles from './Navigation.module.css';
-import WalletConnect from "../wallet/WalletConnect";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useWallet } from "@/contexts/WalletContext";
+import styles from "./Navigation.module.css";
+import WalletConnect from "../../wallet/WalletConnect";
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -24,10 +24,12 @@ export default function Navigation() {
     { name: "Creator Studio", path: "/create" },
     { name: "Gallery", path: "/gallery" },
     { name: "File Upload", path: "/upload" },
-    ...(isConnected ? [
-      { name: "Dashboard", path: "/dashboard" },
-      { name: "Mobile Dashboard", path: "/mobile-dashboard" }
-    ] : [])
+    ...(isConnected
+      ? [
+          { name: "Dashboard", path: "/dashboard" },
+          { name: "Mobile Dashboard", path: "/mobile-dashboard" },
+        ]
+      : []),
   ];
 
   return (
