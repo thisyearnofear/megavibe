@@ -48,10 +48,7 @@ export default function AnalyticsPage() {
         {userRole === "performer" ? (
           <PerformerDashboard />
         ) : (
-          <AnalyticsDashboard 
-            userType={userRole}
-            userId="current-user"
-          />
+          <AnalyticsDashboard />
         )}
       </div>
     );
@@ -78,10 +75,7 @@ export default function AnalyticsPage() {
       {userRole === "performer" ? (
         <PerformerDashboard />
       ) : (
-        <AnalyticsDashboard 
-          userType={userRole}
-          userId="current-user"
-        />
+        <AnalyticsDashboard />
       )}
     </div>
   );

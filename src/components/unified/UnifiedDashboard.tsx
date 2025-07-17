@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useWallet } from '@/contexts/WalletContext';
 import { unifiedAppService, UserProfile, UserActivity } from '@/services/unified/UnifiedAppService';
 import styles from './UnifiedDashboard.module.css';
+import MyContent from "./MyContent";
+
 
 interface DashboardData {
   profile: UserProfile;
@@ -22,7 +24,7 @@ export default function UnifiedDashboard() {
   const { walletAddress, isConnected } = useWallet();
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'activity' | 'recommendations'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'activity' | 'recommendations' | 'my-content'>('overview');
 
   useEffect(() => {
     if (isConnected && walletAddress) {
@@ -107,6 +109,11 @@ export default function UnifiedDashboard() {
       </div>
 
       {/* Navigation tabs */}
+      
+
+
+// ... (rest of the component)
+
       <div className={styles.tabs}>
         <button 
           className={`${styles.tab} ${activeTab === 'overview' ? styles.active : ''}`}
@@ -125,6 +132,12 @@ export default function UnifiedDashboard() {
           onClick={() => setActiveTab('recommendations')}
         >
           For You
+        </button>
+        <button 
+          className={`${styles.tab} ${activeTab === 'my-content' ? styles.active : ''}`}
+          onClick={() => setActiveTab('my-content')}
+        >
+          My Content
         </button>
       </div>
 
@@ -145,7 +158,10 @@ export default function UnifiedDashboard() {
         {activeTab === 'recommendations' && (
           <RecommendationsTab recommendations={dashboardData.recommendations} />
         )}
+
+        {activeTab === 'my-content' && <MyContent />}
       </div>
+// ... (rest of the component)
     </div>
   );
 }

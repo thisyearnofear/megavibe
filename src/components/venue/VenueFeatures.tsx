@@ -110,7 +110,7 @@ export default function VenueFeatures({
         )}
 
         {activeTab === "analytics" && isManager && (
-          <AnalyticsDashboard userType="venue" userId={venue.id} />
+          <AnalyticsDashboard />
         )}
       </div>
     </div>

@@ -64,7 +64,7 @@ export default function GalleryPage() {
 
   return (
     <>
-      <OptimizedNavigation />
+      
       <Container
         maxWidth="lg"
         sx={{ mt: 4, mb: 8 }}
