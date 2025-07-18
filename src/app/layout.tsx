@@ -17,9 +17,67 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL || "https://megavibe.app"
+  ),
   title: "MegaVibe - The Stage",
-  description: "The Stage for Live Performance Economy",
-  keywords: "performers, live performance, content creation, tipping, bounties",
+  description:
+    "The Stage for Live Performance Economy - Connect with performers, create bounties, and tip your favorite artists in the decentralized live performance ecosystem.",
+  keywords:
+    "performers, live performance, content creation, tipping, bounties, web3, blockchain, decentralized, artists, musicians",
+  authors: [{ name: "MegaVibe Team" }],
+  creator: "MegaVibe",
+  publisher: "MegaVibe",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/images/megavibe.png",
+  },
+  openGraph: {
+    title: "MegaVibe - The Stage",
+    description:
+      "The Stage for Live Performance Economy - Connect with performers, create bounties, and tip your favorite artists.",
+    url: "https://megavibe.app",
+    siteName: "MegaVibe",
+    images: [
+      {
+        url: "/images/megavibe.png",
+        width: 1200,
+        height: 630,
+        alt: "MegaVibe - The Stage for Live Performance Economy",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MegaVibe - The Stage",
+    description:
+      "The Stage for Live Performance Economy - Connect with performers, create bounties, and tip your favorite artists.",
+    images: ["/images/megavibe.png"],
+    creator: "@megavibe",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "your-google-verification-code", // Replace with actual verification code
+  },
+  manifest: "/manifest.json",
 };
 
 import { FilCDNProvider } from "@/contexts/FilCDNContext";
