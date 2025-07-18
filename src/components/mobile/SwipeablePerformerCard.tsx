@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import GestureEnhancedCard from './GestureEnhancedCard';
-import { hapticFeedback } from '@/utils/mobile';
-import styles from './SwipeablePerformerCard.module.css';
+import React, { useState } from "react";
+import GestureEnhancedCard from "./GestureEnhancedCard";
+import { hapticFeedback } from "@/utils/mobile";
+import styles from "./SwipeablePerformerCard.module.css";
 
 interface Performer {
   id: string;
@@ -28,21 +28,22 @@ export default function SwipeablePerformerCard({
   onTip,
   onFavorite,
   onViewProfile,
-  onShare
+  onShare,
 }: SwipeablePerformerCardProps) {
   const [isFavorited, setIsFavorited] = useState(false);
   const [showQuickTip, setShowQuickTip] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
 
   const handleSwipeRight = () => {
     // Quick tip gesture
     if (onTip) {
       setShowQuickTip(true);
-      hapticFeedback('MEDIUM');
-      
+      hapticFeedback("MEDIUM");
+
       setTimeout(() => {
         onTip(performer.id);
         setShowQuickTip(false);
-        hapticFeedback('SUCCESS');
+        hapticFeedback("HEAVY");
         setIsPressed(true);
         setTimeout(() => setIsPressed(false), 300);
       }, 1000);
@@ -55,7 +56,7 @@ export default function SwipeablePerformerCard({
     if (onFavorite) {
       onFavorite(performer.id);
     }
-    hapticFeedback('LIGHT');
+    hapticFeedback("LIGHT");
   };
 
   const handleLongPress = () => {
@@ -80,14 +81,14 @@ export default function SwipeablePerformerCard({
         onLongPress={handleLongPress}
         onDoubleTap={handleDoubleTap}
         swipeRightAction={{
-          icon: '💰',
-          label: 'Quick Tip',
-          color: '#10b981'
+          icon: "💰",
+          label: "Quick Tip",
+          color: "#10b981",
         }}
         swipeLeftAction={{
-          icon: isFavorited ? '💔' : '❤️',
-          label: isFavorited ? 'Unfavorite' : 'Favorite',
-          color: '#ef4444'
+          icon: isFavorited ? "💔" : "❤️",
+          label: isFavorited ? "Unfavorite" : "Favorite",
+          color: "#ef4444",
         }}
         className={styles.card}
       >
@@ -115,11 +116,13 @@ export default function SwipeablePerformerCard({
           <div className={styles.performerInfo}>
             <h3 className={styles.performerName}>{performer.name}</h3>
             <p className={styles.performerGenre}>{performer.genre}</p>
-            
+
             {performer.reputation && (
               <div className={styles.reputation}>
                 <span className={styles.reputationIcon}>⭐</span>
-                <span className={styles.reputationScore}>{performer.reputation}</span>
+                <span className={styles.reputationScore}>
+                  {performer.reputation}
+                </span>
               </div>
             )}
           </div>
@@ -132,15 +135,17 @@ export default function SwipeablePerformerCard({
                 <span>{performer.tipAmount} ETH</span>
               </div>
             )}
-            
-            <button 
-              className={`${styles.favoriteButton} ${isFavorited ? styles.favorited : ''}`}
+
+            <button
+              className={`${styles.favoriteButton} ${
+                isFavorited ? styles.favorited : ""
+              }`}
               onClick={(e) => {
                 e.stopPropagation();
                 handleSwipeLeft();
               }}
             >
-              {isFavorited ? '❤️' : '🤍'}
+              {isFavorited ? "❤️" : "🤍"}
             </button>
           </div>
         </div>

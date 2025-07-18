@@ -1,38 +1,59 @@
-// Shared Button Component - DRY principle implementation
+// Shared Button Component - DRY principle implementation using utility classes
 "use client";
 
-import React from 'react';
-import styles from './Button.module.css';
+import React from "react";
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "primary" | "secondary" | "accent" | "outline" | "ghost";
+  size?: "sm" | "md" | "lg";
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   fullWidth?: boolean;
 }
 
-export default function Button({
+function Button({
   children,
-  variant = 'primary',
-  size = 'md',
+  variant = "primary",
+  size = "md",
   isLoading = false,
   leftIcon,
   rightIcon,
   fullWidth = false,
-  className = '',
+  className = "",
   disabled,
   ...props
 }: ButtonProps) {
   const buttonClasses = [
-    styles.button,
-    styles[variant],
-    styles[size],
-    fullWidth && styles.fullWidth,
-    isLoading && styles.loading,
-    className
-  ].filter(Boolean).join(' ');
+    "btn-base",
+    `btn-${variant}`,
+    size !== "md" && `btn-${size}`,
+    fullWidth && "w-full",
+    (disabled || isLoading) && "btn-disabled",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <>
+          <div className="loading-spinner loading-spinner-sm" />
+          Loading...
+        </>
+      );
+    }
+
+    return (
+      <>
+        {leftIcon && <span>{leftIcon}</span>}
+        {children}
+        {rightIcon && <span>{rightIcon}</span>}
+      </>
+    );
+  };
 
   return (
     <button
@@ -40,10 +61,52 @@ export default function Button({
       disabled={disabled || isLoading}
       {...props}
     >
-      {isLoading && <span className={styles.spinner} />}
-      {!isLoading && leftIcon && <span className={styles.leftIcon}>{leftIcon}</span>}
-      <span className={styles.content}>{children}</span>
-      {!isLoading && rightIcon && <span className={styles.rightIcon}>{rightIcon}</span>}
+      {renderContent()}
     </button>
   );
 }
+
+// Export named version as well for consistency
+export { Button as ButtonComponent };
+
+interface IconButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  icon: React.ReactNode;
+  variant?: "primary" | "secondary" | "accent" | "outline" | "ghost";
+  size?: "sm" | "md" | "lg";
+  isLoading?: boolean;
+  "aria-label": string;
+}
+
+export const IconButton: React.FC<IconButtonProps> = ({
+  icon,
+  variant = "ghost",
+  size = "md",
+  isLoading = false,
+  disabled,
+  className = "",
+  ...props
+}) => {
+  const baseClasses = [
+    "btn-base",
+    `btn-${variant}`,
+    size !== "md" && `btn-${size}`,
+    (disabled || isLoading) && "btn-disabled",
+    "aspect-square p-2",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <button className={baseClasses} disabled={disabled || isLoading} {...props}>
+      {isLoading ? (
+        <div className="loading-spinner loading-spinner-sm" />
+      ) : (
+        icon
+      )}
+    </button>
+  );
+};
+
+export default Button;

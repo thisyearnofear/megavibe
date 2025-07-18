@@ -89,3 +89,4 @@ pnpm-lock.yaml
 # Temporary folders
 tmp/
 temp/
+.aider*

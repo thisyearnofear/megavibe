@@ -3,7 +3,8 @@
  * Properly implements FilCDN integration using the Synapse SDK
  */
 
-import { Synapse, RPC_URLS, StorageService, TOKENS, CONTRACT_ADDRESSES, PandoraService } from './mockSynapseSDK';
+import { getSynapseSDK, isMockSDK, getContractAddresses, getRPCUrls } from './synapseSDK';
+import type { SynapseInstance, StorageService, PandoraService } from './synapseSDK';
 import { ethers } from 'ethers';
 
 // Constants
@@ -44,7 +45,7 @@ export interface ProviderInfo {
  * Provides functionality for interacting with FilCDN via Synapse SDK
  */
 export class RealFilCDNService {
-  private synapse: Synapse | null = null;
+  private synapse: SynapseInstance | null = null;
   private storage: StorageService | null = null;
   private initialized: boolean = false;
   private initializing: boolean = false;
@@ -64,8 +65,10 @@ export class RealFilCDNService {
       throw new Error("Synapse not initialized");
     }
     
+    const sdk = await getSynapseSDK();
+    const contractAddresses = await getContractAddresses();
     const network = this.synapse.getNetwork();
-    const pandoraAddress = CONTRACT_ADDRESSES.PANDORA_SERVICE[network];
+    const pandoraAddress = contractAddresses.PANDORA_SERVICE[network];
     
     const signer = this.synapse.getSigner();
     if (!signer || !signer.provider) {
@@ -73,7 +76,7 @@ export class RealFilCDNService {
     }
     
     // Initialize Pandora service for allowance checks
-    const pandoraService = new PandoraService(
+    const pandoraService = new sdk.PandoraService(
       signer.provider,
       pandoraAddress
     );
@@ -138,10 +141,19 @@ export class RealFilCDNService {
     try {
       console.log("Initializing FilCDN service with Synapse SDK");
       
+      // Get SDK instance
+      const sdk = await getSynapseSDK();
+      const rpcUrls = await getRPCUrls();
+
+      // Log if we're using mock SDK
+      if (isMockSDK()) {
+        console.warn("⚠️ Using mock Synapse SDK - not suitable for production");
+      }
+
       // Initialize Synapse SDK
-      this.synapse = await Synapse.create({
+      this.synapse = await sdk.Synapse.create({
         privateKey: this.config.privateKey || "",
-        rpcURL: this.config.rpcURL || RPC_URLS.calibration.websocket,
+        rpcURL: this.config.rpcURL || rpcUrls.calibration.websocket,
         withCDN: this.config.withCDN
       });
 
@@ -149,6 +161,10 @@ export class RealFilCDNService {
       await this.performPreflightCheck(1024, true); // 1KB minimum size
 
       // Create storage service with callbacks
+      if (!this.synapse) {
+        throw new Error("Synapse instance not initialized");
+      }
+
       this.storage = await this.synapse.createStorage({
         callbacks: {
           onProviderSelected: (provider) => {
