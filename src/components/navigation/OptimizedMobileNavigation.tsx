@@ -119,22 +119,38 @@ export default function OptimizedMobileNavigation() {
           >
             <div className={styles.tabContent}>
               <div className={styles.iconContainer}>
-                <span className={`${styles.icon} ${isActive ? styles.activeIcon : ''}`}>
-                  {tab.icon}
-                </span>
-                {tab.badge && (
-                  <span className={`${styles.badge} ${isActive ? styles.activeBadge : ''}`}>
-                    {tab.badge}
+                <div className={styles.iconWrapper}>
+                  <span className={`${styles.icon} ${isActive ? styles.activeIcon : ''}`}>
+                    {tab.icon}
                   </span>
+                  {isActive && 
+                    <div className={styles.activeGlow} />
+                  }
+                  {tab.badge && (
+                    <span 
+                      className={`${styles.badge} ${isActive ? styles.activeBadge : ''}`}
+                      data-count={tab.badge}
+                    >
+                      {tab.badge}
+                    </span>
+                  )}
+                </div>
+                {isDisabled && (
+                  <div className={styles.lockIndicator}>
+                    <span className={styles.lockIcon}>🔒</span>
+                  </div>
                 )}
-                {isDisabled && <span className={styles.lockIcon}>🔒</span>}
               </div>
-              <span className={`${styles.label} ${isActive ? styles.activeLabel : ''}`}>
+              <span 
+                className={`${styles.label} ${isActive ? styles.activeLabel : ''}`}
+                data-active={isActive}
+              >
                 {tab.label}
               </span>
               {isActive && (
                 <div className={styles.activeIndicator}>
                   <div className={styles.activePulse} />
+                  <div className={styles.activeUnderline} />
                 </div>
               )}
             </div>
