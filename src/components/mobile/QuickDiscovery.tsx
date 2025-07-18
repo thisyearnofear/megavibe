@@ -42,7 +42,11 @@ export default function QuickDiscovery({
   }, [hasPermission, requestLocation]);
 
   useEffect(() => {
-    loadNearbyPerformers();
+    const timer = setTimeout(() => {
+      loadNearbyPerformers();
+    }, 300); // Debounce location changes
+    
+    return () => clearTimeout(timer);
   }, [location]);
 
   useEffect(() => {

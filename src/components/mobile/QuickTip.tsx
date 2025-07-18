@@ -343,21 +343,38 @@ export default function QuickTip({
 
         {/* Transaction Error */}
         {transactionError && (
-          <div className={styles.errorContainer}>
+          <div className={styles.errorContainer} role="alert">
             <div className={styles.errorIcon}>⚠️</div>
             <div className={styles.errorContent}>
-              <h4 className={styles.errorTitle}>Transaction Error</h4>
-              <p className={styles.errorMessage}>{transactionError.message}</p>
-              {transactionError.suggestedAction && (
-                <p className={styles.errorAction}>
-                  {transactionError.suggestedAction}
-                </p>
-              )}
-              {transactionError.retryable && (
-                <button className={styles.retryButton} onClick={handleRetry}>
-                  Try Again
-                </button>
-              )}
+              <h4 className={styles.errorTitle}>
+                {transactionError.type === 'insufficient_funds' ? 'Insufficient Funds' : 
+                 transactionError.type === 'user_rejected' ? 'Action Cancelled' :
+                 'Transaction Error'}
+              </h4>
+              <p className={styles.errorMessage}>
+                {transactionError.message}
+                {transactionError.type === 'insufficient_funds' && (
+                  <span className={styles.errorBalance}>
+                    Current Balance: {balance.formatted} {balance.symbol}
+                  </span>
+                )}
+              </p>
+              <div className={styles.errorActions}>
+                {transactionError.suggestedAction && (
+                  <p className={styles.errorAction}>
+                    {transactionError.suggestedAction}
+                  </p>
+                )}
+                {transactionError.retryable ? (
+                  <button className={styles.retryButton} onClick={handleRetry}>
+                    Try Again
+                  </button>
+                ) : (
+                  <button className={styles.closeErrorButton} onClick={() => setTransactionError(null)}>
+                    Close
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}

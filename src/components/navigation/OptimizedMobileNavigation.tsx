@@ -116,6 +116,8 @@ export default function OptimizedMobileNavigation() {
             role="tab"
             aria-selected={isActive}
             aria-label={`${tab.label}${tab.badge ? ` (${tab.badge})` : ""}`}
+            aria-disabled={isDisabled}
+            tabIndex={isDisabled ? -1 : 0}
           >
             <div className={styles.tabContent}>
               <div className={styles.iconContainer}>
