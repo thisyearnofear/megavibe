@@ -463,9 +463,8 @@ class BountyService {
       // Get basic bounty data
       const bounty = await this.getBounty(bountyIdNum);
       
-      // Get submission count (this could be a separate contract call)
-      // For demonstration, we'll use a mock value or calculate it
-      const submissionsCount = 0; // Mock value, would come from contract
+      // Get submission count from contract
+      const submissionsCount = await contract.getSubmissionCount(bountyIdNum);
       
       return {
         id: bounty.id.toString(),
@@ -478,7 +477,7 @@ class BountyService {
         submissionsCount,
         tags: bounty.tags || [],
         createdAt: bounty.createdAt,
-        updatedAt: bounty.createdAt, // Mock value, would come from contract
+        updatedAt: bounty.claimed ? await contract.getClaimTimestamp(bountyIdNum) : bounty.createdAt,
         type: bounty.type === 'audience-to-performer' ? BountyType.AUDIENCE_TO_PERFORMER : BountyType.PERFORMER_TO_AUDIENCE,
         isCompleted: bounty.claimed,
         winningSubmissionId: bounty.claimed ? bounty.submissionHash : undefined

@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       tests: {
         sdkLoading: {
           success: !!sdk,
-          isMockSDK: isMockSDK(),
+          isProductionSDK: !isMockSDK(),
           hasRequiredExports: !!(sdk.Synapse && sdk.RPC_URLS)
         },
         environment: {

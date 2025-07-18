@@ -66,10 +66,21 @@ export function useAnalytics(params: AnalyticsParams): UseAnalyticsReturn {
     setError(null);
 
     try {
-      // In production, this would be a real API call
-      // For now, we'll simulate with realistic data
-      const mockData = await simulateAnalyticsAPI(params);
-      setData(mockData);
+      // Call the analytics API
+      const response = await fetch('/api/analytics', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Analytics API error: ${response.status}`);
+      }
+
+      const analyticsData = await response.json();
+      setData(analyticsData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch analytics');
     } finally {
@@ -89,131 +100,6 @@ export function useAnalytics(params: AnalyticsParams): UseAnalyticsReturn {
     error,
     refetch: fetchAnalytics
   }), [data, loading, error, fetchAnalytics]);
-}
-
-// Simulated API function (would be replaced with real API calls)
-async function simulateAnalyticsAPI(params: AnalyticsParams): Promise<AnalyticsData> {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  const now = new Date();
-  const timeRangeMs = getTimeRangeMs(params.timeRange);
-  const startTime = new Date(now.getTime() - timeRangeMs);
-
-  // Generate realistic mock data based on user type and time range
-  switch (params.userType) {
-    case 'performer':
-      return generatePerformerAnalytics(startTime, now, params.timeRange);
-    case 'audience':
-      return generateAudienceAnalytics(startTime, now, params.timeRange);
-    case 'venue':
-      return generateVenueAnalytics(startTime, now, params.timeRange);
-    default:
-      throw new Error('Invalid user type');
-  }
-}
-
-// Clean data generation functions (DRY principle)
-function generatePerformerAnalytics(startTime: Date, endTime: Date, timeRange: string): AnalyticsData {
-  const baseEarnings = getBaseValue('earnings', timeRange);
-  const baseTips = getBaseValue('tips', timeRange);
-  const baseRequests = getBaseValue('requests', timeRange);
-
-  return {
-    earnings: {
-      total: baseEarnings,
-      timeline: generateTimeline(startTime, endTime, () => Math.random() * 50 + 10, 'value'),
-      change: (Math.random() - 0.5) * 40 // -20% to +20%
-    },
-    tips: {
-      count: baseTips,
-      timeline: generateTimeline(startTime, endTime, () => Math.floor(Math.random() * 5), 'count'),
-      change: (Math.random() - 0.5) * 30
-    },
-    requests: {
-      count: baseRequests,
-      timeline: generateTimeline(startTime, endTime, () => Math.floor(Math.random() * 3), 'count'),
-      change: (Math.random() - 0.5) * 25
-    },
-    audience: {
-      average: Math.floor(Math.random() * 20) + 5,
-      peak: Math.floor(Math.random() * 50) + 20,
-      timeline: generateTimeline(startTime, endTime, () => Math.floor(Math.random() * 30) + 5, 'count')
-    },
-    performance: {
-      duration: Math.floor(Math.random() * 7200) + 1800, // 30min to 2.5h
-      breakdown: {
-        'Tips': baseTips * 0.6,
-        'Requests': baseRequests * 0.3,
-        'Other': baseTips * 0.1
-      },
-      trends: generateTrends(timeRange)
-    },
-    engagement: {
-      rate: Math.random() * 0.4 + 0.6, // 60-100%
-      timeline: generateTimeline(startTime, endTime, () => Math.random() * 0.4 + 0.6, 'rate'),
-      peak: Math.random() * 0.2 + 0.8 // 80-100%
-    },
-    trends: generateAllTrends()
-  };
-}
-
-function generateAudienceAnalytics(startTime: Date, endTime: Date, timeRange: string): AnalyticsData {
-  const baseSpent = getBaseValue('spent', timeRange);
-  const baseTips = getBaseValue('tips', timeRange) * 0.3; // Audience sends fewer tips
-
-  return {
-    earnings: {
-      total: baseSpent,
-      timeline: generateTimeline(startTime, endTime, () => Math.random() * 20 + 5, 'value'),
-      change: (Math.random() - 0.5) * 30
-    },
-    tips: {
-      count: baseTips,
-      timeline: generateTimeline(startTime, endTime, () => Math.floor(Math.random() * 2), 'count'),
-      change: (Math.random() - 0.5) * 25
-    },
-    requests: {
-      count: Math.floor(baseTips * 0.4),
-      timeline: generateTimeline(startTime, endTime, () => Math.floor(Math.random() * 1.5), 'count'),
-      change: (Math.random() - 0.5) * 20
-    },
-    engagement: {
-      rate: Math.random() * 0.3 + 0.4, // 40-70%
-      timeline: generateTimeline(startTime, endTime, () => Math.random() * 0.3 + 0.4, 'rate'),
-      peak: Math.random() * 0.2 + 0.6
-    },
-    trends: generateAllTrends()
-  };
-}
-
-function generateVenueAnalytics(startTime: Date, endTime: Date, timeRange: string): AnalyticsData {
-  const baseRevenue = getBaseValue('revenue', timeRange);
-  const basePerformers = getBaseValue('performers', timeRange);
-
-  return {
-    earnings: {
-      total: baseRevenue,
-      timeline: generateTimeline(startTime, endTime, () => Math.random() * 200 + 50, 'value'),
-      change: (Math.random() - 0.5) * 35
-    },
-    performance: {
-      duration: 0, // Not applicable for venues
-      breakdown: {
-        'Tips': baseRevenue * 0.4,
-        'Requests': baseRevenue * 0.3,
-        'Venue Fee': baseRevenue * 0.2,
-        'Other': baseRevenue * 0.1
-      },
-      trends: generateTrends(timeRange)
-    },
-    audience: {
-      average: Math.floor(Math.random() * 100) + 50,
-      peak: Math.floor(Math.random() * 200) + 100,
-      timeline: generateTimeline(startTime, endTime, () => Math.floor(Math.random() * 150) + 25, 'count')
-    },
-    trends: generateAllTrends()
-  };
 }
 
 // Utility functions (Clean, reusable)

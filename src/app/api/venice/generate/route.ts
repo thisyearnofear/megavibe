@@ -65,16 +65,6 @@ export async function POST(request: NextRequest) {
       prompt: requestBody.prompt.substring(0, 20) + '...' // Log truncated prompt for privacy
     });
     
-    // If in mock mode, return a placeholder image when API key isn't configured
-    if (!VENICE_API_KEY) {
-      console.log('Using mock Venice AI response (no API key configured)');
-      return NextResponse.json({
-        success: true,
-        image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', // 1x1 transparent pixel
-        timestamp: Date.now()
-      });
-    }
-    
     // Call Venice AI API
     const response = await fetch(VENICE_API_URL, {
       method: 'POST',

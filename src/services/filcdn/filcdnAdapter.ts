@@ -1,16 +1,16 @@
 /**
  * FilCDN Service Adapter
- * 
- * This adapter provides a unified interface to both the mock FilCDN service
- * and the real FilCDN service (using Synapse SDK), allowing the application
- * to switch between them based on environment configuration.
+ *
+ * This adapter provides a unified interface to the FilCDN service,
+ * automatically selecting between server-based and client-based implementations
+ * based on environment configuration.
  */
 
-import { 
-  createFilCDNService, 
-  FilCDNService, 
-  StorageResult, 
-  RetrievalResult 
+import {
+  createFilCDNService,
+  FilCDNService,
+  StorageResult,
+  RetrievalResult
 } from './filcdnService';
 
 import {
@@ -25,16 +25,16 @@ export interface FilCDNAdapterConfig {
 
 /**
  * Creates a FilCDN service based on configuration
- * 
+ *
  * @param config Configuration options
- * @returns A FilCDN service instance (either mock or real)
+ * @returns A FilCDN service instance
  */
 export function createFilCDNAdapter(config: FilCDNAdapterConfig): FilCDNService {
   console.log(`Creating FilCDN adapter with useReal=${config.useReal}`);
 
   if (config.useReal) {
     // Create server-based FilCDN service that interacts with secure API endpoints
-    console.log('Using server-based FilCDN service (secure implementation)');
+    console.log('Using server-based FilCDN service (production implementation)');
     const serverService = createServerFilCDNService({
       baseUrl: '/api/filcdn',
       withCDN: config.withCDN
@@ -63,8 +63,8 @@ export function createFilCDNAdapter(config: FilCDNAdapterConfig): FilCDNService 
       }
     };
   } else {
-    // Use mock service
-    console.log('Using mock FilCDN service');
+    // Use development service for testing
+    console.log('Using development FilCDN service');
     return createFilCDNService({
       rpcURL: config.rpcURL,
       withCDN: config.withCDN

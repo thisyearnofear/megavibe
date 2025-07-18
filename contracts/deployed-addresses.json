@@ -19,10 +19,10 @@
       "notes": "Mantle Mainnet - To be deployed"
     },
     "5003": {
-      "address": "",
-      "deployedBlock": 0,
-      "deployedDate": "",
-      "notes": "Mantle Sepolia - To be deployed"
+      "address": "0x53628a5d15cfFac8C8F6c95b76b4FA436C7eaD1A",
+      "deployedBlock": 25657479,
+      "deployedDate": "2025-07-18",
+      "notes": "Mantle Sepolia - Deployed with MegaVibeBounties and MegaVibeTipping"
     },
     "84532": {
       "address": "",
@@ -53,5 +53,10 @@
     "sepolia": "0x4B7F67dBe2731E462A4047a19B2fdF14C910afEa",
     "optimismSepolia": "0x7877Ac5C8158AB46ad608CB6990eCcB2A5265718",
     "unichainSepolia": "0x53628a5d15cfFac8C8F6c95b76b4FA436C7eaD1A"
+  },
+  "mantleSepolia": {
+    "MegaVibeBounties": "0xA78d4FcDaee13A11c11AEaD7f3a68CD15E8CB722",
+    "MegaVibeTipping": "0x86D7cD141775f866403161974fB941F39F4C38Ef",
+    "SimpleReputation": "0x53628a5d15cfFac8C8F6c95b76b4FA436C7eaD1A"
   }
 }

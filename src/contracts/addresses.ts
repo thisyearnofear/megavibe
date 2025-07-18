@@ -10,41 +10,45 @@ export interface ContractAddresses {
 
 // Network configurations
 export const NETWORK_ADDRESSES: Record<number, Partial<ContractAddresses>> = {
-  // Mantle Sepolia
+  // Ethereum Sepolia
+  11155111: {
+    SimpleReputation: '0x4B7F67dBe2731E462A4047a19B2fdF14C910afEa',
+  },
+  // Optimism Sepolia
+  11155420: {
+    SimpleReputation: '0x7877Ac5C8158AB46ad608CB6990eCcB2A5265718',
+  },
+  // Unichain Sepolia
+  1301: {
+    SimpleReputation: '0x53628a5d15cfFac8C8F6c95b76b4FA436C7eaD1A',
+  },
+  // Mantle Sepolia (primary target network)
   5003: {
-    MegaVibeBounties: process.env.NEXT_PUBLIC_BOUNTY_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
-    MegaVibeTipping: process.env.NEXT_PUBLIC_TIPPING_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
-    SimpleReputation: process.env.NEXT_PUBLIC_SIMPLE_REPUTATION_MANTLE_SEPOLIA || '0x0000000000000000000000000000000000000000',
+    MegaVibeBounties: '0xA78d4FcDaee13A11c11AEaD7f3a68CD15E8CB722',
+    MegaVibeTipping: '0x86D7cD141775f866403161974fB941F39F4C38Ef',
+    SimpleReputation: '0x53628a5d15cfFac8C8F6c95b76b4FA436C7eaD1A',
   },
   // Base Sepolia
   84532: {
     SimpleReputation: process.env.NEXT_PUBLIC_SIMPLE_REPUTATION_BASE_SEPOLIA || '0x0000000000000000000000000000000000000000',
   },
-  // Optimism Sepolia
-  11155420: {
-    SimpleReputation: process.env.NEXT_PUBLIC_SIMPLE_REPUTATION_OP_SEPOLIA || '0x0000000000000000000000000000000000000000',
-  },
   // Arbitrum Sepolia
   421614: {
     SimpleReputation: process.env.NEXT_PUBLIC_SIMPLE_REPUTATION_ARB_SEPOLIA || '0x0000000000000000000000000000000000000000',
   },
-  // Unichain Sepolia
-  1301: {
-    SimpleReputation: process.env.NEXT_PUBLIC_SIMPLE_REPUTATION_UNICHAIN_SEPOLIA || '0x0000000000000000000000000000000000000000',
-  },
 };
 
-// Legacy exports for backward compatibility
+// Backward compatibility export
 export const CONTRACT_ADDRESSES = NETWORK_ADDRESSES;
 
-// Default contract addresses (fallback to Mantle Sepolia)
+// Default contract addresses (using Mantle Sepolia deployments)
 export const CONTRACTS = {
-  MegaVibeBounties: process.env.NEXT_PUBLIC_BOUNTY_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
-  MegaVibeTipping: process.env.NEXT_PUBLIC_TIPPING_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
-  SimpleReputation: process.env.NEXT_PUBLIC_SIMPLE_REPUTATION_MANTLE_SEPOLIA || '0x0000000000000000000000000000000000000000',
+  MegaVibeBounties: '0xA78d4FcDaee13A11c11AEaD7f3a68CD15E8CB722', // Deployed on Mantle Sepolia
+  MegaVibeTipping: '0x86D7cD141775f866403161974fB941F39F4C38Ef', // Deployed on Mantle Sepolia
+  SimpleReputation: '0x53628a5d15cfFac8C8F6c95b76b4FA436C7eaD1A', // Deployed on Mantle Sepolia
 };
 
-// Default chain ID (Mantle Sepolia)
+// Default chain ID (Mantle Sepolia for main contracts, Ethereum Sepolia for SimpleReputation)
 export const DEFAULT_CHAIN_ID = 5003;
 
 /**

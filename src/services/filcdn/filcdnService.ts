@@ -103,9 +103,6 @@ export function createFilCDNService(config: FilCDNServiceConfig): FilCDNService 
   };
 }
 
-// Mock implementation for now - would use real API in production
-// This would integrate with FilCDN API or web3.storage/nft.storage
-
 /**
  * Upload files to FilCDN (decentralized storage on Filecoin/IPFS)
  * @param files Array of files to upload
@@ -116,23 +113,19 @@ export async function uploadToFilCDN(files: File[]): Promise<string> {
     throw new Error('No files provided for upload');
   }
 
-  // In a real implementation, we would:
-  // 1. Prepare files for upload (possibly compress/resize)
-  // 2. Upload to FilCDN or IPFS service
-  // 3. Get back a CID (Content Identifier)
-  // 4. Return that CID for use in our smart contracts
-
   try {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Generate a fake CID for demonstration
-    // A real CID would look something like: QmXyZ...123
-    const fakeCid = `Qm${Math.random().toString(36).substring(2, 15)}${Date.now().toString(36)}`;
-    
-    console.log(`Files would be uploaded to FilCDN: ${files.map(f => f.name).join(', ')}`);
-    
-    return fakeCid;
+    // Convert files to data for the secure API
+    const fileData = await Promise.all(
+      files.map(async (file) => ({
+        name: file.name,
+        type: file.type,
+        data: await file.arrayBuffer()
+      }))
+    );
+
+    // Use the secure API to upload files
+    const result = await callSecureApi('uploadFiles', { files: fileData });
+    return result.cid;
   } catch (error) {
     console.error('Error uploading to FilCDN:', error);
     throw new Error('Failed to upload files to decentralized storage');
@@ -149,8 +142,7 @@ export function getFilCdnUrl(cid: string): string {
     return '';
   }
   
-  // In production, this would use a proper IPFS gateway
-  return `https://ipfs.io/ipfs/${cid}`;
+  return `https://gateway.filcdn.io/ipfs/${cid}`;
 }
 
 /**
@@ -161,6 +153,6 @@ export function getFilCdnUrl(cid: string): string {
 export function isValidCid(cid: string): boolean {
   if (!cid) return false;
   
-  // Very basic validation - a real implementation would be more robust
-  return cid.startsWith('Qm') && cid.length >= 46;
+  // Basic CID validation - checks for proper format
+  return /^Qm[1-9A-HJ-NP-Za-km-z]{44}$/.test(cid) || /^bafy[a-z2-7]{55}$/.test(cid);
 }
