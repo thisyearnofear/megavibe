@@ -2,6 +2,7 @@
 
 import React from "react";
 import styles from "./page.module.css";
+import Container from "@/components/layout/Container";
 
 export default function ContentPage() {
   // Mock data for the content items
@@ -111,7 +112,7 @@ export default function ContentPage() {
 
   return (
     <main className={styles.main}>
-      <div className={styles.container}>
+      <Container>
         <h1 className={styles.title}>Discover Content</h1>
         <p className={styles.description}>
           Explore unique music and audio from independent creators. Support your
@@ -223,7 +224,7 @@ export default function ContentPage() {
           <span className={styles.pageIndicator}>Page 1 of 6</span>
           <button className={styles.paginationButton}>Next</button>
         </div>
-      </div>
+      </Container>
     </main>
   );
 }

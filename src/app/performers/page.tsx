@@ -2,6 +2,7 @@
 
 import React from "react";
 import styles from "./page.module.css";
+import Container from "@/components/layout/Container";
 
 export default function PerformersPage() {
   const performers = [
@@ -63,7 +64,7 @@ export default function PerformersPage() {
 
   return (
     <main className={styles.main}>
-      <div className={styles.container}>
+      <Container>
         <h1 className={styles.title}>Performers</h1>
         <p className={styles.description}>
           Discover and support talented performers from around the world.
@@ -129,7 +130,7 @@ export default function PerformersPage() {
           <span className={styles.pageIndicator}>Page 1 of 4</span>
           <button className={styles.paginationButton}>Next</button>
         </div>
-      </div>
+      </Container>
     </main>
   );
 }

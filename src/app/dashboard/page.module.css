@@ -1,11 +1,6 @@
-.container {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
-  min-height: 100vh;
+.main {
+  min-width: 0; /* Prevents grid overflow */
+  width: 100%;
 }
 
 .sidebar {

@@ -6,6 +6,7 @@ import QuickDiscovery from "@/components/mobile/QuickDiscovery";
 import QuickTip from "@/components/mobile/QuickTip";
 import QuickRequest from "@/components/mobile/QuickRequest";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import Container from "@/components/layout/Container";
 import styles from "./page.module.css";
 
 // Feature section component
@@ -37,7 +38,7 @@ const FeatureSection = () => {
 
   return (
     <section className={styles.featureSection}>
-      <div className={styles.container}>
+      <Container>
         <h2 className={styles.sectionTitle}>Features</h2>
         <p className={styles.sectionDescription}>
           MegaVibe brings you a complete ecosystem for the live performance
@@ -53,7 +54,7 @@ const FeatureSection = () => {
             </div>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 };
@@ -87,7 +88,7 @@ const HowItWorksSection = () => {
 
   return (
     <section className={styles.howItWorksSection}>
-      <div className={styles.container}>
+      <Container>
         <h2 className={styles.sectionTitle}>How It Works</h2>
         <p className={styles.sectionDescription}>
           Get started with MegaVibe in four simple steps
@@ -102,7 +103,7 @@ const HowItWorksSection = () => {
             </div>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 };
@@ -186,13 +187,13 @@ export default function Home() {
       <HowItWorksSection />
 
       <section className={styles.ctaSection}>
-        <div className={styles.container}>
+        <Container>
           <h2 className={styles.ctaTitle}>Ready to Join The Stage?</h2>
           <p className={styles.ctaDescription}>
             Experience the future of the live performance economy today.
           </p>
           <button className={styles.ctaButton}>Get Started</button>
-        </div>
+        </Container>
       </section>
     </main>
   );

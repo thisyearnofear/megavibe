@@ -14,6 +14,7 @@ import {
 import styles from "./page.module.css";
 import Button from "@/components/ui/Button";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
+import Container from "@/components/layout/Container";
 
 export default function BountiesPage() {
   const router = useRouter();
@@ -156,7 +157,7 @@ export default function BountiesPage() {
   });
 
   return (
-    <div className={styles.container}>
+    <Container>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -245,6 +246,6 @@ export default function BountiesPage() {
           <BountyList bounties={filteredBounties} />
         )}
       </motion.div>
-    </div>
+    </Container>
   );
 }

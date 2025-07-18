@@ -46,6 +46,16 @@
   --border-radius-md: 0.5rem;
   --border-radius-lg: 1rem;
   --border-width: 1px;
+  
+  /* Content widths */
+  --content-width-narrow: 800px;
+  --content-width-standard: 1200px;
+  --content-width-wide: 1400px;
+  
+  /* Container padding */
+  --container-padding-desktop: var(--space-lg);
+  --container-padding-tablet: var(--space-md);
+  --container-padding-mobile: var(--space-sm);
 }
 
 * {

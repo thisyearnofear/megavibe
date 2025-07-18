@@ -3,11 +3,12 @@
 import React from "react";
 import FilCDNDemo from "@/components/filcdn/FilCDNDemo";
 import styles from "./page.module.css";
+import Container from "@/components/layout/Container";
 
 export default function UploadPage() {
   return (
     <main className={styles.main}>
-      <div className={styles.container}>
+      <Container>
         <h1 className={styles.title}>File Upload</h1>
         <p className={styles.description}>
           Upload and manage your content on MegaVibe's decentralized storage
@@ -72,7 +73,7 @@ export default function UploadPage() {
             <p>Maximum file size: 254 MB per upload</p>
           </div>
         </div>
-      </div>
+      </Container>
     </main>
   );
 }
