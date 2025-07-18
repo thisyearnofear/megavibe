@@ -43,10 +43,16 @@ export default function QRScanner({ isOpen, onClose, onScan, onError }: QRScanne
 
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: "environment", // Use back camera
+          facingMode: "environment",
           width: { ideal: 1280 },
           height: { ideal: 720 }
+        },
+        audio: false
+      }).catch(err => {
+        if (err.name === 'NotAllowedError') {
+          throw new Error('Camera access was denied. Please allow camera access in your browser settings.');
         }
+        throw err;
       });
 
       setStream(mediaStream);

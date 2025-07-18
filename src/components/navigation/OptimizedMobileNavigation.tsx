@@ -62,8 +62,9 @@ export default function OptimizedMobileNavigation() {
   };
 
   const isTabActive = (tab: TabItem) => {
-    if (tab.href === "/" && pathname === "/") return true;
-    if (tab.href !== "/" && pathname.startsWith(tab.href)) return true;
+    const normalizedPath = pathname.split('?')[0].split('#')[0];
+    if (tab.href === "/" && normalizedPath === "/") return true;
+    if (tab.href !== "/" && normalizedPath.startsWith(tab.href)) return true;
 
     // Special cases for grouped navigation
     if (tab.id === "discover") {

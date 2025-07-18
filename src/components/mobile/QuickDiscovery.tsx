@@ -96,7 +96,13 @@ export default function QuickDiscovery({
       }
     } catch (err) {
       console.error("Failed to load performers:", err);
-      setError("Failed to load performers");
+      setError(
+        err instanceof Error ? 
+        err.message : 
+        "Failed to load nearby performers. Please try again later."
+      );
+      // Retry automatically in 5 seconds
+      setTimeout(() => loadNearbyPerformers(), 5000);
     } finally {
       setLoading(false);
     }
