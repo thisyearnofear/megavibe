@@ -175,7 +175,15 @@ export default function QRScanner({ isOpen, onClose, onScan, onError }: QRScanne
       <div className={styles.scanner}>
         {/* Header */}
         <div className={styles.header}>
-          <button className={styles.closeButton} onClick={onClose}>
+          <button 
+            className={styles.closeButton} 
+            onClick={() => {
+              // Add haptic feedback and smooth exit
+              navigator.vibrate?.(50);
+              stopCamera();
+              setTimeout(onClose, 300);
+            }}
+          >
             ✕
           </button>
           <h2 className={styles.title}>Scan QR Code</h2>

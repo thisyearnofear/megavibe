@@ -40,7 +40,12 @@ export default function SwipeablePerformerCard({
       onTip(performer.id);
       hapticFeedback('MEDIUM');
       
-      setTimeout(() => setShowQuickTip(false), 2000);
+      setTimeout(() => {
+        setShowQuickTip(false);
+        // Add success confirmation effect
+        setIsPressed(true);
+        setTimeout(() => setIsPressed(false), 500);
+      }, 2000);
     }
   };
 
