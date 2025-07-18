@@ -222,23 +222,30 @@ export default function QuickTip({
             {!showCustomAmount ? (
               <div className={styles.presetAmounts}>
                 <div className={styles.amountSlider}>
-                  {PRESET_AMOUNTS.map((amount) => (
-                    <button
-                      key={amount}
-                      className={`${styles.amountButton} ${
-                        selectedAmount === amount ? styles.selectedAmount : ""
-                      }`}
-                      onClick={() => {
-                        setSelectedAmount(amount);
-                        hapticFeedback('SELECTION');
-                      }}
-                    >
-                      <span className={styles.amountValue}>${amount}</span>
-                      {selectedAmount === amount && (
-                        <span className={styles.checkmark}>✓</span>
-                      )}
-                    </button>
-                  ))}
+                  {PRESET_AMOUNTS.map((amount) => {
+                    const isSelected = selectedAmount === amount;
+                    return (
+                      <button
+                        key={amount}
+                        className={`${styles.amountButton} ${
+                          isSelected ? styles.selectedAmount : ""
+                        }`}
+                        onClick={() => {
+                          setSelectedAmount(amount);
+                          hapticFeedback('SELECTION');
+                        }}
+                        aria-pressed={isSelected}
+                      >
+                        <div className={styles.amountButtonContent}>
+                          <span className={styles.amountValue}>${amount}</span>
+                          {isSelected && (
+                            <div className={styles.amountSelectionRing} />
+                          )}
+                        </div>
+                        <div className={styles.amountButtonBorder} />
+                      </button>
+                    );
+                  })}
                 </div>
                 <button
                   className={styles.customAmountButton}
@@ -246,8 +253,10 @@ export default function QuickTip({
                     setShowCustomAmount(true);
                     hapticFeedback('LIGHT');
                   }}
+                  aria-label="Enter custom amount"
                 >
-                  <span className={styles.customIcon}>+</span> Custom
+                  <span className={styles.customIcon}>+</span>
+                  <span className={styles.customText}>Custom</span>
                 </button>
               </div>
           ) : (
