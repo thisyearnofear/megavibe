@@ -180,6 +180,8 @@ export default function QuickTip({
   const canSend =
     finalAmount > 0 &&
     (!isConnected || parseFloat(balance.formatted) >= finalAmount);
+  
+  if (!isOpen) return null;
 
   return (
     <div className={styles.overlay}>
