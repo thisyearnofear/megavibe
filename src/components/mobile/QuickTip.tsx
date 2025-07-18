@@ -59,7 +59,9 @@ export default function QuickTip({
     ? parseFloat(customAmount) || 0
     : selectedAmount;
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   // Estimate gas when amount changes
   useEffect(() => {
