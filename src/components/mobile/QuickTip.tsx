@@ -55,11 +55,13 @@ export default function QuickTip({
   );
   const [estimatingGas, setEstimatingGas] = useState(false);
 
-  const finalAmount = showCustomAmount // Move declaration here
+  const finalAmount = showCustomAmount 
     ? parseFloat(customAmount) || 0
     : selectedAmount;
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   // Estimate gas when amount changes
   useEffect(() => {
@@ -181,7 +183,7 @@ export default function QuickTip({
     finalAmount > 0 &&
     (!isConnected || parseFloat(balance.formatted) >= finalAmount);
   
-  return !isOpen ? null : (
+  return (
     <div className={styles.overlay}>
       <div className={styles.bottomSheet}>
         {/* Handle bar for gesture indication */}
