@@ -181,9 +181,7 @@ export default function QuickTip({
     finalAmount > 0 &&
     (!isConnected || parseFloat(balance.formatted) >= finalAmount);
   
-  if (!isOpen) return null;
-
-  return (
+  return !isOpen ? null : (
     <div className={styles.overlay}>
       <div className={styles.bottomSheet}>
         {/* Handle bar for gesture indication */}
