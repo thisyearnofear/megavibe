@@ -217,15 +217,21 @@ export default function QRScanner({ isOpen, onClose, onScan, onError }: QRScanne
               {/* Scanning Overlay */}
               <div className={styles.scanningOverlay}>
                 <div className={styles.scanFrame}>
-                  <div className={styles.corner} />
-                  <div className={styles.corner} />
-                  <div className={styles.corner} />
-                  <div className={styles.corner} />
+                  <div className={styles.cornerTopLeft} />
+                  <div className={styles.cornerTopRight} />
+                  <div className={styles.cornerBottomLeft} />
+                  <div className={styles.cornerBottomRight} />
+                  <div className={styles.scanGuideText}>
+                    Align QR code within frame
+                  </div>
                 </div>
                 
                 {isScanning && (
                   <div className={styles.scanLine} />
                 )}
+              </div>
+              <div className={styles.hintBubble}>
+                <span>💡</span> Point camera at performer's QR code
               </div>
             </>
           )}

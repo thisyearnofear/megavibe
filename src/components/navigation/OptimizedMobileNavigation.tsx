@@ -119,12 +119,24 @@ export default function OptimizedMobileNavigation() {
           >
             <div className={styles.tabContent}>
               <div className={styles.iconContainer}>
-                <span className={styles.icon}>{tab.icon}</span>
-                {tab.badge && <span className={styles.badge}>{tab.badge}</span>}
+                <span className={`${styles.icon} ${isActive ? styles.activeIcon : ''}`}>
+                  {tab.icon}
+                </span>
+                {tab.badge && (
+                  <span className={`${styles.badge} ${isActive ? styles.activeBadge : ''}`}>
+                    {tab.badge}
+                  </span>
+                )}
                 {isDisabled && <span className={styles.lockIcon}>🔒</span>}
               </div>
-              <span className={styles.label}>{tab.label}</span>
-              {isActive && <div className={styles.activeIndicator} />}
+              <span className={`${styles.label} ${isActive ? styles.activeLabel : ''}`}>
+                {tab.label}
+              </span>
+              {isActive && (
+                <div className={styles.activeIndicator}>
+                  <div className={styles.activePulse} />
+                </div>
+              )}
             </div>
           </Link>
         );

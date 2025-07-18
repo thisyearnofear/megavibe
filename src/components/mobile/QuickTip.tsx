@@ -218,26 +218,38 @@ export default function QuickTip({
         <div className={styles.amountSection}>
           <h3 className={styles.sectionTitle}>Amount</h3>
 
-          {!showCustomAmount ? (
-            <div className={styles.presetAmounts}>
-              {PRESET_AMOUNTS.map((amount) => (
+          <div className={styles.amountSelector}>
+            {!showCustomAmount ? (
+              <div className={styles.presetAmounts}>
+                <div className={styles.amountSlider}>
+                  {PRESET_AMOUNTS.map((amount) => (
+                    <button
+                      key={amount}
+                      className={`${styles.amountButton} ${
+                        selectedAmount === amount ? styles.selectedAmount : ""
+                      }`}
+                      onClick={() => {
+                        setSelectedAmount(amount);
+                        hapticFeedback('SELECTION');
+                      }}
+                    >
+                      <span className={styles.amountValue}>${amount}</span>
+                      {selectedAmount === amount && (
+                        <span className={styles.checkmark}>✓</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
                 <button
-                  key={amount}
-                  className={`${styles.amountButton} ${
-                    selectedAmount === amount ? styles.selectedAmount : ""
-                  }`}
-                  onClick={() => setSelectedAmount(amount)}
+                  className={styles.customAmountButton}
+                  onClick={() => {
+                    setShowCustomAmount(true);
+                    hapticFeedback('LIGHT');
+                  }}
                 >
-                  ${amount}
+                  <span className={styles.customIcon}>+</span> Custom
                 </button>
-              ))}
-              <button
-                className={styles.customAmountButton}
-                onClick={() => setShowCustomAmount(true)}
-              >
-                Custom
-              </button>
-            </div>
+              </div>
           ) : (
             <div className={styles.customAmountInput}>
               <div className={styles.inputWrapper}>

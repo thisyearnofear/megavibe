@@ -82,8 +82,10 @@ export default function GestureEnhancedCard({
   });
 
   const cardStyle = {
-    transform: `translateX(${swipeOffset}px) scale(${isPressed ? 0.95 : 1})`,
-    transition: swipeOffset === 0 ? 'all 0.3s ease' : 'transform 0.2s ease'
+    transform: `translateX(${swipeOffset}px) scale(${isPressed ? 0.97 : 1})`,
+    transition: swipeOffset === 0 ? 'all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28)' : 'transform 0.2s ease',
+    opacity: isPressed ? 0.9 : 1,
+    boxShadow: isPressed ? '0 10px 25px rgba(0,0,0,0.1)' : '0 2px 10px rgba(0,0,0,0.1)'
   };
 
   return (
