@@ -21,6 +21,7 @@ interface WalletContextType {
   connectWallet: (walletType: ProviderType) => Promise<void>;
   disconnectWallet: () => void;
   switchNetwork: (chainId: number) => Promise<void>;
+  isInitialized: boolean;
 }
 
 const defaultContext: WalletContextType = {
@@ -35,6 +36,7 @@ const defaultContext: WalletContextType = {
   connectWallet: async () => {},
   disconnectWallet: () => {},
   switchNetwork: async () => {},
+  isInitialized: false,
 };
 
 const WalletContext = createContext<WalletContextType>(defaultContext);
@@ -53,23 +55,30 @@ export function WalletProvider({ children }: WalletProviderProps) {
   const [chainId, setChainId] = useState(0);
   const [isNetworkSupported, setIsNetworkSupported] = useState(false);
   const [balance, setBalance] = useState({ mnt: "0", formatted: "0" });
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize provider service when component mounts
   useEffect(() => {
     const initializeProvider = async () => {
-      await providerService.initialize();
+      try {
+        await providerService.initialize();
 
-      // Check if wallet is already connected
-      const walletInfo = providerService.getWalletInfo();
-      if (walletInfo && walletInfo.isConnected) {
-        setIsConnected(true);
-        setWalletAddress(walletInfo.address);
-        setChainId(walletInfo.chainId);
-        setIsNetworkSupported(walletInfo.isSupported);
-        setBalance({
-          mnt: walletInfo.balance.mnt,
-          formatted: walletInfo.balance.formatted,
-        });
+        // Check if wallet is already connected
+        const walletInfo = providerService.getWalletInfo();
+        if (walletInfo && walletInfo.isConnected) {
+          setIsConnected(true);
+          setWalletAddress(walletInfo.address);
+          setChainId(walletInfo.chainId);
+          setIsNetworkSupported(walletInfo.isSupported);
+          setBalance({
+            mnt: walletInfo.balance.mnt,
+            formatted: walletInfo.balance.formatted,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to initialize wallet provider:", error);
+      } finally {
+        setIsInitialized(true);
       }
     };
 
@@ -103,6 +112,8 @@ export function WalletProvider({ children }: WalletProviderProps) {
     } catch (error) {
       console.error("Failed to connect wallet:", error);
       setIsConnected(false);
+      // Re-throw the error so components can handle it
+      throw error;
     }
   };
 
@@ -184,6 +195,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
     connectWallet,
     disconnectWallet,
     switchNetwork,
+    isInitialized,
   };
 
   return (

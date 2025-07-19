@@ -3,6 +3,61 @@
   display: inline-block;
 }
 
+.connectButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.connectButton:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.connectButton:active {
+  transform: translateY(0);
+}
+
+.compact .connectButton {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+.connectIcon {
+  font-size: 16px;
+}
+
+.compact .connectIcon {
+  font-size: 14px;
+}
+
+.connectText {
+  font-weight: 500;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+}
+
+.compact .loadingState {
+  padding: 6px 10px;
+}
+
 .walletButton {
   display: flex;
   align-items: center;

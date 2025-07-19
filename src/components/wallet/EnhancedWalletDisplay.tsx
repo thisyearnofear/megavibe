@@ -2,7 +2,9 @@
 
 import React, { useState } from "react";
 import { useWallet } from "@/contexts/WalletContext";
+import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { useAddressResolver } from "@/services/identity/addressResolver";
+import WalletConnect from "./WalletConnect";
 import styles from "./EnhancedWalletDisplay.module.css";
 
 interface EnhancedWalletDisplayProps {
@@ -18,12 +20,48 @@ export default function EnhancedWalletDisplay({
   compact = false,
   onClick,
 }: EnhancedWalletDisplayProps) {
-  const { walletAddress, balance, isConnected, disconnectWallet } = useWallet();
+  const {
+    walletAddress,
+    balance,
+    isConnected,
+    disconnectWallet,
+    isInitialized,
+  } = useWallet();
+  const { openWalletModal, isWalletModalOpen, closeWalletModal } =
+    useWalletConnection();
   const { identity, loading } = useAddressResolver(walletAddress);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  // Show loading state during initialization
+  if (!isInitialized) {
+    return (
+      <div
+        className={`${styles.walletDisplay} ${compact ? styles.compact : ""}`}
+      >
+        <div className={styles.loadingState}>
+          <div className={styles.loadingSpinner} />
+        </div>
+      </div>
+    );
+  }
+
+  // Show connect button when not connected
   if (!isConnected || !walletAddress) {
-    return null;
+    return (
+      <div
+        className={`${styles.walletDisplay} ${compact ? styles.compact : ""}`}
+      >
+        <button
+          className={styles.connectButton}
+          onClick={openWalletModal}
+          aria-label="Connect wallet"
+        >
+          <span className={styles.connectIcon}>🔗</span>
+          {!compact && <span className={styles.connectText}>Connect</span>}
+        </button>
+        {isWalletModalOpen && <WalletConnect />}
+      </div>
+    );
   }
 
   const handleClick = () => {
