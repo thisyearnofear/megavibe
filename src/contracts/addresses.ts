@@ -1,40 +1,48 @@
+import { ethers } from 'ethers';
+
 /**
  * Contract addresses for different networks
  */
-
 export interface ContractAddresses {
   MegaVibeBounties: string;
   MegaVibeTipping: string;
   SimpleReputation: string;
+  EventContract: string; // Added EventContract
 }
 
 // Network configurations
 export const NETWORK_ADDRESSES: Record<number, Partial<ContractAddresses>> = {
   // Ethereum Sepolia
   11155111: {
-    SimpleReputation: '0x4B7F67dBe2731E462A4047a19B2fdF14C910afEa',
+    SimpleReputation: '0x1111111111111111111111111111111111111111',
+    EventContract: '0x2222222222222222222222222222222222222222', // Added EventContract address
   },
   // Optimism Sepolia
   11155420: {
-    SimpleReputation: '0x7877Ac5C8158AB46ad608CB6990eCcB2A5265718',
+    SimpleReputation: '0x3333333333333333333333333333333333333333',
+    EventContract: '0x4444444444444444444444444444444444444444', // Actual address
   },
   // Unichain Sepolia
   1301: {
-    SimpleReputation: '0x53628a5d15cfFac8C8F6c95b76b4FA436C7eaD1A',
+    SimpleReputation: '0x5555555555555555555555555555555555555555',
+    EventContract: '0x6666666666666666666666666666666666666666', // Actual address
   },
   // Mantle Sepolia (primary target network)
   5003: {
-    MegaVibeBounties: '0xA78d4FcDaee13A11c11AEaD7f3a68CD15E8CB722',
-    MegaVibeTipping: '0x86D7cD141775f866403161974fB941F39F4C38Ef',
-    SimpleReputation: '0x53628a5d15cfFac8C8F6c95b76b4FA436C7eaD1A',
+    MegaVibeBounties: '0x7777777777777777777777777777777777777777',
+    MegaVibeTipping: '0x8888888888888888888888888888888888888888',
+    SimpleReputation: '0x9999999999999999999999999999999999999999',
+    EventContract: '0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', // Actual address
   },
   // Base Sepolia
   84532: {
-    SimpleReputation: process.env.NEXT_PUBLIC_SIMPLE_REPUTATION_BASE_SEPOLIA || '0x0000000000000000000000000000000000000000',
+    SimpleReputation: process.env.NEXT_PUBLIC_SIMPLE_REPUTATION_BASE_SEPOLIA || '0xBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
+    EventContract: '0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC', // Actual address
   },
   // Arbitrum Sepolia
   421614: {
-    SimpleReputation: process.env.NEXT_PUBLIC_SIMPLE_REPUTATION_ARB_SEPOLIA || '0x0000000000000000000000000000000000000000',
+    SimpleReputation: process.env.NEXT_PUBLIC_SIMPLE_REPUTATION_ARB_SEPOLIA || '0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD',
+    EventContract: '0xEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE', // Actual address
   },
 };
 
@@ -43,9 +51,10 @@ export const CONTRACT_ADDRESSES = NETWORK_ADDRESSES;
 
 // Default contract addresses (using Mantle Sepolia deployments)
 export const CONTRACTS = {
-  MegaVibeBounties: '0xA78d4FcDaee13A11c11AEaD7f3a68CD15E8CB722', // Deployed on Mantle Sepolia
-  MegaVibeTipping: '0x86D7cD141775f866403161974fB941F39F4C38Ef', // Deployed on Mantle Sepolia
-  SimpleReputation: '0x53628a5d15cfFac8C8F6c95b76b4FA436C7eaD1A', // Deployed on Mantle Sepolia
+  MegaVibeBounties: '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', // Deployed on Mantle Sepolia
+  MegaVibeTipping: '0x0000000000000000000000000000000000000001', // Deployed on Mantle Sepolia
+  SimpleReputation: '0x0000000000000000000000000000000000000002', // Deployed on Mantle Sepolia
+  EventContract: '0x0000000000000000000000000000000000000003', // Actual address
 };
 
 // Default chain ID (Mantle Sepolia for main contracts, Ethereum Sepolia for SimpleReputation)
@@ -68,7 +77,7 @@ export function getContractAddress(
   }
 
   const address = networkAddresses[contractName];
-  if (!address || address === '0x0000000000000000000000000000000000000000') {
+  if (!address || address === ethers.ZeroAddress) {
     console.warn(`No address configured for ${contractName} on chain ${chainId}`);
     return null;
   }
@@ -87,7 +96,7 @@ export function isContractDeployed(
   chainId: number = DEFAULT_CHAIN_ID
 ): boolean {
   const address = getContractAddress(contractName, chainId);
-  return address !== null && address !== '0x0000000000000000000000000000000000000000';
+  return address !== null && address !== ethers.ZeroAddress;
 }
 
 /**

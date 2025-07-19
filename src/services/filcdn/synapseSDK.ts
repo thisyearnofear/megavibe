@@ -2,7 +2,6 @@
  * Production-ready Synapse SDK implementation
  * Handles environment-based SDK loading with proper fallbacks
  */
-
 const isDevelopment = process.env.NODE_ENV === 'development';
 const isTestEnvironment = process.env.NEXT_PUBLIC_USE_MOCK_SDK === 'true';
 const isStorybook = process.env.NODE_ENV === 'test' || typeof window !== 'undefined' && (window as any).__STORYBOOK_ADDONS__;
@@ -69,17 +68,17 @@ async function loadSynapseSDK(): Promise<{
   StorageService: any;
   PandoraService: any;
 }> {
-  // Use mock in development, testing, or when explicitly requested
+  // Use actual in development, testing, or when explicitly requested
   if (isDevelopment || isTestEnvironment || isStorybook) {
-    console.log('🔧 Using mock Synapse SDK for development/testing');
-    const mockSDK = await import('./mockSynapseSDK');
+    console.log('🔧 Using actual Synapse SDK for development/testing');
+    const actualSDK = await import('./actualSynapseSDK');
     return {
-      Synapse: mockSDK.Synapse as any,
-      RPC_URLS: mockSDK.RPC_URLS,
-      TOKENS: mockSDK.TOKENS,
-      CONTRACT_ADDRESSES: mockSDK.CONTRACT_ADDRESSES,
-      StorageService: mockSDK.StorageService as any,
-      PandoraService: mockSDK.PandoraService as any,
+      Synapse: actualSDK.Synapse as any,
+      RPC_URLS: actualSDK.RPC_URLS,
+      TOKENS: actualSDK.TOKENS,
+      CONTRACT_ADDRESSES: actualSDK.CONTRACT_ADDRESSES,
+      StorageService: actualSDK.StorageService as any,
+      PandoraService: actualSDK.PandoraService as any,
     };
   }
 
@@ -111,16 +110,16 @@ async function loadSynapseSDK(): Promise<{
       );
     }
 
-    // Fallback to mock with warning for non-production environments
-    console.warn('⚠️ Falling back to mock SDK. This should not happen in production!');
-    const mockSDK = await import('./mockSynapseSDK');
+    // Fallback to actual SDK with warning for non-production environments
+    console.warn('⚠️ Falling back to actual SDK. This should not happen in production!');
+    const actualSDK = await import('./actualSynapseSDK');
     return {
-      Synapse: mockSDK.Synapse as any,
-      RPC_URLS: mockSDK.RPC_URLS,
-      TOKENS: mockSDK.TOKENS,
-      CONTRACT_ADDRESSES: mockSDK.CONTRACT_ADDRESSES,
-      StorageService: mockSDK.StorageService as any,
-      PandoraService: mockSDK.PandoraService as any,
+      Synapse: actualSDK.Synapse as any,
+      RPC_URLS: actualSDK.RPC_URLS,
+      TOKENS: actualSDK.TOKENS,
+      CONTRACT_ADDRESSES: actualSDK.CONTRACT_ADDRESSES,
+      StorageService: actualSDK.StorageService as any,
+      PandoraService: actualSDK.PandoraService as any,
     };
   }
 }
@@ -176,11 +175,13 @@ export async function checkSDKHealth(): Promise<{
 }> {
   try {
     const sdk = await getSynapseSDK();
+    console.log('SDK loaded:', sdk);
     
     // Basic health check - try to create a Synapse instance
     const instance = await sdk.Synapse.create({
       network: 'calibration'
     });
+    console.log('Synapse instance created:', instance);
     
     return {
       healthy: true,
@@ -188,6 +189,7 @@ export async function checkSDKHealth(): Promise<{
       version: 'unknown' // SDK might not expose version
     };
   } catch (error) {
+    console.error('Error creating Synapse instance:', error);
     return {
       healthy: false,
       error: error instanceof Error ? error.message : 'Unknown error'
@@ -199,5 +201,3 @@ export async function checkSDKHealth(): Promise<{
 export function isMockSDK(): boolean {
   return isDevelopment || isTestEnvironment || isStorybook;
 }
-
-// All types are already exported as interfaces above

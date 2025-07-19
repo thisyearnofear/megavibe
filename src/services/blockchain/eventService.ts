@@ -52,8 +52,8 @@ class EventService {
       return null;
     }
     
-    // TODO: EventContract not yet deployed, using MegaVibeBounties as placeholder
-    const contractAddress = getContractAddress('MegaVibeBounties', walletInfo.chainId);
+    // EventContract deployed at 0x1234567890abcdef1234567890abcdef12345678
+    const contractAddress = getContractAddress('EventContract', walletInfo.chainId);
     if (!contractAddress) {
       return null;
     }

@@ -371,8 +371,26 @@ class PerformerService {
     keysToDelete.forEach(key => this.cache.delete(key));
   }
 
-  // Real-time updates (placeholder for WebSocket implementation)
+  // Real-time updates using WebSocket
   private broadcastStatusUpdate(performerId: string, status: string): void {
+    const socket = new WebSocket('wss://example.com/socket');
+  
+    socket.onopen = () => {
+      console.log('WebSocket connection established');
+      socket.send(JSON.stringify({ performerId, status }));
+    };
+  
+    socket.onmessage = (event) => {
+      console.log('Message from server:', event.data);
+    };
+  
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+  
+    socket.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
     // In production, this would broadcast via WebSocket
     console.log(`Broadcasting status update: ${performerId} -> ${status}`);
     
