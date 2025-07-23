@@ -1,0 +1,44 @@
+.quickActionsContainer {
+  padding: 40px;
+  background-color: #1a1a1a;
+  text-align: center;
+  border-radius: 8px;
+  margin: 40px auto;
+  max-width: 900px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 25px;
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  justify-content: center;
+}
+
+.actionButton {
+  background-color: #0070f3;
+  color: #fff;
+  border: none;
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-decoration: none; /* For Link component */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.actionButton:hover {
+  background-color: #005bb5;
+  transform: translateY(-3px);
+}

@@ -1,0 +1,36 @@
+.impactBar {
+  position: fixed;
+  bottom: 60px; /* Above the mobile navigation */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 112, 243, 0.9); /* Blue with some transparency */
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 112, 243, 0.4);
+  z-index: 999;
+  min-width: 200px;
+  text-align: center;
+}
+
+.message {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.stats {
+  display: flex;
+  gap: 15px;
+  font-size: 12px;
+}
+
+.stats span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}

@@ -1,0 +1,29 @@
+.coachMark {
+  position: absolute;
+  z-index: 1001;
+}
+.bubble {
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.arrow {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(0, 0, 0, 0.8);
+  margin: 0 auto;
+}
+.dismiss {
+  display: block;
+  margin: 4px auto 0;
+  background: none;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+}

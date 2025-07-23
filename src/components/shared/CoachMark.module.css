@@ -1,0 +1,38 @@
+.coachMark {
+  position: absolute;
+  background-color: #fff;
+  color: #333;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 3000; /* Above everything else */
+  transform: translateX(-50%); /* Center horizontally */
+  white-space: nowrap;
+}
+
+.coachMark p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+}
+
+.coachMark button {
+  background-color: #0070f3;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.arrow {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #fff;
+}

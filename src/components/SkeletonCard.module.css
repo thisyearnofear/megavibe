@@ -1,0 +1,26 @@
+.card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.avatar {
+  width: 100%;
+  height: 120px;
+  background-color: #eee;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+.lineShort,
+.line {
+  height: 12px;
+  background-color: #eee;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+.lineShort {
+  width: 40%;
+}
+.line {
+  width: 100%;
+}
