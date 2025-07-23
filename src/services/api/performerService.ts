@@ -412,6 +412,18 @@ class PerformerService {
       window.removeEventListener('performerStatusUpdate', handler as EventListener);
     };
   }
+
+  subscribeToTipUpdates(callback: (update: any) => void): () => void {
+    const handler = (event: CustomEvent) => {
+      callback(event.detail);
+    };
+
+    window.addEventListener('tipUpdate', handler as EventListener);
+    
+    return () => {
+      window.removeEventListener('tipUpdate', handler as EventListener);
+    };
+  }
 }
 
 export const performerService = new PerformerService();
