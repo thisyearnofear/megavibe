@@ -20,7 +20,7 @@ export interface ServerFilCDNConfig {
 export class ServerFilCDNService {
   private initialized: boolean = false;
   private initializing: boolean = false;
-  private stats: any = {};
+  private stats: Record<string, unknown> = {};
   private baseUrl: string;
   private withCDN: boolean;
   
@@ -87,7 +87,7 @@ export class ServerFilCDNService {
    * @param data Data to store
    * @returns Storage result
    */
-  async storeData(data: any): Promise<StorageResult> {
+  async storeData(data: unknown): Promise<StorageResult> {
     if (!this.initialized) {
       await this.initialize();
     }
@@ -194,7 +194,7 @@ export class ServerFilCDNService {
    * Get statistics about the FilCDN service
    * @returns Service statistics
    */
-  async getStats(): Promise<any> {
+  async getStats(): Promise<Record<string, unknown>> {
     try {
       // Call stats endpoint
       const response = await fetch(`${this.baseUrl}/stats`);

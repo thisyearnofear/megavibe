@@ -168,11 +168,18 @@ export default function BountyCreationForm({
       setTimeout(() => {
         setSuccessMessage("");
       }, 5000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to create bounty:", error);
-      setError(
-        error.userMessage || "Failed to create bounty. Please try again."
-      );
+      let userMessage = "Failed to create bounty. Please try again.";
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "userMessage" in error &&
+        typeof (error as { userMessage?: unknown }).userMessage === "string"
+      ) {
+        userMessage = (error as { userMessage: string }).userMessage;
+      }
+      setError(userMessage);
     } finally {
       setIsLoading(false);
     }

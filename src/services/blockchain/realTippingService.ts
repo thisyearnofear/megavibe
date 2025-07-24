@@ -23,7 +23,7 @@ export interface TipRecord {
 
 class RealTippingService {
   private contractAddress: string;
-  private contractABI: any[];
+  private contractABI: unknown[];
 
   constructor() {
     this.contractAddress = CONTRACTS.MegaVibeTipping;
@@ -199,15 +199,23 @@ class RealTippingService {
       // Listen for TipSent events
       const filter = contract.filters.TipSent(performerId);
       
-      const listener = (performerId: string, tipper: string, amount: bigint, message: string, event: any) => {
+      const listener = (performerId: string, tipper: string, amount: bigint, message: string, event: unknown) => {
+        let blockNumber = '';
+        let transactionIndex = '';
+        let transactionHash = '';
+        if (typeof event === "object" && event !== null) {
+          if ("blockNumber" in event) blockNumber = String((event as { blockNumber?: unknown }).blockNumber);
+          if ("transactionIndex" in event) transactionIndex = String((event as { transactionIndex?: unknown }).transactionIndex);
+          if ("transactionHash" in event) transactionHash = String((event as { transactionHash?: unknown }).transactionHash);
+        }
         const tipRecord: TipRecord = {
-          id: `tip_${event.blockNumber}_${event.transactionIndex}`,
+          id: `tip_${blockNumber}_${transactionIndex}`,
           performerId,
           tipper,
           amount: ethers.formatEther(amount),
           message: message || undefined,
           timestamp: Date.now(),
-          txHash: event.transactionHash,
+          txHash: transactionHash,
           status: 'confirmed'
         };
         

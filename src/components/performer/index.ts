@@ -12,8 +12,15 @@ export type {
 export const performerUtils = {
   generatePerformerId: () => `performer_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
   
-  validateProfile: (profile: any) => {
-    return !!(profile.name && profile.type);
+  validateProfile: (profile: unknown) => {
+    return (
+      typeof profile === "object" &&
+      profile !== null &&
+      "name" in profile &&
+      typeof (profile as { name: unknown }).name === "string" &&
+      "type" in profile &&
+      typeof (profile as { type: unknown }).type === "string"
+    );
   },
   
   formatPerformerType: (type: string) => {

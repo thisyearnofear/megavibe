@@ -83,7 +83,7 @@ class EventService {
     try {
       // Use a different variable name to avoid confusion with ethers ContractEvent type
       // and explicitly cast the return value to any to handle the contract's custom structure
-      const eventDataFromContract: any = await contract.getEvent(eventId);
+      const eventDataFromContract: unknown = await contract.getEvent(eventId);
       
       return {
         id: eventId,
@@ -158,7 +158,7 @@ class EventService {
 
     try {
       // Use a different variable name and explicitly cast to any
-      const speakerDataFromContract: any = await contract.getSpeaker(speakerId);
+      const speakerDataFromContract: unknown = await contract.getSpeaker(speakerId);
       
       return {
         id: speakerId,
@@ -276,21 +276,26 @@ class EventService {
         to: contract.target as string,
         value: '0',
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle user rejected transaction
-      if (error.code === 4001) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code?: number }).code === 4001
+      ) {
         throw this.createError(
           BlockchainErrorType.USER_REJECTED,
-          'User rejected the transaction',
-          'You declined the transaction. Registration was not completed.'
+          "User rejected the transaction",
+          "You declined the transaction. Registration was not completed."
         );
       }
-      
+
       // Handle other errors
       throw this.createError(
         BlockchainErrorType.TRANSACTION_ERROR,
-        'Failed to register for event',
-        'There was an error registering for the event. Please try again.',
+        "Failed to register for event",
+        "There was an error registering for the event. Please try again.",
         error
       );
     }
@@ -346,7 +351,7 @@ class EventService {
     type: BlockchainErrorType,
     message: string,
     userMessage?: string,
-    details?: any
+    details?: unknown
   ): BlockchainError {
     return {
       type,

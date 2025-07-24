@@ -154,6 +154,6 @@ export enum BlockchainErrorType {
 export interface BlockchainError {
   type: BlockchainErrorType;
   message: string;
-  details?: any;
+  details?: unknown;
   userMessage?: string; // User-friendly message
 }

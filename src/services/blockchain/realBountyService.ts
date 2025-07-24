@@ -37,7 +37,7 @@ export interface BountyResponse {
 
 class RealBountyService {
   private contractAddress: string;
-  private contractABI: any[];
+  private contractABI: unknown[];
 
   constructor() {
     this.contractAddress = CONTRACTS.MegaVibeBounties;
@@ -332,8 +332,12 @@ class RealBountyService {
         description: string,
         amount: bigint,
         deadline: bigint,
-        event: any
+        event: unknown
       ) => {
+        let txHash = '';
+        if (typeof event === "object" && event !== null && "transactionHash" in event) {
+          txHash = (event as { transactionHash: string }).transactionHash;
+        }
         const bountyRecord: BountyRecord = {
           id: bountyId,
           performerId,
@@ -343,7 +347,7 @@ class RealBountyService {
           amount: ethers.formatEther(amount),
           timestamp: Date.now(),
           deadline: Number(deadline) * 1000,
-          txHash: event.transactionHash,
+          txHash,
           status: 'confirmed',
           responses: []
         };

@@ -79,10 +79,19 @@ class RealQRService {
   }
 
   async generateCustomQR(
-    data: any,
+    data: unknown,
     options: QRGenerationOptions = {}
   ): Promise<string> {
     try {
+      // Only allow objects, arrays, strings, numbers, booleans for QR data
+      if (
+        typeof data !== "object" &&
+        typeof data !== "string" &&
+        typeof data !== "number" &&
+        typeof data !== "boolean"
+      ) {
+        throw new Error("Unsupported QR data type");
+      }
       const qrOptions = {
         width: options.size || 256,
         margin: options.margin || 2,
@@ -90,6 +99,15 @@ class RealQRService {
           dark: options.color?.dark || '#000000',
           light: options.color?.light || '#FFFFFF'
         },
+        errorCorrectionLevel: options.errorCorrectionLevel || 'M'
+      };
+
+      return await QRCode.toDataURL(JSON.stringify(data), qrOptions);
+    } catch (error) {
+      console.error('Failed to generate custom QR code:', error);
+      throw new Error('Custom QR code generation failed');
+    }
+  },
         errorCorrectionLevel: options.errorCorrectionLevel || 'M'
       };
 

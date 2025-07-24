@@ -251,7 +251,7 @@ class AddressResolverService {
   /**
    * Parse ensdata.net response
    */
-  private parseEnsdataResponse(data: any, originalInput: string): ResolvedIdentity {
+  private parseEnsdataResponse(data: unknown, originalInput: string): ResolvedIdentity {
     const address = data.address || originalInput;
     const ensName = data.ens_primary || data.name;
     
@@ -276,7 +276,7 @@ class AddressResolverService {
   /**
    * Parse web3.bio response
    */
-  private parseWeb3BioResponse(data: any[], originalInput: string): ResolvedIdentity {
+  private parseWeb3BioResponse(data: unknown[], originalInput: string): ResolvedIdentity {
     if (!Array.isArray(data) || data.length === 0) {
       return this.createFallbackIdentity(originalInput);
     }
@@ -322,7 +322,7 @@ class AddressResolverService {
   /**
    * Extract platforms from ensdata response
    */
-  private extractPlatforms(data: any): string[] {
+  private extractPlatforms(data: Record<string, unknown>): string[] {
     const platforms: string[] = [];
     
     if (data.ens_primary || data.name) platforms.push('ens');
@@ -395,8 +395,10 @@ export function useAddressResolver(addressOrEns?: string) {
 
     addressResolver.resolveAddress(addressOrEns)
       .then(setIdentity)
-      .catch(err => {
-        setError(err.message);
+      .catch((err: unknown) => {
+        const message =
+          err instanceof Error ? err.message : "Unknown error";
+        setError(message);
         setIdentity(addressResolver['createFallbackIdentity'](addressOrEns));
       })
       .finally(() => setLoading(false));

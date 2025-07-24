@@ -20,8 +20,8 @@ interface FilCDNContextState {
   isInitialized: boolean;
   isInitializing: boolean;
   error: string | null;
-  stats: any | null;
-  storeData: (data: any) => Promise<StorageResult>;
+  stats: unknown | null;
+  storeData: (data: unknown) => Promise<StorageResult>;
   retrieveData: (cid: string) => Promise<RetrievalResult>;
   getCDNUrl: (cid: string) => Promise<string>;
   clearError: () => void;
@@ -76,7 +76,7 @@ export const FilCDNProvider: React.FC<FilCDNProviderProps> = ({ children }) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [stats, setStats] = useState<any | null>(null);
+  const [stats, setStats] = useState<unknown | null>(null);
   const [walletConnected, setWalletConnected] = useState(false);
 
   // Initialize FilCDN service
@@ -127,15 +127,17 @@ export const FilCDNProvider: React.FC<FilCDNProviderProps> = ({ children }) => {
   }, [isInitialized, isInitializing]);
 
   // Store data in FilCDN
-  const storeData = async (data: any): Promise<StorageResult> => {
+  const storeData = async (data: unknown): Promise<StorageResult> => {
     if (!filcdn || !isInitialized) {
       throw new Error("FilCDN not initialized");
     }
 
     try {
       return await filcdn.storeData(data);
-    } catch (err: any) {
-      setError(`Failed to store data: ${err.message}`);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Unknown error";
+      setError(`Failed to store data: ${message}`);
       throw err;
     }
   };
@@ -148,8 +150,10 @@ export const FilCDNProvider: React.FC<FilCDNProviderProps> = ({ children }) => {
 
     try {
       return await filcdn.retrieveData(cid);
-    } catch (err: any) {
-      setError(`Failed to retrieve data: ${err.message}`);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Unknown error";
+      setError(`Failed to retrieve data: ${message}`);
       throw err;
     }
   };
@@ -162,8 +166,10 @@ export const FilCDNProvider: React.FC<FilCDNProviderProps> = ({ children }) => {
 
     try {
       return await filcdn.getCDNUrl(cid);
-    } catch (err: any) {
-      setError(`Failed to get CDN URL: ${err.message}`);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Unknown error";
+      setError(`Failed to get CDN URL: ${message}`);
       throw err;
     }
   };

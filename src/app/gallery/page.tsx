@@ -44,10 +44,24 @@ export default function GalleryPage() {
         const data = await response.json();
 
         // Transform the submissions data to include submissionId
-        const items = data.submissions.map((item: any, index: number) => ({
-          ...item,
-          submissionId: index,
-        }));
+        const items = data.submissions.map((item: unknown, index: number) => {
+          // Attempt to safely cast/validate object as GalleryItem shape
+          if (
+            typeof item === "object" &&
+            item !== null &&
+            "imageUrl" in item &&
+            "title" in item &&
+            "creator" in item &&
+            "prompt" in item
+          ) {
+            return {
+              ...(item as Omit<GalleryItem, "submissionId">),
+              submissionId: index,
+            };
+          }
+          // Skip invalid items
+          return null;
+        }).filter(Boolean) as GalleryItem[];
 
         setGalleryItems(items);
         setError(null);

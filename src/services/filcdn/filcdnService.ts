@@ -19,7 +19,7 @@ export interface StorageResult {
 }
 
 export interface RetrievalResult {
-  data: any;
+  data: unknown;
   mimeType: string;
 }
 
@@ -30,17 +30,17 @@ export interface FilCDNServiceConfig {
 
 export interface FilCDNService {
   initialize: () => Promise<void>;
-  storeData: (data: any) => Promise<StorageResult>;
+  storeData: (data: unknown) => Promise<StorageResult>;
   retrieveData: (cid: string) => Promise<RetrievalResult>;
   getCDNUrl: (cid: string) => Promise<string>;
-  getStats: () => Promise<any>;
+  getStats: () => Promise<unknown>;
 }
 
 /**
  * Calls the secure server-side API for FilCDN operations
  * This keeps private keys server-side only
  */
-async function callSecureApi(operation: string, data?: any): Promise<any> {
+async function callSecureApi(operation: string, data?: unknown): Promise<unknown> {
   try {
     const response = await fetch(API_BASE_URL, {
       method: 'POST',
@@ -75,11 +75,11 @@ export function createFilCDNService(config: FilCDNServiceConfig): FilCDNService 
       await new Promise(resolve => setTimeout(resolve, 500)); // Simulate initialization
     },
     
-    storeData: async (data: any): Promise<StorageResult> => {
+    storeData: async (data: unknown): Promise<StorageResult> => {
       console.log("Storing data in FilCDN via secure API");
       
       // Use the secure API to store data
-      const result = await callSecureApi('store', data);
+      const result = await callSecureApi('store', data) as { result: StorageResult };
       return result.result;
     },
     
@@ -87,7 +87,7 @@ export function createFilCDNService(config: FilCDNServiceConfig): FilCDNService 
       console.log("Retrieving data from FilCDN for CID:", cid);
       
       // Use the secure API to retrieve data
-      const result = await callSecureApi('retrieve', { cid });
+      const result = await callSecureApi('retrieve', { cid }) as { result: RetrievalResult };
       return result.result;
     },
     
@@ -95,9 +95,9 @@ export function createFilCDNService(config: FilCDNServiceConfig): FilCDNService 
       return `https://ipfs.io/ipfs/${cid}`;
     },
     
-    getStats: async (): Promise<any> => {
+    getStats: async (): Promise<unknown> => {
       // Use the secure API to get stats
-      const result = await callSecureApi('getStats');
+      const result = await callSecureApi('getStats') as { result: unknown };
       return result.result;
     }
   };

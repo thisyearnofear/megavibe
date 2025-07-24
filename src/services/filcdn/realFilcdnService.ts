@@ -29,7 +29,7 @@ export interface StorageResult {
 
 // Retrieval result interface
 export interface RetrievalResult {
-  data: any;
+  data: unknown;
   mimeType: string;
 }
 
@@ -51,7 +51,7 @@ export class RealFilCDNService {
   private initializing: boolean = false;
   private providerInfo: ProviderInfo | null = null;
   private proofSetId: number | null = null;
-  private stats: any = {};
+  private stats: Record<string, unknown> = {};
   
   constructor(private config: FilCDNConfig = {}) {}
 
@@ -221,7 +221,7 @@ export class RealFilCDNService {
    * @param data Data to store
    * @returns Storage result
    */
-  async storeData(data: any): Promise<StorageResult> {
+  async storeData(data: unknown): Promise<StorageResult> {
     if (!this.initialized || !this.storage) {
       await this.initialize();
     }
@@ -287,7 +287,7 @@ export class RealFilCDNService {
       }
       
       // Determine MIME type based on data
-      let result: any;
+      let result: unknown;
       let mimeType = 'application/octet-stream';
       
       try {
@@ -340,7 +340,7 @@ export class RealFilCDNService {
    * Get statistics about the FilCDN service
    * @returns Service statistics
    */
-  async getStats(): Promise<any> {
+  async getStats(): Promise<Record<string, unknown>> {
     // Update timestamp
     this.stats.lastUpdated = Date.now();
     

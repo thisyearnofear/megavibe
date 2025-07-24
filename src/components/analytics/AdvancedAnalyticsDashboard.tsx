@@ -57,15 +57,27 @@ const generateMockData = (timeRange: string) => {
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+type TooltipPayloadItem = {
+  name: string;
+  value: number;
+  color?: string;
+};
+
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: TooltipPayloadItem[];
+  label?: string;
+}) => {
   if (active && payload && payload.length) {
     return (
       <div className={styles.customTooltip}>
         <p className={styles.tooltipLabel}>{`${label}`}</p>
-        {payload.map((pld: any, index: number) => (
-          <p key={index} style={{ color: pld.color }}>{`${
-            pld.name
-          }: ${pld.value.toLocaleString()}`}</p>
+        {payload.map((pld, index: number) => (
+          <p key={index} style={{ color: pld.color }}>{`${pld.name}: ${pld.value.toLocaleString()}`}</p>
         ))}
       </div>
     );
@@ -76,7 +88,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export default function AdvancedAnalyticsDashboard() {
   const [timeRange, setTimeRange] = useState("30d");
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<ReturnType<typeof generateMockData> | null>(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
@@ -171,7 +183,7 @@ export default function AdvancedAnalyticsDashboard() {
                 dataKey="value"
               >
                 {memoizedData.tipperDemographics.byLocation.map(
-                  (_entry: any, index: number) => (
+                  (_entry, index: number) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={COLORS[index % COLORS.length]}

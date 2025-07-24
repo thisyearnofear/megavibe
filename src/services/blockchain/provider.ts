@@ -10,7 +10,7 @@ import { BlockchainError, BlockchainErrorType, ProviderType, WalletInfo } from '
 // TypeScript declarations for Ethereum in window object
 declare global {
   interface Window {
-    ethereum?: any;
+    ethereum?: unknown;
   }
 }
 
@@ -132,9 +132,14 @@ class ProviderService {
       this.notifyConnectionListeners(true);
       
       return this.walletInfo!;
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle user rejected request
-      if (error.code === 4001) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code?: number }).code === 4001
+      ) {
         throw this.createError(
           BlockchainErrorType.USER_REJECTED,
           'User rejected the connection request',
@@ -219,22 +224,27 @@ class ProviderService {
         this.provider = new ethers.BrowserProvider(window.ethereum);
         this.signer = await this.provider.getSigner();
         await this.updateWalletInfo();
-      } catch (error: any) {
+      } catch (error: unknown) {
         // This error code means the chain has not been added to MetaMask
-        if (error.code === 4902) {
+        if (
+          typeof error === "object" &&
+          error !== null &&
+          "code" in error &&
+          (error as { code?: number }).code === 4902
+        ) {
           const networkConfig = getNetworkConfig(chainId);
           if (!networkConfig) {
             throw this.createError(
               BlockchainErrorType.NETWORK_ERROR,
-              'Network configuration not found',
-              'Unable to add this network to your wallet'
+              "Network configuration not found",
+              "Unable to add this network to your wallet"
             );
           }
-          
+
           // Add the network to the wallet
           try {
             await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
+              method: "wallet_addEthereumChain",
               params: [
                 {
                   chainId: `0x${chainId.toString(16)}`,
@@ -245,7 +255,7 @@ class ProviderService {
                 },
               ],
             });
-            
+
             // Update provider and signer after network added
             this.provider = new ethers.BrowserProvider(window.ethereum);
             this.signer = await this.provider.getSigner();
@@ -253,16 +263,16 @@ class ProviderService {
           } catch (addError) {
             throw this.createError(
               BlockchainErrorType.NETWORK_ERROR,
-              'Failed to add network to wallet',
-              'Unable to add the network to your wallet. Please try again.',
+              "Failed to add network to wallet",
+              "Unable to add the network to your wallet. Please try again.",
               addError
             );
           }
         } else {
           throw this.createError(
             BlockchainErrorType.NETWORK_ERROR,
-            'Failed to switch network',
-            'Unable to switch networks. Please try again.',
+            "Failed to switch network",
+            "Unable to switch networks. Please try again.",
             error
           );
         }
@@ -467,7 +477,7 @@ class ProviderService {
     type: BlockchainErrorType,
     message: string,
     userMessage?: string,
-    details?: any
+    details?: unknown
   ): BlockchainError {
     return {
       type,

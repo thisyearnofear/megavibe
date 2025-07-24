@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const { getSynapseSDK, isMockSDK } = await import('@/services/filcdn/synapseSDK');
     const sdk = await getSynapseSDK();
     
-    const testResults: any = {
+    const testResults: Record<string, unknown> = {
       timestamp: new Date().toISOString(),
       tests: {
         sdkLoading: {
