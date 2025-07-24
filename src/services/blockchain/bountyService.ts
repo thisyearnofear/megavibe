@@ -85,9 +85,14 @@ class BountyService {
         to: contract.target as string,
         value: data.amount,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle user rejected transaction
-      if (error.code === 4001) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code?: number }).code === 4001
+      ) {
         throw this.createError(
           BlockchainErrorType.USER_REJECTED,
           'User rejected the transaction',
@@ -137,9 +142,14 @@ class BountyService {
         to: contract.target as string,
         value: '0',
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle user rejected transaction
-      if (error.code === 4001) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code?: number }).code === 4001
+      ) {
         throw this.createError(
           BlockchainErrorType.USER_REJECTED,
           'User rejected the transaction',

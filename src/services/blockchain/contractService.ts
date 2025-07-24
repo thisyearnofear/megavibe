@@ -35,9 +35,9 @@ export class ContractService {
       // Update internal state
       await this.initialize();
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       // If network doesn't exist, add it
-      if (error.code === 4902) {
+      if (typeof error === "object" && error !== null && "code" in error && (error as { code?: unknown }).code === 4902) {
         return await this.addNetwork(targetChainId);
       }
       console.error('Failed to switch network:', error);
@@ -163,7 +163,7 @@ export class ContractService {
     address: string;
     error?: string;
   }>> {
-    const results: Record<string, any> = {};
+    const results: Record<string, unknown> = {};
     
     for (const contractName of Object.keys(CONTRACTS) as Array<keyof typeof CONTRACTS>) {
       results[contractName] = await this.validateContractDeployment(contractName, chainId);

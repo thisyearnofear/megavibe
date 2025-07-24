@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 interface UploadOptions {
-  onSuccess?: (result: any) => void;
+  onSuccess?: (result: unknown) => void;
   onError?: (error: Error) => void;
 }
 
@@ -66,10 +66,16 @@ export const useUploader = (options?: UploadOptions) => {
           options.onSuccess(performanceResult);
         }
       };
-    } catch (err: any) {
-      setError(err);
+    } catch (err: unknown) {
+      let errorObj: Error;
+      if (err instanceof Error) {
+        errorObj = err;
+      } else {
+        errorObj = new Error("Unknown upload error");
+      }
+      setError(errorObj);
       if (options?.onError) {
-        options.onError(err);
+        options.onError(errorObj);
       }
     } finally {
       setIsUploading(false);
