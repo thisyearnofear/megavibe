@@ -287,7 +287,7 @@ export class RealFilCDNService {
       }
       
       // Determine MIME type based on data
-      let result: any;
+      let result: unknown;
       let mimeType = 'application/octet-stream';
       
       try {
@@ -340,7 +340,7 @@ export class RealFilCDNService {
    * Get statistics about the FilCDN service
    * @returns Service statistics
    */
-  async getStats(): Promise<any> {
+  async getStats(): Promise<Record<string, unknown>> {
     // Update timestamp
     this.stats.lastUpdated = Date.now();
     

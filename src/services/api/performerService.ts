@@ -57,7 +57,7 @@ export interface NearbyPerformersQuery {
 
 class PerformerService {
   private baseUrl: string;
-  private cache: Map<string, { data: any; timestamp: number }> = new Map();
+  private cache: Map<string, { data: unknown; timestamp: number }> = new Map();
   private cacheTimeout = 30000; // 30 seconds
 
   constructor() {
@@ -344,7 +344,7 @@ class PerformerService {
   }
 
   // Cache management
-  private getFromCache(key: string): any {
+  private getFromCache(key: string): unknown {
     const cached = this.cache.get(key);
     if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
       return cached.data;
@@ -353,7 +353,7 @@ class PerformerService {
     return null;
   }
 
-  private setCache(key: string, data: any): void {
+  private setCache(key: string, data: unknown): void {
     this.cache.set(key, { data, timestamp: Date.now() });
   }
 
@@ -413,7 +413,7 @@ class PerformerService {
     };
   }
 
-  subscribeToTipUpdates(callback: (update: any) => void): () => void {
+  subscribeToTipUpdates(callback: (update: unknown) => void): () => void {
     const handler = (event: CustomEvent) => {
       callback(event.detail);
     };
