@@ -108,7 +108,7 @@ class TransactionService {
       }
       
       // Prepare transaction options
-      const txOptions: any = {};
+      const txOptions: Record<string, unknown> = {};
       if (value) txOptions.value = value;
       if (gasLimit) txOptions.gasLimit = gasLimit;
 

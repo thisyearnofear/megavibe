@@ -132,9 +132,14 @@ class ProviderService {
       this.notifyConnectionListeners(true);
       
       return this.walletInfo!;
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle user rejected request
-      if (error.code === 4001) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code?: number }).code === 4001
+      ) {
         throw this.createError(
           BlockchainErrorType.USER_REJECTED,
           'User rejected the connection request',

@@ -130,17 +130,35 @@ class TippingService {
         if (!('args' in event)) {
           throw new Error('Event does not contain expected arguments');
         }
-        
-        const args = event.args as any;
-        return {
-          hash: event.transactionHash,
-          status: TransactionStatus.CONFIRMED,
-          timestamp: Number(args.timestamp),
-          from: args.sender,
-          to: args.recipient,
-          value: ethers.formatEther(args.amount),
-          blockNumber: event.blockNumber,
-        };
+
+        const argsUnknown = event.args as unknown;
+        // Safely check for required properties
+        if (
+          typeof argsUnknown === "object" &&
+          argsUnknown !== null &&
+          "timestamp" in argsUnknown &&
+          "sender" in argsUnknown &&
+          "recipient" in argsUnknown &&
+          "amount" in argsUnknown
+        ) {
+          const args = argsUnknown as {
+            timestamp: string | number;
+            sender: string;
+            recipient: string;
+            amount: string | bigint;
+          };
+          return {
+            hash: event.transactionHash,
+            status: TransactionStatus.CONFIRMED,
+            timestamp: Number(args.timestamp),
+            from: args.sender,
+            to: args.recipient,
+            value: ethers.formatEther(args.amount),
+            blockNumber: event.blockNumber,
+          };
+        } else {
+          throw new Error('Event arguments missing required fields');
+        }
       });
     } catch (error) {
       throw this.createError(

@@ -42,7 +42,21 @@ export default function MyContributions() {
         // Fetch uploaded moments (reusing performances API)
         const momentsRes = await fetch(`/api/performances?creator=${walletAddress}`);
         const momentsData = await momentsRes.json();
-        const moments: Performance[] = momentsData.performances.map((p: any) => ({ ...p, type: 'moment' }));
+
+        const isPerformance = (p: unknown): p is Performance =>
+          typeof p === "object" &&
+          p !== null &&
+          "cid" in p &&
+          "filename" in p &&
+          "filetype" in p &&
+          "creator" in p &&
+          "timestamp" in p;
+
+        const moments: Performance[] = Array.isArray(momentsData.performances)
+          ? momentsData.performances
+              .filter(isPerformance)
+              .map((p) => ({ ...p, type: 'moment' }))
+          : [];
 
         // TODO: Fetch tips and bounties from relevant APIs
         // For now, using mock data

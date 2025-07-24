@@ -61,7 +61,7 @@ export const TimeRangeSelector = memo(({
   options 
 }: {
   value: string;
-  onChange: (value: any) => void;
+  onChange: (value: string) => void;
   options: Array<{ value: string; label: string }>;
 }) => (
   <div className={styles.timeRangeSelector}>
@@ -89,7 +89,7 @@ export const ChartContainer = memo(({
 }: {
   title: string;
   type: "line" | "bar" | "doughnut" | "area";
-  data: any;
+  data: unknown;
   timeRange?: string;
   className?: string;
 }) => {
@@ -115,7 +115,7 @@ export const ChartContainer = memo(({
 ChartContainer.displayName = "ChartContainer";
 
 // Simple chart implementation (would be replaced with real chart library)
-const SimpleChart = memo(({ type, data }: { type: string; data: any }) => {
+const SimpleChart = memo(({ type, data }: { type: string; data: unknown }) => {
   if (!data || (Array.isArray(data) && data.length === 0)) {
     return (
       <div className={styles.emptyChart}>
@@ -124,23 +124,48 @@ const SimpleChart = memo(({ type, data }: { type: string; data: any }) => {
       </div>
     );
   }
-  
-  switch (type) {
-    case "line":
-      return <LineChart data={data} />;
-    case "bar":
-      return <BarChart data={data} />;
-    case "doughnut":
-      return <DoughnutChart data={data} />;
-    default:
-      return <div className={styles.chartPlaceholder}>Chart: {type}</div>;
+
+  if (type === "line" || type === "bar") {
+    // Data for line/bar chart is expected to be an array of { value: number, label: string }
+    if (
+      Array.isArray(data) &&
+      data.every(
+        (d) =>
+          typeof d === "object" &&
+          d !== null &&
+          "value" in d &&
+          typeof d.value === "number" &&
+          "label" in d &&
+          typeof d.label === "string"
+      )
+    ) {
+      if (type === "line") {
+        return <LineChart data={data as { value: number; label: string }[]} />;
+      }
+      if (type === "bar") {
+        return <BarChart data={data as { value: number; label: string }[]} />;
+      }
+    }
+    return <div className={styles.chartPlaceholder}>Invalid data for {type} chart</div>;
   }
+  if (type === "doughnut") {
+    // Data for doughnut is expected to be Record<string, number>
+    if (
+      typeof data === "object" &&
+      data !== null &&
+      !Array.isArray(data)
+    ) {
+      return <DoughnutChart data={data as Record<string, number>} />;
+    }
+    return <div className={styles.chartPlaceholder}>Invalid data for doughnut chart</div>;
+  }
+  return <div className={styles.chartPlaceholder}>Chart: {type}</div>;
 });
 
 SimpleChart.displayName = "SimpleChart";
 
 // Simple chart implementations (optimized for performance)
-const LineChart = memo(({ data }: { data: any[] }) => (
+const LineChart = memo(({ data }: { data: { value: number; label: string }[] }) => (
   <div className={styles.lineChart}>
     <svg viewBox="0 0 400 200" className={styles.chartSvg}>
       {/* Simple line chart implementation */}
@@ -167,7 +192,7 @@ const LineChart = memo(({ data }: { data: any[] }) => (
 
 LineChart.displayName = "LineChart";
 
-const BarChart = memo(({ data }: { data: any[] }) => (
+const BarChart = memo(({ data }: { data: { value: number; label: string }[] }) => (
   <div className={styles.barChart}>
     {data.map((item, index) => (
       <div key={index} className={styles.barItem}>
@@ -186,14 +211,14 @@ const BarChart = memo(({ data }: { data: any[] }) => (
 
 BarChart.displayName = "BarChart";
 
-const DoughnutChart = memo(({ data }: { data: any }) => {
-  const total = Object.values(data).reduce((sum: number, value: any) => sum + value, 0);
+const DoughnutChart = memo(({ data }: { data: Record<string, number> }) => {
+  const total = Object.values(data).reduce((sum: number, value: number) => sum + value, 0);
   let currentAngle = 0;
   
   return (
     <div className={styles.doughnutChart}>
       <svg viewBox="0 0 200 200" className={styles.chartSvg}>
-        {Object.entries(data).map(([key, value]: [string, any], index) => {
+        {Object.entries(data).map(([key, value], index) => {
           const percentage = value / total;
           const angle = percentage * 360;
           const startAngle = currentAngle;
@@ -222,7 +247,7 @@ const DoughnutChart = memo(({ data }: { data: any }) => {
       </svg>
       
       <div className={styles.doughnutLegend}>
-        {Object.entries(data).map(([key, value]: [string, any], index) => (
+        {Object.entries(data).map(([key, value], index) => (
           <div key={key} className={styles.legendItem}>
             <span 
               className={styles.legendColor}

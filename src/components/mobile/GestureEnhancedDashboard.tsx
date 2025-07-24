@@ -20,7 +20,7 @@ export default function GestureEnhancedDashboard() {
   const { walletAddress, isConnected } = useWalletConnection();
   const [currentSection, setCurrentSection] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [dashboardData, setDashboardData] = useState<unknown>(null);
 
   const { gestureState } = useAdvancedGestures({
     onSwipeLeft: () => {
@@ -207,7 +207,7 @@ export default function GestureEnhancedDashboard() {
 }
 
 // Section Components
-function PerformersSection({ dashboardData }: { dashboardData: any }) {
+function PerformersSection({ dashboardData }: { dashboardData: unknown }) {
   const mockPerformers = [
     {
       id: '1',
@@ -254,7 +254,7 @@ function PerformersSection({ dashboardData }: { dashboardData: any }) {
   );
 }
 
-function BountiesSection({ dashboardData }: { dashboardData: any }) {
+function BountiesSection({ dashboardData }: { dashboardData: unknown }) {
   const mockBounties = [
     { id: '1', title: 'Epic Guitar Solo', reward: '0.1 ETH', deadline: '2 days' },
     { id: '2', title: 'Beat Drop Challenge', reward: '0.05 ETH', deadline: '5 days' },
@@ -287,7 +287,7 @@ function BountiesSection({ dashboardData }: { dashboardData: any }) {
   );
 }
 
-function ActivitySection({ dashboardData }: { dashboardData: any }) {
+function ActivitySection({ dashboardData }: { dashboardData: unknown }) {
   return (
     <div className={styles.sectionInner}>
       <h3 className={styles.sectionHeader}>Recent Activity</h3>
@@ -313,7 +313,7 @@ function ActivitySection({ dashboardData }: { dashboardData: any }) {
   );
 }
 
-function AchievementsSection({ dashboardData }: { dashboardData: any }) {
+function AchievementsSection({ dashboardData }: { dashboardData: unknown }) {
   const achievements = [
     { id: '1', title: 'First Tip', icon: '🎉', unlocked: true },
     { id: '2', title: 'Generous Tipper', icon: '💎', unlocked: true },

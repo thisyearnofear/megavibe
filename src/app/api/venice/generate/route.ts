@@ -135,10 +135,14 @@ export async function POST(request: NextRequest) {
         decentralized: true
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    let message = "Unknown error";
+    if (typeof error === "object" && error && "message" in error) {
+      message = (error as { message?: string }).message || message;
+    }
     console.error('Venice AI generation error:', error);
     return NextResponse.json(
-      { error: `Server error: ${error.message}` }, 
+      { error: `Server error: ${message}` }, 
       { status: 500 }
     );
   }
