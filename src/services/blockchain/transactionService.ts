@@ -25,7 +25,7 @@ export interface TransactionError {
   message: string;
   retryable: boolean;
   suggestedAction?: string;
-  originalError?: any;
+  originalError?: unknown;
 }
 
 export type TransactionStatus = 'idle' | 'estimating' | 'confirming' | 'pending' | 'confirmed' | 'failed';
@@ -44,7 +44,7 @@ class TransactionService {
   async estimateGas(
     contractAddress: string,
     methodName: string,
-    params: any[],
+    params: unknown[],
     value?: string
   ): Promise<GasEstimate> {
     try {
@@ -92,7 +92,7 @@ class TransactionService {
   async sendTransaction(
     contractAddress: string,
     methodName: string,
-    params: any[],
+    params: unknown[],
     value?: string,
     gasLimit?: string
   ): Promise<TransactionResult> {
@@ -211,7 +211,7 @@ class TransactionService {
     return contract;
   }
 
-  private handleTransactionError(error: any): TransactionError {
+  private handleTransactionError(error: unknown): TransactionError {
     console.error('Transaction error:', error);
 
     // Parse common error types

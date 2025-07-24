@@ -72,21 +72,26 @@ class TippingService {
         to: contract.target as string,
         value: data.amount,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle user rejected transaction
-      if (error.code === 4001) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code?: number }).code === 4001
+      ) {
         throw this.createError(
           BlockchainErrorType.USER_REJECTED,
-          'User rejected the transaction',
-          'You declined the transaction. No tip was sent.'
+          "User rejected the transaction",
+          "You declined the transaction. No tip was sent."
         );
       }
-      
+
       // Handle other errors
       throw this.createError(
         BlockchainErrorType.TRANSACTION_ERROR,
-        'Failed to send tip',
-        'There was an error sending your tip. Please try again.',
+        "Failed to send tip",
+        "There was an error sending your tip. Please try again.",
         error
       );
     }
@@ -225,7 +230,7 @@ class TippingService {
     type: BlockchainErrorType,
     message: string,
     userMessage?: string,
-    details?: any
+    details?: unknown
   ): BlockchainError {
     return {
       type,

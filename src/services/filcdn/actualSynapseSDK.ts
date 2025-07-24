@@ -1,24 +1,24 @@
 // actualSynapseSDK.ts
 
 export const Synapse = class Synapse {
-  config: any;
+  config: unknown;
   
-  constructor(config: any) {
+  constructor(config: unknown) {
     this.config = config;
   }
   
-  static async create(config: any) {
+  static async create(config: unknown) {
     return new Synapse(config);
   }
 
-  async createStorage(options: any) {
+  async createStorage(options: unknown) {
     console.log('Creating storage with options:', options);
     return {
       upload: async (data: Uint8Array) => {
         console.log('Uploading data:', data);
         return { commp: { toString: () => 'mock-commp' } };
       },
-      providerDownload: async (cid: string, options?: any) => {
+      providerDownload: async (cid: string, options?: unknown) => {
         console.log('Downloading CID:', cid, 'with options:', options);
         return new Uint8Array([0, 1, 2, 3]);
       }
@@ -34,11 +34,11 @@ export const Synapse = class Synapse {
   }
 
   payments = {
-    deposit: async (amount: bigint, token?: any, callbacks?: any) => {
+    deposit: async (amount: bigint, token?: unknown, callbacks?: unknown) => {
       console.log('Depositing amount:', amount, 'with token:', token, 'and callbacks:', callbacks);
       return { transactionHash: 'mock-transaction-hash' };
     },
-    approveService: async (address: string, rate: bigint, amount: bigint, token?: any) => {
+    approveService: async (address: string, rate: bigint, amount: bigint, token?: unknown) => {
       console.log('Approving service with address:', address, 'rate:', rate, 'amount:', amount, 'and token:', token);
       return { transactionHash: 'mock-transaction-hash' };
     },
@@ -72,7 +72,7 @@ export const StorageService = class StorageService {
     return { commp: { toString: () => 'mock-commp' } };
   }
 
-  async providerDownload(cid: string, options?: any) {
+  async providerDownload(cid: string, options?: unknown) {
     console.log('Downloading CID:', cid, 'with options:', options);
     return new Uint8Array([0, 1, 2, 3]);
   }
@@ -82,7 +82,7 @@ export const PandoraService = class PandoraService {
   async checkAllowanceForStorage(
     dataSize: number,
     withCDN: boolean,
-    payments: any
+    payments: unknown
   ) {
     console.log('Checking allowance for storage with dataSize:', dataSize, 'withCDN:', withCDN, 'and payments:', payments);
     return {

@@ -246,7 +246,7 @@ class BountyService {
       const bounties = await contract.getActiveBountiesForEvent(eventId);
       
       // Transform raw contract data to our Bounty type with UI enhancements
-      return Promise.all(bounties.map(async (bounty: any, index: number) => {
+      return Promise.all(bounties.map(async (bounty: unknown, index: number) => {
         // Get the bounty ID
         const bountyIds = await contract.getEventBounties(eventId);
         const bountyId = Number(bountyIds[index]);
@@ -432,7 +432,7 @@ class BountyService {
     type: BlockchainErrorType,
     message: string,
     userMessage?: string,
-    details?: any
+    details?: unknown
   ): BlockchainError {
     return {
       type,
@@ -482,7 +482,7 @@ class BountyService {
         isCompleted: bounty.claimed,
         winningSubmissionId: bounty.claimed ? bounty.submissionHash : undefined
       };
-    } catch (error) {
+    } catch (error: unknown) {
       throw this.createError(
         BlockchainErrorType.CONTRACT_ERROR,
         `Failed to get detailed bounty #${bountyId}`,
@@ -521,21 +521,26 @@ class BountyService {
         bountyId,
         submissionHash
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle user rejected transaction
-      if (error.code === 4001) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code?: number }).code === 4001
+      ) {
         throw this.createError(
           BlockchainErrorType.USER_REJECTED,
-          'User rejected the transaction',
-          'You declined the transaction. The response was not submitted.'
+          "User rejected the transaction",
+          "You declined the transaction. The response was not submitted."
         );
       }
-      
+
       // Handle other errors
       throw this.createError(
         BlockchainErrorType.TRANSACTION_ERROR,
-        'Failed to submit bounty response',
-        'There was an error submitting your response. Please try again.',
+        "Failed to submit bounty response",
+        "There was an error submitting your response. Please try again.",
         error
       );
     }

@@ -73,11 +73,11 @@ dotenv.config({ path: options.env });
 
 // Logger with verbosity control
 const log = {
-  info: (message: string, ...args: any[]) => console.info(`[INFO] ${message}`, ...args),
-  success: (message: string, ...args: any[]) => console.log(`[SUCCESS] ${message}`, ...args),
-  warn: (message: string, ...args: any[]) => console.warn(`[WARN] ${message}`, ...args),
-  error: (message: string, ...args: any[]) => console.error(`[ERROR] ${message}`, ...args),
-  verbose: (message: string, ...args: any[]) => {
+  info: (message: string, ...args: unknown[]) => console.info(`[INFO] ${message}`, ...args),
+  success: (message: string, ...args: unknown[]) => console.log(`[SUCCESS] ${message}`, ...args),
+  warn: (message: string, ...args: unknown[]) => console.warn(`[WARN] ${message}`, ...args),
+  error: (message: string, ...args: unknown[]) => console.error(`[ERROR] ${message}`, ...args),
+  verbose: (message: string, ...args: unknown[]) => {
     if (options.verbose) console.log(`[DEBUG] ${message}`, ...args);
   }
 };
@@ -99,8 +99,9 @@ async function readEventsFromFile(filePath: string): Promise<Event[]> {
     
     log.verbose(`Successfully parsed ${events.length} events`);
     return events;
-  } catch (error: any) {
-    log.error(`Failed to read events from file: ${error.message || String(error)}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    log.error(`Failed to read events from file: ${message}`);
     throw error;
   }
 }
@@ -157,8 +158,9 @@ async function initializeFilCDN(): Promise<FilCDNService> {
     await filcdnService.initialize();
     log.success('FilCDN service initialized successfully');
     return filcdnService;
-  } catch (error: any) {
-    log.error('Failed to initialize FilCDN service:', error.message || String(error));
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    log.error('Failed to initialize FilCDN service:', message);
     throw error;
   }
 }
@@ -175,8 +177,9 @@ async function uploadEventsToFilCDN(events: Event[], filcdn: FilCDNService): Pro
     log.success(`Events uploaded successfully to FilCDN with CID: ${result.cid}`);
     log.verbose(`Upload details: ${JSON.stringify(result)}`);
     return result.cid;
-  } catch (error: any) {
-    log.error('Failed to upload events to FilCDN:', error.message || String(error));
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    log.error('Failed to upload events to FilCDN:', message);
     throw error;
   }
 }
@@ -205,8 +208,9 @@ async function updateEventsIndex(cid: string, filcdn: FilCDNService): Promise<vo
     
     fs.writeFileSync('events-index.json', JSON.stringify(indexData, null, 2));
     log.info('Events index saved to local file: events-index.json');
-  } catch (error: any) {
-    log.error('Failed to update events index:', error.message || String(error));
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    log.error('Failed to update events index:', message);
     throw error;
   }
 }
@@ -249,8 +253,9 @@ async function main() {
     log.info(`Events CID: ${eventsCid}`);
     log.info('You can now use this data in the MegaVibe application.');
     
-  } catch (error: any) {
-    log.error('Event upload process failed:', error.message || String(error));
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    log.error('Event upload process failed:', message);
     process.exit(1);
   }
 }

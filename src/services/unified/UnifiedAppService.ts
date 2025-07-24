@@ -15,7 +15,7 @@ export interface UserActivity {
   timestamp: number;
   amount?: string;
   target: string; // performer ID, event ID, etc.
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 export interface UserProfile {
@@ -39,7 +39,7 @@ export interface RecommendationEngine {
   recommendPerformers(userProfile: UserProfile): Promise<string[]>;
   recommendBounties(userProfile: UserProfile): Promise<string[]>;
   recommendEvents(userProfile: UserProfile): Promise<string[]>;
-  getPersonalizedFeed(userProfile: UserProfile): Promise<any[]>;
+  getPersonalizedFeed(userProfile: UserProfile): Promise<unknown[]>;
 }
 
 export class UnifiedAppService {
@@ -81,7 +81,7 @@ export class UnifiedAppService {
     performers: string[];
     bounties: string[];
     events: string[];
-    personalizedFeed: any[];
+    personalizedFeed: unknown[];
   }> {
     const profile = await this.initializeUserProfile(walletAddress);
     
@@ -129,7 +129,7 @@ export class UnifiedAppService {
   async getDashboardData(walletAddress: string): Promise<{
     profile: UserProfile;
     recentActivity: UserActivity[];
-    recommendations: any;
+    recommendations: unknown;
     achievements: string[];
     stats: {
       totalTipped: string;
@@ -214,12 +214,12 @@ export class UnifiedAppService {
     return [];
   }
 
-  private async getPersonalizedFeed(profile: UserProfile): Promise<any[]> {
+  private async getPersonalizedFeed(profile: UserProfile): Promise<unknown[]> {
     // Create personalized feed mixing all content types
     return [];
   }
 
-  private calculateStats(activities: UserActivity[]): any {
+  private calculateStats(activities: UserActivity[]): Record<string, unknown> {
     return {
       totalTipped: activities
         .filter(a => a.type === 'tip')

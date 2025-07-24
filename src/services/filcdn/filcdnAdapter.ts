@@ -46,7 +46,7 @@ export function createFilCDNAdapter(config: FilCDNAdapterConfig): FilCDNService 
         await serverService.initialize();
       },
       
-      storeData: async (data: any): Promise<StorageResult> => {
+      storeData: async (data: unknown): Promise<StorageResult> => {
         return await serverService.storeData(data);
       },
       
@@ -58,7 +58,7 @@ export function createFilCDNAdapter(config: FilCDNAdapterConfig): FilCDNService 
         return await serverService.getCDNUrl(cid);
       },
       
-      getStats: async (): Promise<any> => {
+      getStats: async (): Promise<unknown> => {
         return await serverService.getStats();
       }
     };
