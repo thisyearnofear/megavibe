@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRealFilCDNService } from "@/services/filcdn/realFilcdnService";
 
 // Initialize FilCDN service with private key from server environment
@@ -10,7 +10,6 @@ const filcdnService = createRealFilCDNService({
 
 // Track initialization state
 let isInitialized = false;
-let initError: string | null = null;
 let initializationPromise: Promise<void> | null = null;
 
 // Initialize the service
@@ -22,10 +21,8 @@ async function ensureInitialized() {
       try {
         await filcdnService.initialize();
         isInitialized = true;
-        initError = null;
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Failed to initialize FilCDN service:", err);
-        initError = err.message;
         throw err;
       }
     })();
@@ -53,11 +50,15 @@ export async function GET() {
         lastUpdated: stats.lastUpdated
       }
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    let message = "Unknown error";
+    if (typeof err === "object" && err && "message" in err) {
+      message = (err as { message?: string }).message || message;
+    }
     return NextResponse.json(
       { 
         status: "error", 
-        message: `FilCDN initialization failed: ${err.message}`,
+        message: `FilCDN initialization failed: ${message}`,
         initialized: false
       },
       { status: 500 }
