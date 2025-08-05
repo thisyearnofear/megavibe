@@ -55,7 +55,7 @@ export default function MyContributions() {
         const moments: Performance[] = Array.isArray(momentsData.performances)
           ? momentsData.performances
               .filter(isPerformance)
-              .map((p) => ({ ...p, type: 'moment' }))
+              .map((p: Performance) => ({ ...p, type: 'moment' }))
           : [];
 
         // TODO: Fetch tips and bounties from relevant APIs

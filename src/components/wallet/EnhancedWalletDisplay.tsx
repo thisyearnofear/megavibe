@@ -27,8 +27,17 @@ export default function EnhancedWalletDisplay({
     disconnectWallet,
     isInitialized,
   } = useWallet();
-  const { openWalletModal, isWalletModalOpen, closeWalletModal } =
-    useWalletConnection();
+  const { connect } = useWalletConnection();
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  
+  const openWalletModal = () => {
+    connect('metamask' as any);
+    setIsWalletModalOpen(true);
+  };
+  
+  const closeWalletModal = () => {
+    setIsWalletModalOpen(false);
+  };
   const { identity, loading } = useAddressResolver(walletAddress);
   const [showDropdown, setShowDropdown] = useState(false);
 

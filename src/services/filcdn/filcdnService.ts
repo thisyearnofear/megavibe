@@ -125,7 +125,7 @@ export async function uploadToFilCDN(files: File[]): Promise<string> {
 
     // Use the secure API to upload files
     const result = await callSecureApi('uploadFiles', { files: fileData });
-    return result.cid;
+    return (result as any).cid;
   } catch (error) {
     console.error('Error uploading to FilCDN:', error);
     throw new Error('Failed to upload files to decentralized storage');

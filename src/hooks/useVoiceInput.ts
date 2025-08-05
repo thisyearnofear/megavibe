@@ -61,7 +61,7 @@ export function useVoiceInput(): UseVoiceInputReturn {
 
     try {
       // Create recognition instance
-      let SpeechRecognitionCtor: new () => SpeechRecognitionType | undefined;
+      let SpeechRecognitionCtor: (new () => SpeechRecognitionType) | undefined = undefined;
       if (typeof window !== "undefined") {
         const win = window as unknown as Record<string, unknown>;
         SpeechRecognitionCtor = 

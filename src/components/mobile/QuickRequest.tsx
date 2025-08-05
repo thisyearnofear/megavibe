@@ -66,7 +66,10 @@ export default function QuickRequest({
   onClose,
   onComplete,
 }: QuickRequestProps) {
-  const { isConnected, connectWallet, balance } = useWalletConnection();
+  const { walletInfo, connect } = useWalletConnection();
+  const isConnected = walletInfo.isConnected;
+  const connectWallet = connect;
+  const balance = walletInfo.balance?.formatted || '0';
   const [selectedType, setSelectedType] = useState(REQUEST_TYPES[0]);
   const [requestText, setRequestText] = useState("");
   const [selectedAmount, setSelectedAmount] = useState(15);
@@ -117,7 +120,7 @@ export default function QuickRequest({
   };
 
   // Update request text when voice transcript changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (transcript && !isListening) {
       const cleanedTranscript = processTranscriptForVenue(transcript);
       if (cleanedTranscript) {
@@ -162,7 +165,7 @@ export default function QuickRequest({
       // Connect wallet if not connected
       if (!isConnected) {
         try {
-          await connectWallet(ProviderType.METAMASK);
+          await connectWallet('metamask' as any);
         } catch (error) {
           setTransactionError({
             type: "user_rejected",
@@ -251,7 +254,7 @@ export default function QuickRequest({
   const canSend =
     requestText.trim().length > 0 &&
     finalAmount > 0 &&
-    (!isConnected || parseFloat(balance.formatted) >= finalAmount);
+    (!isConnected || parseFloat(balance) >= finalAmount);
 
   return (
     <div className={styles.overlay}>
@@ -462,8 +465,8 @@ export default function QuickRequest({
 
         {isConnected && !transactionResult && (
           <div className={styles.walletInfo}>
-            <span>Balance: {balance.formatted} MNT</span>
-            {finalAmount > parseFloat(balance.formatted) && (
+            <span>Balance: {balance} MNT</span>
+            {finalAmount > parseFloat(balance) && (
               <span className={styles.insufficientFunds}>
                 Insufficient funds
               </span>

@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 // Venice AI API configuration
 const VENICE_API_KEY = process.env.VENICE_API_KEY;
 const VENICE_API_URL = 'https://api.venice.ai/api/v1/image/generate';
-const VENICE_STYLES_URL = 'https://api.venice.ai/api/v1/image/styles';
 
 // Valid style presets for Venice AI
 const VALID_STYLES = [

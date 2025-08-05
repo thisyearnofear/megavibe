@@ -14,20 +14,18 @@ interface WalletOption {
 }
 
 export default function WalletConnect() {
-  const {
-    isConnected,
-    walletAddress,
-    formattedAddress,
-    balance,
-    chainId,
-    isNetworkSupported,
-    disconnectWallet,
-    connectWallet,
-    isWalletModalOpen,
-    openWalletModal,
-    closeWalletModal,
-    switchNetwork,
-  } = useWalletConnection();
+  const { walletInfo, connect, disconnect, switchNetwork } = useWalletConnection();
+  const isConnected = walletInfo.isConnected;
+  const walletAddress = walletInfo.address;
+  const formattedAddress = walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : '';
+  const balance = walletInfo.balance?.formatted || '0';
+  const chainId = walletInfo.chainId;
+  const isNetworkSupported = walletInfo.isSupported;
+  const disconnectWallet = disconnect;
+  const connectWallet = connect;
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const openWalletModal = () => setIsWalletModalOpen(true);
+  const closeWalletModal = () => setIsWalletModalOpen(false);
 
   const [isConnecting, setIsConnecting] = useState(false);
 
@@ -57,7 +55,7 @@ export default function WalletConnect() {
   const handleConnectWallet = async (walletType: ProviderType) => {
     setIsConnecting(true);
     try {
-      await connectWallet(walletType);
+      await connectWallet(walletType as any);
     } catch (error) {
       console.error("Failed to connect wallet:", error);
     } finally {
@@ -85,7 +83,7 @@ export default function WalletConnect() {
               <span className={styles.addressValue}>{formattedAddress}</span>
             </div>
             <div className={styles.walletBalance}>
-              <span className={styles.balanceValue}>{balance.formatted}</span>
+              <span className={styles.balanceValue}>{balance}</span>
               <span className={styles.balanceUnit}>MNT</span>
             </div>
           </div>
@@ -103,7 +101,7 @@ export default function WalletConnect() {
           )}
 
           <button
-            onClick={disconnectWallet}
+            onClick={() => disconnectWallet()}
             className={styles.disconnectButton}
           >
             Disconnect

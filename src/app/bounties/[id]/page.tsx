@@ -46,7 +46,8 @@ interface ExtendedBountySubmission extends BountySubmission {
 export default function BountyDetailPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { walletAddress: account } = useWalletConnection();
+  const { walletInfo } = useWalletConnection();
+  const account = walletInfo.address;
   const [bounty, setBounty] = useState<ExtendedBountyDetails | null>(null);
   const [submissions, setSubmissions] = useState<ExtendedBountySubmission[]>(
     []
@@ -206,7 +207,7 @@ export default function BountyDetailPage() {
     return (
       <div className={styles.errorContainer}>
         <h2>Bounty Not Found</h2>
-        <p>The bounty you're looking for doesn't exist or has been removed.</p>
+        <p>The bounty you&apos;re looking for doesn&apos;t exist or has been removed.</p>
         <Button onClick={handleBack}>Go Back</Button>
       </div>
     );

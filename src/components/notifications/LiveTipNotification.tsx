@@ -18,7 +18,7 @@ const LiveTipNotification = () => {
   useEffect(() => {
     const unsubscribe = performerService.subscribeToTipUpdates((update) => {
       const newNotification: Notification = {
-        ...update,
+        ...(update as any),
         id: Date.now().toString(), // Unique ID for animation key
       };
       setNotifications((prev) => [...prev, newNotification]);

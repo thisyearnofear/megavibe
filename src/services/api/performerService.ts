@@ -107,7 +107,7 @@ class PerformerService {
       // Check cache first
       const cacheKey = `nearby_${query.lat}_${query.lng}_${query.radius}_${query.status}`;
       const cached = this.getFromCache(cacheKey);
-      if (cached) return cached;
+      if (cached && Array.isArray(cached)) return cached as PerformerProfile[];
 
       // Get all performers from storage
       const allPerformers = this.getAllPerformers();
@@ -157,7 +157,7 @@ class PerformerService {
     try {
       // Check cache first
       const cached = this.getFromCache(`performer_${performerId}`);
-      if (cached) return cached;
+      if (cached && typeof cached === 'object' && cached !== null) return cached as PerformerProfile;
 
       // Get from storage
       const performer = this.getPerformerProfile(performerId);

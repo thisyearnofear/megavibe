@@ -71,7 +71,6 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
           performer={selectedPerformer}
           isOpen={showTipModal}
           onClose={() => setShowTipModal(false)}
-          onComplete={handleTipComplete}
         />
       )}
 

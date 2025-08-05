@@ -10,11 +10,11 @@ import styles from "./page.module.css";
 type UserRole = "audience" | "performer" | "venue";
 
 export default function AnalyticsPage() {
-  const { isConnected } = useWalletConnection();
+  const { walletInfo } = useWalletConnection();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [userRole, setUserRole] = useState<UserRole>("audience");
 
-  if (!isConnected) {
+  if (!walletInfo.isConnected) {
     return (
       <div className={styles.container}>
         <div className={styles.connectPrompt}>

@@ -84,19 +84,20 @@ class EventService {
       // Use a different variable name to avoid confusion with ethers ContractEvent type
       // and explicitly cast the return value to any to handle the contract's custom structure
       const eventDataFromContract: unknown = await contract.getEvent(eventId);
+      const eventData = eventDataFromContract as any;
       
       return {
         id: eventId,
-        name: eventDataFromContract.name,
-        description: eventDataFromContract.description,
-        startTime: Number(eventDataFromContract.startTime),
-        endTime: Number(eventDataFromContract.endTime),
-        location: eventDataFromContract.location,
-        organizer: eventDataFromContract.organizer,
-        isActive: eventDataFromContract.isActive,
-        speakerIds: eventDataFromContract.speakerIds,
-        speakerCount: eventDataFromContract.speakerIds.length,
-        attendeeCount: Number(eventDataFromContract.attendeeCount),
+        name: eventData.name,
+        description: eventData.description,
+        startTime: Number(eventData.startTime),
+        endTime: Number(eventData.endTime),
+        location: eventData.location,
+        organizer: eventData.organizer,
+        isActive: eventData.isActive,
+        speakerIds: eventData.speakerIds,
+        speakerCount: eventData.speakerIds.length,
+        attendeeCount: Number(eventData.attendeeCount),
       };
     } catch (error) {
       throw this.createError(
@@ -159,15 +160,16 @@ class EventService {
     try {
       // Use a different variable name and explicitly cast to any
       const speakerDataFromContract: unknown = await contract.getSpeaker(speakerId);
+      const speakerData = speakerDataFromContract as any;
       
       return {
         id: speakerId,
-        name: speakerDataFromContract.name,
-        bio: speakerDataFromContract.bio,
-        profileImage: speakerDataFromContract.profileImage,
-        walletAddress: speakerDataFromContract.walletAddress,
-        eventIds: speakerDataFromContract.eventIds,
-        isActive: speakerDataFromContract.isActive,
+        name: speakerData.name,
+        bio: speakerData.bio,
+        profileImage: speakerData.profileImage,
+        walletAddress: speakerData.walletAddress,
+        eventIds: speakerData.eventIds,
+        isActive: speakerData.isActive,
       };
     } catch (error) {
       throw this.createError(

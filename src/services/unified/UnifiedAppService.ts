@@ -146,7 +146,12 @@ export class UnifiedAppService {
       recentActivity: profile.activities.slice(0, 10),
       recommendations,
       achievements: profile.achievements,
-      stats: this.calculateStats(profile.activities)
+      stats: this.calculateStats(profile.activities) as {
+        totalTipped: string;
+        bountiesCreated: number;
+        bountiesCompleted: number;
+        eventsAttended: number;
+      }
     };
   }
 

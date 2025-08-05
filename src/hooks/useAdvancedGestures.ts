@@ -199,9 +199,10 @@ export function useAdvancedGestures(options: AdvancedGestureOptions = {}) {
     }
   }, [onDoubleTap, onLongPress, enableHaptics, enableRotation, doubleTapDelay, longPressDelay]);
 
-  const handleTouchMove = useCallback(throttle((e: TouchEvent) => {
-    if (e.touches.length === 1 && touchStartRef.current) {
-      const touch = e.touches[0];
+  const handleTouchMove = useCallback(throttle((e: unknown) => {
+    const touchEvent = e as TouchEvent;
+    if (touchEvent.touches.length === 1 && touchStartRef.current) {
+      const touch = touchEvent.touches[0];
       const deltaY = touch.clientY - touchStartRef.current.y;
       
       // Clear long press if moved too much
@@ -213,17 +214,17 @@ export function useAdvancedGestures(options: AdvancedGestureOptions = {}) {
       if (deltaY > 80 && window.scrollY === 0 && onPullToRefresh) {
         setGestureState(prev => ({ ...prev, touchPosition: { x: touch.clientX, y: touch.clientY } }));
       }
-    } else if (e.touches.length === 2 && initialTouchesRef.current) {
-      const currentDistance = getDistance(e.touches[0], e.touches[1]);
+    } else if (touchEvent.touches.length === 2 && initialTouchesRef.current) {
+      const currentDistance = getDistance(touchEvent.touches[0], touchEvent.touches[1]);
       const initialDistance = getDistance(initialTouchesRef.current[0], initialTouchesRef.current[1]);
       const scale = currentDistance / initialDistance;
-      const center = getCenter(e.touches[0], e.touches[1]);
+      const center = getCenter(touchEvent.touches[0], touchEvent.touches[1]);
       
       setGestureState(prev => ({ ...prev, pinchScale: scale }));
       onPinch?.(scale, center);
       
       if (enableRotation) {
-        const currentAngle = getAngle(e.touches[0], e.touches[1]);
+        const currentAngle = getAngle(touchEvent.touches[0], touchEvent.touches[1]);
         const rotationDelta = currentAngle - lastAngleRef.current;
         
         setGestureState(prev => ({ 

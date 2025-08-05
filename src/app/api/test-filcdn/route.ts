@@ -5,7 +5,7 @@ import { createRealFilCDNService } from '@/services/filcdn/realFilcdnService';
  * Test endpoint to verify Synapse SDK integration
  * GET /api/test-filcdn - Test basic SDK functionality
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log('🧪 Testing Synapse SDK integration...');
     
@@ -47,13 +47,13 @@ export async function GET(request: NextRequest) {
     try {
       console.log('📊 Testing service stats...');
       const stats = await filcdnService.getStats();
-      testResults.tests.serviceStats = {
+      (testResults.tests as any).serviceStats = {
         success: true,
         stats: stats
       };
     } catch (error) {
       console.warn('⚠️ Service stats test failed:', error);
-      testResults.tests.serviceStats = {
+      (testResults.tests as any).serviceStats = {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error'
       };
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
         });
         
         const result = await filcdnService.storeData(testData);
-        testResults.tests.dataStorage = {
+        (testResults.tests as any).dataStorage = {
           success: true,
           cid: result.cid,
           size: result.size,
@@ -78,13 +78,13 @@ export async function GET(request: NextRequest) {
         };
       } catch (error) {
         console.warn('⚠️ Data storage test failed:', error);
-        testResults.tests.dataStorage = {
+        (testResults.tests as any).dataStorage = {
           success: false,
           error: error instanceof Error ? error.message : 'Unknown error'
         };
       }
     } else {
-      testResults.tests.dataStorage = {
+      (testResults.tests as any).dataStorage = {
         skipped: true,
         reason: 'Not in development environment or missing private key'
       };

@@ -11,7 +11,7 @@ import WalletConnect from "@/components/wallet/WalletConnect";
 
 export default function CreateBountyPage() {
   const router = useRouter();
-  const { isConnected } = useWalletConnection();
+  const { walletInfo } = useWalletConnection();
   const [success, setSuccess] = useState(false);
 
   const handleBack = () => {
@@ -52,7 +52,7 @@ export default function CreateBountyPage() {
               bounties list...
             </p>
           </div>
-        ) : isConnected ? (
+        ) : walletInfo.isConnected ? (
           <BountyCreationForm onSuccess={handleSuccess} />
         ) : (
           <div className={styles.walletPrompt}>

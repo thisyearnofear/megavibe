@@ -20,7 +20,9 @@ export default function PhotoFirstBounty({
   onClose,
   onComplete,
 }: PhotoFirstBountyProps) {
-  const { isConnected, connectWallet } = useWalletConnection();
+  const { walletInfo, connect } = useWalletConnection();
+  const isConnected = walletInfo.isConnected;
+  const connectWallet = connect;
   const [step, setStep] = useState<"photo" | "details" | "confirm">("photo");
   const [photo, setPhoto] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState("song");
@@ -99,7 +101,7 @@ export default function PhotoFirstBounty({
 
   const handleCreateBounty = async () => {
     if (!isConnected) {
-      await connectWallet(ProviderType.METAMASK);
+      await connectWallet('metamask' as any);
       return;
     }
 

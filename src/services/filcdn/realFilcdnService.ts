@@ -68,16 +68,16 @@ export class RealFilCDNService {
     const sdk = await getSynapseSDK();
     const contractAddresses = await getContractAddresses();
     const network = this.synapse.getNetwork();
-    const pandoraAddress = contractAddresses.PANDORA_SERVICE[network];
+    const pandoraAddress = (contractAddresses as any).PANDORA_SERVICE[network];
     
     const signer = this.synapse.getSigner();
-    if (!signer || !signer.provider) {
+    if (!signer || !(signer as any).provider) {
       throw new Error("Provider not found");
     }
     
     // Initialize Pandora service for allowance checks
-    const pandoraService = new sdk.PandoraService(
-      signer.provider,
+    const pandoraService = new (sdk as any).PandoraService(
+      (signer as any).provider,
       pandoraAddress
     );
 
@@ -153,8 +153,7 @@ export class RealFilCDNService {
       // Initialize Synapse SDK
       this.synapse = await sdk.Synapse.create({
         privateKey: this.config.privateKey || "",
-        rpcURL: this.config.rpcURL || rpcUrls.calibration.websocket,
-        withCDN: this.config.withCDN
+        rpcUrl: this.config.rpcURL || (rpcUrls as any).calibration.websocket
       });
 
       // Perform initial preflight check with minimum size for proof set creation
@@ -167,28 +166,28 @@ export class RealFilCDNService {
 
       this.storage = await this.synapse.createStorage({
         callbacks: {
-          onProviderSelected: (provider) => {
-            console.log(`✓ Selected storage provider: ${provider.owner}`);
-            console.log(`  PDP URL: ${provider.pdpUrl}`);
+          onProviderSelected: (provider: any) => {
+            console.log(`✓ Selected storage provider: ${(provider as any).owner}`);
+            console.log(`  PDP URL: ${(provider as any).pdpUrl}`);
             this.providerInfo = {
-              owner: provider.owner,
-              pdpUrl: provider.pdpUrl,
+              owner: (provider as any).owner,
+              pdpUrl: (provider as any).pdpUrl,
               speed: 0 // Will be updated later
             };
           },
-          onProofSetResolved: (info) => {
-            if (info.isExisting) {
-              console.log(`✓ Using existing proof set: ${info.proofSetId}`);
+          onProofSetResolved: (info: any) => {
+            if ((info as any).isExisting) {
+              console.log(`✓ Using existing proof set: ${(info as any).proofSetId}`);
             } else {
-              console.log(`✓ Created new proof set: ${info.proofSetId}`);
+              console.log(`✓ Created new proof set: ${(info as any).proofSetId}`);
             }
-            this.proofSetId = info.proofSetId;
+            this.proofSetId = (info as any).proofSetId;
           },
-          onProofSetCreationStarted: (transaction, statusUrl) => {
-            console.log(`  Creating proof set, tx: ${transaction.hash}`);
+          onProofSetCreationStarted: (transaction: any, statusUrl: any) => {
+            console.log(`  Creating proof set, tx: ${(transaction as any).hash}`);
           },
-          onProofSetCreationProgress: (progress) => {
-            if (progress.transactionMined && !progress.proofSetLive) {
+          onProofSetCreationProgress: (progress: any) => {
+            if ((progress as any).transactionMined && !(progress as any).proofSetLive) {
               console.log('  Transaction mined, waiting for proof set to be live...');
             }
           },

@@ -45,7 +45,7 @@ export default function GestureEnhancedCard({
   const cardRef = useRef<HTMLDivElement>(null);
 
   const { gestureState } = useAdvancedGestures({
-    onSwipeLeft: (velocity) => {
+    onSwipeLeft: () => {
       if (enableSwipeActions && onSwipeLeft) {
         setSwipeOffset(-100);
         hapticFeedback('MEDIUM');
@@ -55,7 +55,7 @@ export default function GestureEnhancedCard({
         }, 200);
       }
     },
-    onSwipeRight: (velocity) => {
+    onSwipeRight: () => {
       if (enableSwipeActions && onSwipeRight) {
         setSwipeOffset(100);
         hapticFeedback('MEDIUM');
@@ -65,14 +65,14 @@ export default function GestureEnhancedCard({
         }, 200);
       }
     },
-    onLongPress: (position) => {
+    onLongPress: () => {
       if (enableLongPress && onLongPress) {
         setIsPressed(true);
         onLongPress();
         setTimeout(() => setIsPressed(false), 300);
       }
     },
-    onDoubleTap: (position) => {
+    onDoubleTap: () => {
       if (enableDoubleTap && onDoubleTap) {
         onDoubleTap();
       }

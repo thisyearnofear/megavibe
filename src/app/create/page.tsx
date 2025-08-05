@@ -16,7 +16,7 @@ const ForPerformers = () => (
       <div className={styles.comingSoonCard}>
         <div className={styles.comingSoonIcon}>📈</div>
         <h3 className={styles.comingSoonTitle}>Audience Analytics</h3>
-        <p className={styles.comingSoonDescription}>Get insights into your audience's engagement and preferences.</p>
+        <p className={styles.comingSoonDescription}>Get insights into your audience&apos;s engagement and preferences.</p>
       </div>
     </div>
   </div>

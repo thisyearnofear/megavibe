@@ -39,7 +39,10 @@ const getContextInfo = (pathname: string): ContextInfo => {
 
 export default function MobileTopBar() {
   const pathname = usePathname();
-  const { isConnected, formattedAddress, balance } = useWalletConnection();
+  const { walletInfo } = useWalletConnection();
+  const isConnected = walletInfo.isConnected;
+  const formattedAddress = walletInfo.address ? `${walletInfo.address.slice(0, 6)}...${walletInfo.address.slice(-4)}` : '';
+  const balance = walletInfo.balance?.formatted || '0';
   const contextInfo = getContextInfo(pathname);
 
   const handleBack = () => {
@@ -71,7 +74,7 @@ export default function MobileTopBar() {
         {isConnected ? (
           <div className={styles.walletInfo}>
             <div className={styles.walletBalance}>
-              <span className={styles.balanceAmount}>{balance.formatted}</span>
+              <span className={styles.balanceAmount}>{balance}</span>
               <span className={styles.balanceUnit}>MNT</span>
             </div>
             <div className={styles.walletAddress}>

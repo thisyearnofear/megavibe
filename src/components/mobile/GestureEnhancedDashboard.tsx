@@ -17,7 +17,9 @@ interface DashboardSection {
 }
 
 export default function GestureEnhancedDashboard() {
-  const { walletAddress, isConnected } = useWalletConnection();
+  const { walletInfo } = useWalletConnection();
+  const walletAddress = walletInfo.address;
+  const isConnected = walletInfo.isConnected;
   const [currentSection, setCurrentSection] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [dashboardData, setDashboardData] = useState<unknown>(null);

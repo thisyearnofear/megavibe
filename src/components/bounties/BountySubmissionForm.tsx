@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import {
   FaUpload,
   FaFile,
@@ -9,7 +8,7 @@ import {
   FaUser,
   FaEthereum,
 } from "react-icons/fa";
-import { BsPinAngleFill, BsTagsFill } from "react-icons/bs";
+import { BsPinAngleFill } from "react-icons/bs";
 import { format } from "date-fns";
 
 import styles from "./BountySubmissionForm.module.css";
@@ -37,7 +36,9 @@ export default function BountySubmissionForm({
   onSuccess,
 }: BountySubmissionFormProps) {
   const router = useRouter();
-  const { walletAddress, isConnected, connectWallet } = useWalletConnection();
+  const { walletInfo } = useWalletConnection();
+  const walletAddress = walletInfo.address;
+  const isConnected = walletInfo.isConnected;
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState<boolean>(false);

@@ -107,15 +107,6 @@ class RealQRService {
       console.error('Failed to generate custom QR code:', error);
       throw new Error('Custom QR code generation failed');
     }
-  },
-        errorCorrectionLevel: options.errorCorrectionLevel || 'M'
-      };
-
-      return await QRCode.toDataURL(JSON.stringify(data), qrOptions);
-    } catch (error) {
-      console.error('Failed to generate custom QR code:', error);
-      throw new Error('Custom QR code generation failed');
-    }
   }
 
   async scanQRFromImageData(

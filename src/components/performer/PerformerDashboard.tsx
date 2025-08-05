@@ -27,7 +27,10 @@ interface RecentActivity {
 type PerformerStatus = "offline" | "live" | "break" | "finished";
 
 export default function PerformerDashboard() {
-  const { isConnected, walletAddress, balance } = useWalletConnection();
+  const { walletInfo } = useWalletConnection();
+  const isConnected = walletInfo.isConnected;
+  const walletAddress = walletInfo.address;
+  const balance = walletInfo.balance?.formatted || '0';
   const { location, hasPermission } = useLocation();
   const [status, setStatus] = useState<PerformerStatus>("offline");
   const [stats, setStats] = useState<PerformanceStats>({
@@ -290,7 +293,7 @@ export default function PerformerDashboard() {
         <div className={styles.walletStatus}>
           <h3>💳 Wallet Status</h3>
           <div className={styles.walletDetails}>
-            <p>Balance: {balance.formatted} MNT</p>
+            <p>Balance: {balance} MNT</p>
             <p>Address: {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}</p>
           </div>
         </div>

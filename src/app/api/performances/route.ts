@@ -11,7 +11,7 @@ const performanceSchema = z.object({
 
 type Performance = z.infer<typeof performanceSchema>;
 
-let performances: Performance[] = [];
+const performances: Performance[] = [];
 
 export async function POST(req: NextRequest) {
   try {

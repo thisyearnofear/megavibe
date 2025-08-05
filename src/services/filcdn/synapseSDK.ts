@@ -4,7 +4,7 @@
  */
 const isDevelopment = process.env.NODE_ENV === 'development';
 const isTestEnvironment = process.env.NEXT_PUBLIC_USE_MOCK_SDK === 'true';
-const isStorybook = process.env.NODE_ENV === 'test' || typeof window !== 'undefined' && (window as unknown as { __STORYBOOK_ADDONS__?: unknown }).__STORYBOOK_ADDONS__;
+const isStorybook = process.env.NODE_ENV === 'test' || typeof window !== 'undefined' && Boolean((window as unknown as { __STORYBOOK_ADDONS__?: unknown }).__STORYBOOK_ADDONS__);
 
 // Type definitions for better TypeScript support
 export interface SynapseConfig {
@@ -93,7 +93,7 @@ async function loadSynapseSDK(): Promise<{
     }
 
     return {
-      Synapse: realSDK.Synapse,
+      Synapse: realSDK.Synapse as any,
       RPC_URLS: realSDK.RPC_URLS || {},
       TOKENS: realSDK.TOKENS || {},
       CONTRACT_ADDRESSES: realSDK.CONTRACT_ADDRESSES || {},

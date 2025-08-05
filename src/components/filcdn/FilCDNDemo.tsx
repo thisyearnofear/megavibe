@@ -24,7 +24,6 @@ export default function FilCDNDemo() {
   const {
     storeData,
     retrieveData,
-    getCdnUrl,
     loading,
     error,
     lastCid,
@@ -34,7 +33,7 @@ export default function FilCDNDemo() {
     maxRetries: 3,
   });
 
-  const { isInitialized, isInitializing, stats, reInitialize } = useFilCDN();
+  const { isInitialized, isInitializing, reInitialize } = useFilCDN();
 
   // Load stored files from local storage on component mount
   useEffect(() => {

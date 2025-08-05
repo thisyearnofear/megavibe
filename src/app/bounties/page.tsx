@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { FaEthereum, FaClock, FaSearch, FaPlus } from "react-icons/fa";
+import { FaSearch, FaPlus } from "react-icons/fa";
 import BountyList from "@/components/bounties/BountyList";
-import { bountyService } from "@/services/blockchain";
 import {
   BountyDetails,
   BountyStatus,
@@ -18,7 +17,7 @@ import Container from "@/components/layout/Container";
 
 export default function BountiesPage() {
   const router = useRouter();
-  const { isConnected } = useWalletConnection();
+  const { walletInfo } = useWalletConnection();
   const [bounties, setBounties] = useState<BountyDetails[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -170,7 +169,7 @@ export default function BountiesPage() {
               Discover opportunities or create your own bounties
             </p>
           </div>
-          {isConnected && (
+          {walletInfo.isConnected && (
             <Button
               onClick={handleCreateBounty}
               variant="primary"
@@ -232,7 +231,7 @@ export default function BountiesPage() {
           <div className={styles.emptyState}>
             <h3>No bounties found</h3>
             <p>Try adjusting your filters or create a new bounty</p>
-            {isConnected && (
+            {walletInfo.isConnected && (
               <Button
                 onClick={handleCreateBounty}
                 variant="primary"

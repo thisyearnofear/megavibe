@@ -214,8 +214,10 @@ class TransactionService {
   private handleTransactionError(error: unknown): TransactionError {
     console.error('Transaction error:', error);
 
+    const errorObj = error as any;
+    
     // Parse common error types
-    if (error.code === 'INSUFFICIENT_FUNDS') {
+    if (errorObj.code === 'INSUFFICIENT_FUNDS') {
       return {
         type: 'insufficient_funds',
         message: 'Insufficient funds to complete transaction',
@@ -225,7 +227,7 @@ class TransactionService {
       };
     }
 
-    if (error.code === 'ACTION_REJECTED' || error.code === 4001) {
+    if (errorObj.code === 'ACTION_REJECTED' || errorObj.code === 4001) {
       return {
         type: 'user_rejected',
         message: 'Transaction was rejected by user',
@@ -235,7 +237,7 @@ class TransactionService {
       };
     }
 
-    if (error.code === 'NETWORK_ERROR') {
+    if (errorObj.code === 'NETWORK_ERROR') {
       return {
         type: 'network_error',
         message: 'Network connection error',
@@ -245,7 +247,7 @@ class TransactionService {
       };
     }
 
-    if (error.message?.includes('gas')) {
+    if (errorObj.message?.includes('gas')) {
       return {
         type: 'gas_too_high',
         message: 'Gas fees are too high',
@@ -258,7 +260,7 @@ class TransactionService {
     // Generic contract error
     return {
       type: 'contract_error',
-      message: error.message || 'Transaction failed',
+      message: errorObj.message || 'Transaction failed',
       retryable: true,
       suggestedAction: 'Please try again',
       originalError: error

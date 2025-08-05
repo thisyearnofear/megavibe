@@ -7,7 +7,8 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { providerService, ProviderType } from "@/services/blockchain";
+import { ProviderType } from "@/services/blockchain/providerService";
+import { useWalletConnection } from "@/hooks/useWalletConnection";
 
 interface WalletContextType {
   isConnected: boolean;
@@ -50,151 +51,48 @@ interface WalletProviderProps {
 }
 
 export function WalletProvider({ children }: WalletProviderProps) {
-  const [isConnected, setIsConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState("");
-  const [chainId, setChainId] = useState(0);
-  const [isNetworkSupported, setIsNetworkSupported] = useState(false);
-  const [balance, setBalance] = useState({ mnt: "0", formatted: "0" });
+  // Use the new wallet connection hook
+  const { walletInfo, connect, disconnect, switchNetwork } = useWalletConnection();
+
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize provider service when component mounts
   useEffect(() => {
-    const initializeProvider = async () => {
-      try {
-        await providerService.initialize();
-
-        // Check if wallet is already connected
-        const walletInfo = providerService.getWalletInfo();
-        if (walletInfo && walletInfo.isConnected) {
-          setIsConnected(true);
-          setWalletAddress(walletInfo.address);
-          setChainId(walletInfo.chainId);
-          setIsNetworkSupported(walletInfo.isSupported);
-          setBalance({
-            mnt: walletInfo.balance.mnt,
-            formatted: walletInfo.balance.formatted,
-          });
-        }
-      } catch (error) {
-        console.error("Failed to initialize wallet provider:", error);
-      } finally {
-        setIsInitialized(true);
-      }
-    };
-
-    initializeProvider();
-
-    // Set up event listeners
-    providerService.onAccountChanged(handleAccountChanged);
-    providerService.onChainChanged(handleChainChanged);
-    providerService.onConnectionChanged(handleConnectionChanged);
-
-    // Clean up event listeners on unmount
-    return () => {
-      providerService.removeAccountChangedListener(handleAccountChanged);
-      providerService.removeChainChangedListener(handleChainChanged);
-      providerService.removeConnectionChangedListener(handleConnectionChanged);
-    };
+    // Mark as initialized since we're using wagmi hooks directly
+    setIsInitialized(true);
   }, []);
 
   const connectWallet = async (walletType: ProviderType) => {
     try {
-      const walletInfo = await providerService.connect(walletType);
-
-      setIsConnected(true);
-      setWalletAddress(walletInfo.address);
-      setChainId(walletInfo.chainId);
-      setIsNetworkSupported(walletInfo.isSupported);
-      setBalance({
-        mnt: walletInfo.balance.mnt,
-        formatted: walletInfo.balance.formatted,
-      });
+      await connect(walletType);
+      // WalletInfo will be updated via event listeners
     } catch (error) {
       console.error("Failed to connect wallet:", error);
-      setIsConnected(false);
-      // Re-throw the error so components can handle it
       throw error;
     }
   };
 
   const disconnectWallet = () => {
-    providerService.disconnect();
-    setIsConnected(false);
-    setWalletAddress("");
-    setChainId(0);
-    setIsNetworkSupported(false);
-    setBalance({ mnt: "0", formatted: "0" });
+    disconnect();
   };
 
-  const switchNetwork = async (targetChainId: number) => {
+  const switchNetworkWrapper = async (targetChainId: number) => {
     try {
-      await providerService.switchNetwork(targetChainId);
-
-      // Update wallet info after network switch
-      const walletInfo = providerService.getWalletInfo();
-      if (walletInfo) {
-        setChainId(walletInfo.chainId);
-        setIsNetworkSupported(walletInfo.isSupported);
-        setBalance({
-          mnt: walletInfo.balance.mnt,
-          formatted: walletInfo.balance.formatted,
-        });
-      }
+      await switchNetwork(targetChainId);
     } catch (error) {
       console.error("Failed to switch network:", error);
-    }
-  };
-
-  // Handle account change events
-  const handleAccountChanged = (address: string) => {
-    setWalletAddress(address);
-
-    // Update balance
-    const walletInfo = providerService.getWalletInfo();
-    if (walletInfo) {
-      setBalance({
-        mnt: walletInfo.balance.mnt,
-        formatted: walletInfo.balance.formatted,
-      });
-    }
-  };
-
-  // Handle chain change events
-  const handleChainChanged = (newChainId: number) => {
-    setChainId(newChainId);
-
-    // Update network support status and balance
-    const walletInfo = providerService.getWalletInfo();
-    if (walletInfo) {
-      setIsNetworkSupported(walletInfo.isSupported);
-      setBalance({
-        mnt: walletInfo.balance.mnt,
-        formatted: walletInfo.balance.formatted,
-      });
-    }
-  };
-
-  // Handle connection state change events
-  const handleConnectionChanged = (connected: boolean) => {
-    setIsConnected(connected);
-
-    if (!connected) {
-      setWalletAddress("");
-      setChainId(0);
-      setIsNetworkSupported(false);
-      setBalance({ mnt: "0", formatted: "0" });
+      throw error;
     }
   };
 
   const value = {
-    isConnected,
-    walletAddress,
-    chainId,
-    isNetworkSupported,
-    balance,
+    isConnected: walletInfo.isConnected,
+    walletAddress: walletInfo.address,
+    chainId: walletInfo.chainId,
+    isNetworkSupported: walletInfo.isSupported,
+    balance: walletInfo.balance,
     connectWallet,
     disconnectWallet,
-    switchNetwork,
+    switchNetwork: switchNetworkWrapper,
     isInitialized,
   };
 

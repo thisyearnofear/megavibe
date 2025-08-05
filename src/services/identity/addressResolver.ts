@@ -252,23 +252,24 @@ class AddressResolverService {
    * Parse ensdata.net response
    */
   private parseEnsdataResponse(data: unknown, originalInput: string): ResolvedIdentity {
-    const address = data.address || originalInput;
-    const ensName = data.ens_primary || data.name;
+    const dataObj = data as any;
+    const address = dataObj.address || originalInput;
+    const ensName = dataObj.ens_primary || dataObj.name;
     
     return {
       address,
       ensName,
       displayName: ensName || this.formatAddress(address),
-      avatar: data.avatar_url || data.avatar,
-      description: data.description,
-      platforms: this.extractPlatforms(data),
+      avatar: dataObj.avatar_url || dataObj.avatar,
+      description: dataObj.description,
+      platforms: this.extractPlatforms(dataObj),
       social: {
-        twitter: data.twitter,
-        github: data.github,
-        farcaster: data.farcaster?.username,
+        twitter: dataObj.twitter,
+        github: dataObj.github,
+        farcaster: dataObj.farcaster?.username,
       },
       links: {
-        website: data.url || data.website,
+        website: dataObj.url || dataObj.website,
       },
     };
   }
@@ -282,27 +283,28 @@ class AddressResolverService {
     }
 
     // Primary profile (usually ENS)
-    const primary = data[0];
+    const primary = data[0] as any;
     const platforms: string[] = [];
     const social: ResolvedIdentity['social'] = {};
     const links: ResolvedIdentity['links'] = {};
 
     // Aggregate data from all platforms
     data.forEach(profile => {
-      platforms.push(profile.platform);
+      const profileObj = profile as any;
+      platforms.push(profileObj.platform);
       
-      if (profile.links) {
-        Object.assign(links, profile.links);
+      if (profileObj.links) {
+        Object.assign(links, profileObj.links);
         
         // Extract social links
-        if (profile.links.twitter) {
-          social.twitter = profile.links.twitter.handle;
+        if (profileObj.links.twitter) {
+          social.twitter = profileObj.links.twitter.handle;
         }
-        if (profile.links.github) {
-          social.github = profile.links.github.handle;
+        if (profileObj.links.github) {
+          social.github = profileObj.links.github.handle;
         }
-        if (profile.links.farcaster) {
-          social.farcaster = profile.links.farcaster.handle;
+        if (profileObj.links.farcaster) {
+          social.farcaster = profileObj.links.farcaster.handle;
         }
       }
     });

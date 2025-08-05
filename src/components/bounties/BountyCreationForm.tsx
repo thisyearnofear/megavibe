@@ -16,14 +16,9 @@ interface BountyCreationFormProps {
 export default function BountyCreationForm({
   onSuccess,
 }: BountyCreationFormProps) {
-  const {
-    isConnected,
-    walletAddress,
-    chainId,
-    isNetworkSupported,
-    openWalletModal,
-    switchNetwork,
-  } = useWalletConnection();
+  const { walletInfo, connect, switchNetwork } = useWalletConnection();
+  const isConnected = walletInfo.isConnected;
+  const isNetworkSupported = walletInfo.isSupported;
 
   // Form state
   const [title, setTitle] = useState("");
@@ -101,7 +96,7 @@ export default function BountyCreationForm({
 
     // Validation
     if (!isConnected) {
-      openWalletModal();
+      connect('metamask' as any);
       return;
     }
 

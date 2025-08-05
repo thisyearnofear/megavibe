@@ -13,7 +13,6 @@ import {
   Skeleton,
   Button,
 } from "@mui/material";
-import OptimizedNavigation from "@/components/navigation/OptimizedNavigation";
 import styles from "./page.module.css";
 
 type GalleryItem = {

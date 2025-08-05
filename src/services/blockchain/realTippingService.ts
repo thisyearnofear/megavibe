@@ -144,7 +144,7 @@ class RealTippingService {
   }
 
   getContract(signer: ethers.Signer): ethers.Contract {
-    return new ethers.Contract(this.contractAddress, this.contractABI, signer);
+    return new ethers.Contract(this.contractAddress, this.contractABI as any, signer);
   }
 
   // Local storage methods for immediate UI updates

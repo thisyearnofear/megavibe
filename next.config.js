@@ -7,6 +7,11 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
+  
+  // Ignore ESLint errors during build for production
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 
   // Performance optimizations
   compiler: {

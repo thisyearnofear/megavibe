@@ -1,86 +1,63 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useWallet } from '../contexts/WalletContext';
-import { ProviderType } from '@/services/blockchain';
+'use client';
 
-export interface WalletConnectionHook {
+import { useAccount, useBalance, useDisconnect, useChainId, useSwitchChain } from 'wagmi';
+import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { mainnet, sepolia } from 'wagmi/chains';
+import { useEffect } from 'react';
+import { ProviderType } from '@/services/blockchain/providerService';
+
+export interface WalletInfo {
   isConnected: boolean;
-  walletAddress: string;
-  formattedAddress: string;
+  address: string;
   chainId: number;
-  isNetworkSupported: boolean;
+  isSupported: boolean;
   balance: {
     mnt: string;
     formatted: string;
   };
-  connectWallet: (walletType: ProviderType) => Promise<void>;
-  disconnectWallet: () => void;
-  switchNetwork: (chainId: number) => Promise<void>;
-  isWalletModalOpen: boolean;
-  openWalletModal: () => void;
-  closeWalletModal: () => void;
 }
 
-/**
- * Custom hook for wallet connection functionality
- * Provides a simplified interface for components to interact with wallet features
- */
-export function useWalletConnection(): WalletConnectionHook {
-  const { 
-    isConnected, 
-    walletAddress, 
-    chainId,
-    isNetworkSupported,
-    balance, 
-    connectWallet, 
-    disconnectWallet,
-    switchNetwork
-  } = useWallet();
-  
-  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
-  
-  // Format wallet address for display (0x1234...5678)
-  const formattedAddress = useMemo(() => {
-    if (!walletAddress) return '';
-    return `${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`;
-  }, [walletAddress]);
+export function useWalletConnection() {
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const { data: balanceData } = useBalance({ address });
+  const { disconnect } = useDisconnect();
+  const { switchChain } = useSwitchChain();
+  const { open } = useWeb3Modal();
 
-  // Close modal when wallet is connected
-  useEffect(() => {
-    if (isConnected) {
-      setIsWalletModalOpen(false);
+  const walletInfo: WalletInfo = {
+    isConnected: isConnected,
+    address: address || "",
+    chainId: chainId || 0,
+    isSupported: chainId ? [mainnet.id, sepolia.id].includes(chainId as any) : false,
+    balance: {
+      mnt: balanceData?.value.toString() || "0",
+      formatted: balanceData?.formatted || "0",
+    },
+  };
+
+  const connect = async (_walletType: ProviderType) => {
+    open();
+    return walletInfo;
+  };
+
+  const switchNetwork = async (targetChainId: number) => {
+    if (switchChain) {
+      try {
+        await switchChain({ chainId: targetChainId });
+      } catch (error) {
+        console.error("Failed to switch network:", error);
+        throw error;
+      }
+    } else {
+      console.warn("Switch network function not available.");
     }
-  }, [isConnected]);
-
-  const openWalletModal = useCallback(() => {
-    setIsWalletModalOpen(true);
-  }, []);
-
-  const closeWalletModal = useCallback(() => {
-    setIsWalletModalOpen(false);
-  }, []);
-
-  // Enhanced wallet connection that shows the modal if needed
-  const handleConnectWallet = useCallback(async (walletType: ProviderType) => {
-    try {
-      await connectWallet(walletType);
-    } catch (error) {
-      console.error('Wallet connection error:', error);
-      // Keep modal open on error
-    }
-  }, [connectWallet]);
+  };
 
   return {
-    isConnected,
-    walletAddress,
-    formattedAddress,
-    chainId,
-    isNetworkSupported,
-    balance,
-    connectWallet: handleConnectWallet,
-    disconnectWallet,
+    walletInfo,
+    connect,
+    disconnect,
     switchNetwork,
-    isWalletModalOpen,
-    openWalletModal,
-    closeWalletModal,
   };
 }

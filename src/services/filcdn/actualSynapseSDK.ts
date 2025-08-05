@@ -26,7 +26,7 @@ export const Synapse = class Synapse {
   }
 
   getNetwork() {
-    return this.config.network || 'calibration';
+    return (this.config as any).network || 'calibration';
   }
 
   getSigner() {

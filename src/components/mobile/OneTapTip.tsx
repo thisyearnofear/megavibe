@@ -6,7 +6,7 @@ import { realTippingService } from "@/services/blockchain/realTippingService";
 import { ProviderType } from "@/services/blockchain/types";
 import { PerformerProfile } from "@/services/api/performerService";
 import { MOBILE_CONSTANTS } from "@/constants/mobile";
-import { hapticFeedback, formatCurrency } from "@/utils/mobile";
+import { hapticFeedback } from "@/utils/mobile";
 import styles from "./OneTapTip.module.css";
 
 interface Performer extends PerformerProfile {
@@ -18,7 +18,6 @@ interface OneTapTipProps {
   performer: Performer;
   isOpen: boolean;
   onClose: () => void;
-  onComplete: () => void;
 }
 
 const { TIP_PRESETS, APPROVAL_PRESETS } = MOBILE_CONSTANTS;
@@ -27,10 +26,11 @@ export default function OneTapTip({
   performer,
   isOpen,
   onClose,
-  onComplete,
 }: OneTapTipProps) {
-  const { isConnected, connectWallet, balance } = useWalletConnection();
-  const [selectedAmount, setSelectedAmount] = useState(5);
+  const { walletInfo, connect } = useWalletConnection();
+  const isConnected = walletInfo.isConnected;
+  const connectWallet = connect;
+  const [selectedAmount] = useState(5);
   const [approvedAmount, setApprovedAmount] = useState(0);
   const [isApproving, setIsApproving] = useState(false);
   const [isTipping, setIsTipping] = useState(false);
@@ -71,7 +71,7 @@ export default function OneTapTip({
 
   const handleOneTapTip = async (amount: number) => {
     if (!isConnected) {
-      await connectWallet(ProviderType.METAMASK);
+      await connectWallet('metamask' as any);
       return;
     }
 
@@ -85,7 +85,7 @@ export default function OneTapTip({
       setIsTipping(true);
       hapticFeedback("LIGHT"); // Immediate feedback
 
-      const result = await realTippingService.sendTip(
+      await realTippingService.sendTip(
         performer.id,
         amount,
         "Quick tip! 🚀"
@@ -97,7 +97,7 @@ export default function OneTapTip({
       // Update approved amount
       setApprovedAmount((prev) => prev - amount);
 
-      onComplete();
+      onClose();
     } catch (error) {
       console.error("Tip failed:", error);
       hapticFeedback("ERROR"); // Error haptic

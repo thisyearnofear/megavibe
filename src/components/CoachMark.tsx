@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, ReactNode, RefObject } from "react";
+import React, { useEffect, useState, RefObject } from "react";
 import styles from "./CoachMark.module.css";
 
 interface CoachMarkProps {

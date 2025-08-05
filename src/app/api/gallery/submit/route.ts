@@ -15,7 +15,7 @@ type GallerySubmission = z.infer<typeof gallerySubmissionSchema>;
 
 // In-memory store for gallery submissions
 // In a production app, this would be stored in a database
-let gallerySubmissions: GallerySubmission[] = [];
+const gallerySubmissions: GallerySubmission[] = [];
 
 export async function POST(req: NextRequest) {
   try {

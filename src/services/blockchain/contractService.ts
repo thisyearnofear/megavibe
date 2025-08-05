@@ -163,7 +163,11 @@ export class ContractService {
     address: string;
     error?: string;
   }>> {
-    const results: Record<string, unknown> = {};
+    const results: Record<string, {
+      deployed: boolean;
+      address: string;
+      error?: string;
+    }> = {};
     
     for (const contractName of Object.keys(CONTRACTS) as Array<keyof typeof CONTRACTS>) {
       results[contractName] = await this.validateContractDeployment(contractName, chainId);

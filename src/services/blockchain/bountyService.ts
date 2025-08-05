@@ -257,13 +257,14 @@ class BountyService {
       
       // Transform raw contract data to our Bounty type with UI enhancements
       return Promise.all(bounties.map(async (bounty: unknown, index: number) => {
+        const bountyData = bounty as any;
         // Get the bounty ID
         const bountyIds = await contract.getEventBounties(eventId);
         const bountyId = Number(bountyIds[index]);
         
         // Calculate time left for display
         const currentTime = Math.floor(Date.now() / 1000);
-        const deadlineTime = Number(bounty.deadline);
+        const deadlineTime = Number(bountyData.deadline);
         const timeLeftSeconds = deadlineTime - currentTime;
         
         let timeLeft = '';
@@ -278,28 +279,28 @@ class BountyService {
         }
         
         // Determine bounty type based on event and speaker IDs
-        const type = bounty.eventId.startsWith('performer-') 
+        const type = bountyData.eventId.startsWith('performer-') 
           ? 'performer-to-audience' 
           : 'audience-to-performer';
         
         return {
           id: bountyId,
-          sponsor: bounty.sponsor,
-          reward: ethers.formatEther(bounty.reward),
-          eventId: bounty.eventId,
-          speakerId: bounty.speakerId,
-          description: bounty.description,
-          deadline: Number(bounty.deadline),
-          claimed: bounty.claimed,
-          claimant: bounty.claimant,
-          submissionHash: bounty.submissionHash,
-          createdAt: Number(bounty.createdAt),
+          sponsor: bountyData.sponsor,
+          reward: ethers.formatEther(bountyData.reward),
+          eventId: bountyData.eventId,
+          speakerId: bountyData.speakerId,
+          description: bountyData.description,
+          deadline: Number(bountyData.deadline),
+          claimed: bountyData.claimed,
+          claimant: bountyData.claimant,
+          submissionHash: bountyData.submissionHash,
+          createdAt: Number(bountyData.createdAt),
           
           // UI enhancements
           type,
           timeLeft,
-          title: this.generateBountyTitle(bounty.description, type),
-          tags: this.extractTags(bounty.description),
+          title: this.generateBountyTitle(bountyData.description, type),
+          tags: this.extractTags(bountyData.description),
         };
       }));
     } catch (error) {

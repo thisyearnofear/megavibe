@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { FaEthereum, FaClock, FaSearch, FaPlus } from "react-icons/fa";
+import { FaEthereum, FaClock } from "react-icons/fa";
 import styles from "./BountyList.module.css";
 import { BountyDetails, BountyType } from "@/services/blockchain/types";
 import { formatEthAmount, formatDate } from "@/utils/formatting";

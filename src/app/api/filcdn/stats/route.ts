@@ -17,7 +17,6 @@ const filcdnService = createRealFilCDNService({
 
 // Track initialization state
 let isInitialized = false;
-let initError: string | null = null;
 let initializationPromise: Promise<void> | null = null;
 
 // Initialize the service
@@ -29,10 +28,8 @@ async function ensureInitialized() {
       try {
         await filcdnService.initialize();
         isInitialized = true;
-        initError = null;
       } catch (err: any) {
         console.error("Failed to initialize FilCDN service:", err);
-        initError = err.message;
         throw err;
       }
     })();
@@ -55,8 +52,8 @@ export async function GET() {
       initialized: isInitialized,
       proofSetId: stats.proofSetId,
       lastUpdated: stats.lastUpdated,
-      providerPdpUrl: stats.provider?.pdpUrl || null,
-      providerSpeed: stats.provider?.speed || null
+      providerPdpUrl: (stats.provider as any)?.pdpUrl || null,
+      providerSpeed: (stats.provider as any)?.speed || null
     };
     
     return NextResponse.json(safeStats);

@@ -11,7 +11,7 @@ export default function UploadPage() {
       <Container>
         <h1 className={styles.title}>File Upload</h1>
         <p className={styles.description}>
-          Upload and manage your content on MegaVibe's decentralized storage
+          Upload and manage your content on MegaVibe&apos;s decentralized storage
           system. Files uploaded here are stored securely on the Filecoin
           network.
         </p>

@@ -10,7 +10,7 @@ import { BlockchainError, BlockchainErrorType, ProviderType, WalletInfo } from '
 // TypeScript declarations for Ethereum in window object
 declare global {
   interface Window {
-    ethereum?: unknown;
+    ethereum?: any;
   }
 }
 

@@ -34,7 +34,9 @@ interface OnboardingStep {
 }
 
 export default function PerformerOnboarding() {
-  const { isConnected, connectWallet } = useWalletConnection();
+  const { walletInfo, connect } = useWalletConnection();
+  const isConnected = walletInfo.isConnected;
+  const connectWallet = connect;
   const { location, requestLocation } = useLocation();
   const [currentStep, setCurrentStep] = useState(0);
   const [profile, setProfile] = useState<Partial<PerformerProfile>>({
@@ -166,7 +168,9 @@ export default function PerformerOnboarding() {
 
 // Step Components
 const WalletStep = ({ onNext }: { onNext: () => void }) => {
-  const { isConnected, connectWallet } = useWalletConnection();
+  const { walletInfo, connect } = useWalletConnection();
+  const isConnected = walletInfo.isConnected;
+  const connectWallet = connect;
 
   React.useEffect(() => {
     if (isConnected) {
@@ -192,7 +196,7 @@ const WalletStep = ({ onNext }: { onNext: () => void }) => {
           </p>
           <button
             className={styles.connectButton}
-            onClick={() => connectWallet(ProviderType.METAMASK)}
+            onClick={() => connectWallet('metamask' as any)}
           >
             Connect MetaMask
           </button>
