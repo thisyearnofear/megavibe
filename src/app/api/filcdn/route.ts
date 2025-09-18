@@ -241,7 +241,7 @@ export async function GET() {
     console.log('🔍 FilCDN API health check requested');
     
     // Get detailed service status
-    const status = {
+    let status: any = {
       status: isInitialized ? "operational" : "initializing",
       initialized: isInitialized,
       error: initError,

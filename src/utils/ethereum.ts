@@ -16,7 +16,7 @@ export interface EthereumProvider {
 
 declare global {
   interface Window {
-    ethereum?: EthereumProvider;
+    ethereum?: any;
   }
 }
 
@@ -193,9 +193,9 @@ export function detectWalletProviders(): {
     hasEthereum,
     providerInfo: {
       isMetaMask: hasMetaMask,
-      chainId: getCurrentChainId(),
-      selectedAddress: getSelectedAddress(),
-      isConnected: isProviderConnected(),
+      chainId: getCurrentChainId() || undefined,
+      selectedAddress: getSelectedAddress() || undefined,
+      isConnected: isProviderConnected() || undefined,
     },
   };
 }

@@ -932,7 +932,7 @@ function createPlaceholderImage(prompt: string, style?: string) {
 // Export the component wrapped in ErrorBoundary
 export default function AIImageGenerator() {
   return (
-    <ErrorBoundary fallback={<AIGeneratorErrorFallback />}>
+    <ErrorBoundary fallback={AIGeneratorErrorFallback}>
       <AIImageGeneratorInner />
     </ErrorBoundary>
   );

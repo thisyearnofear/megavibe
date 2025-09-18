@@ -457,17 +457,17 @@ class ProviderService {
         const ethereumProvider = getEthereumProvider();
         if (ethereumProvider) {
           this.provider = new ethers.BrowserProvider(ethereumProvider as any);
-        }
-        if (this.walletInfo?.isConnected) {
-          this.signer = await this.provider.getSigner();
-          await this.updateWalletInfo();
-          
-          // Notify chain changed listeners
-          if (this.walletInfo) {
-            const chainId = parseInt(chainIdHex, 16);
-            this.chainChangedListeners.forEach(listener => {
-              listener(chainId);
-            });
+          if (this.walletInfo?.isConnected) {
+            this.signer = await this.provider.getSigner();
+            await this.updateWalletInfo();
+            
+            // Notify chain changed listeners
+            if (this.walletInfo) {
+              const chainId = parseInt(chainIdHex, 16);
+              this.chainChangedListeners.forEach(listener => {
+                listener(chainId);
+              });
+            }
           }
         }
       } else {
