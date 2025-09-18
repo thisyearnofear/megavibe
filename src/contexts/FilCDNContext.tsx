@@ -5,6 +5,7 @@ import React, {
   useContext,
   useState,
   useEffect,
+  useMemo,
   ReactNode,
 } from "react";
 import {
@@ -121,10 +122,10 @@ export const FilCDNProvider: React.FC<FilCDNProviderProps> = ({ children }) => {
 
   // Initialize FilCDN on component mount
   useEffect(() => {
-    if (!isInitialized && !isInitializing) {
+    if (!isInitialized && !isInitializing && !filcdn) {
       initializeFilCDN();
     }
-  }, [isInitialized, isInitializing]);
+  }, []); // Empty dependency array to prevent infinite loops
 
   // Store data in FilCDN
   const storeData = async (data: unknown): Promise<StorageResult> => {
@@ -135,8 +136,7 @@ export const FilCDNProvider: React.FC<FilCDNProviderProps> = ({ children }) => {
     try {
       return await filcdn.storeData(data);
     } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Unknown error";
+      const message = err instanceof Error ? err.message : "Unknown error";
       setError(`Failed to store data: ${message}`);
       throw err;
     }
@@ -151,8 +151,7 @@ export const FilCDNProvider: React.FC<FilCDNProviderProps> = ({ children }) => {
     try {
       return await filcdn.retrieveData(cid);
     } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Unknown error";
+      const message = err instanceof Error ? err.message : "Unknown error";
       setError(`Failed to retrieve data: ${message}`);
       throw err;
     }
@@ -167,8 +166,7 @@ export const FilCDNProvider: React.FC<FilCDNProviderProps> = ({ children }) => {
     try {
       return await filcdn.getCDNUrl(cid);
     } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Unknown error";
+      const message = err instanceof Error ? err.message : "Unknown error";
       setError(`Failed to get CDN URL: ${message}`);
       throw err;
     }
@@ -199,19 +197,22 @@ export const FilCDNProvider: React.FC<FilCDNProviderProps> = ({ children }) => {
     return () => clearInterval(interval);
   }, [filcdn, isInitialized]);
 
-  // Provide context value
-  const contextValue: FilCDNContextState = {
-    filcdn,
-    isInitialized,
-    isInitializing,
-    error,
-    stats,
-    storeData,
-    retrieveData,
-    getCDNUrl,
-    clearError,
-    reInitialize,
-  };
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo<FilCDNContextState>(
+    () => ({
+      filcdn,
+      isInitialized,
+      isInitializing,
+      error,
+      stats,
+      storeData,
+      retrieveData,
+      getCDNUrl,
+      clearError,
+      reInitialize,
+    }),
+    [filcdn, isInitialized, isInitializing, error, stats]
+  );
 
   return (
     <FilCDNContext.Provider value={contextValue}>

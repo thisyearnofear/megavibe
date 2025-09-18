@@ -11,7 +11,7 @@ import {
   BountyType,
 } from "@/services/blockchain/types";
 import styles from "./page.module.css";
-import Button from "@/components/ui/Button";
+import Button from "@/components/shared/Button";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import Container from "@/components/layout/Container";
 
@@ -173,7 +173,7 @@ export default function BountiesPage() {
             <Button
               onClick={handleCreateBounty}
               variant="primary"
-              icon={<FaPlus />}
+              leftIcon={<FaPlus />}
             >
               Create Bounty
             </Button>

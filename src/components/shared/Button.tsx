@@ -5,12 +5,14 @@ import React from "react";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "accent" | "outline" | "ghost";
+  variant?: "primary" | "secondary" | "accent" | "outline" | "ghost" | "tip" | "bounty";
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   fullWidth?: boolean;
+  success?: boolean;
+  hapticFeedback?: boolean;
 }
 
 function Button({
@@ -23,6 +25,9 @@ function Button({
   fullWidth = false,
   className = "",
   disabled,
+  success = false,
+  hapticFeedback = true,
+  onClick,
   ...props
 }: ButtonProps) {
   const buttonClasses = [
@@ -31,10 +36,22 @@ function Button({
     size !== "md" && `btn-${size}`,
     fullWidth && "w-full",
     (disabled || isLoading) && "btn-disabled",
+    success && "btn-success",
     className,
   ]
     .filter(Boolean)
     .join(" ");
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (disabled || isLoading) return;
+    
+    // Haptic feedback for mobile
+    if (hapticFeedback && typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(50);
+    }
+    
+    onClick?.(e);
+  };
 
   const renderContent = () => {
     if (isLoading) {
@@ -42,6 +59,15 @@ function Button({
         <>
           <div className="loading-spinner loading-spinner-sm" />
           Loading...
+        </>
+      );
+    }
+
+    if (success) {
+      return (
+        <>
+          <span>✨</span>
+          Success!
         </>
       );
     }
@@ -59,6 +85,7 @@ function Button({
     <button
       className={buttonClasses}
       disabled={disabled || isLoading}
+      onClick={handleClick}
       {...props}
     >
       {renderContent()}

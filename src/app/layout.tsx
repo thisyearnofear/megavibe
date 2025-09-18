@@ -85,6 +85,7 @@ import { WalletProvider } from "@/contexts/WalletContext";
 import { BlockchainProvider } from "@/components/layout/BlockchainProvider";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import MobileLayout from "@/components/mobile/MobileLayout";
+import { ClientOnlyWeb3Provider } from "@/components/providers/ClientOnlyWeb3Provider";
 
 export default function RootLayout({
   children,
@@ -95,17 +96,19 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
       <body>
         <ErrorBoundary>
-          <FilCDNProvider>
-            <WalletProvider>
-              <BlockchainProvider>
-                <MobileLayout>
-                  <OptimizedNavigation />
-                  {children}
-                  <Footer />
-                </MobileLayout>
-              </BlockchainProvider>
-            </WalletProvider>
-          </FilCDNProvider>
+          <ClientOnlyWeb3Provider>
+            <FilCDNProvider>
+              <WalletProvider>
+                <BlockchainProvider>
+                  <MobileLayout>
+                    <OptimizedNavigation />
+                    {children}
+                    <Footer />
+                  </MobileLayout>
+                </BlockchainProvider>
+              </WalletProvider>
+            </FilCDNProvider>
+          </ClientOnlyWeb3Provider>
         </ErrorBoundary>
       </body>
     </html>

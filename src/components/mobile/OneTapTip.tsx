@@ -7,6 +7,8 @@ import { ProviderType } from "@/services/blockchain/types";
 import { PerformerProfile } from "@/services/api/performerService";
 import { MOBILE_CONSTANTS } from "@/constants/mobile";
 import { hapticFeedback } from "@/utils/mobile";
+import Button from "@/components/shared/Button";
+import { LoadingSpinner } from "@/components/shared/LoadingStates";
 import styles from "./OneTapTip.module.css";
 
 interface Performer extends PerformerProfile {
@@ -143,9 +145,15 @@ export default function OneTapTip({
               <p className={styles.performerType}>{performer.type}</p>
             </div>
           </div>
-          <button className={styles.closeButton} onClick={onClose}>
-            ✕
-          </button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onClose}
+            className={styles.closeButton}
+            hapticFeedback={false}
+          >
+            ×
+          </Button>
         </div>
 
         <div className={styles.content}>
@@ -155,12 +163,14 @@ export default function OneTapTip({
               <span className={styles.approvalLabel}>Pre-approved:</span>
               <span className={styles.approvalAmount}>${approvedAmount}</span>
             </div>
-            <button
-              className={styles.settingsButton}
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setShowApprovalSettings(true)}
+              className={styles.settingsButton}
             >
               ⚙️
-            </button>
+            </Button>
           </div>
 
           {/* One-Tap Preset Buttons */}
@@ -223,23 +233,28 @@ export default function OneTapTip({
 
               <div className={styles.approvalGrid}>
                 {APPROVAL_PRESETS.map((amount) => (
-                  <button
+                  <Button
                     key={amount}
+                    variant="outline"
+                    size="sm"
                     className={styles.approvalButton}
                     onClick={() => handleApproval(amount)}
                     disabled={isApproving}
+                    isLoading={isApproving}
                   >
                     ${amount}
-                  </button>
+                  </Button>
                 ))}
               </div>
 
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 className={styles.cancelButton}
                 onClick={() => setShowApprovalSettings(false)}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           </div>
         )}

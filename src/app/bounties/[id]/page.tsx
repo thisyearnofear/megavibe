@@ -12,7 +12,7 @@ import {
   FaArrowLeft,
 } from "react-icons/fa";
 import styles from "./page.module.css";
-import Button from "@/components/ui/Button";
+import Button from "@/components/shared/Button";
 import BountySubmissionForm from "@/components/bounties/BountySubmissionForm";
 import { formatAddress, formatEthAmount, formatDate } from "@/utils/formatting";
 import { bountyService } from "@/services/blockchain";
@@ -382,7 +382,7 @@ export default function BountyDetailPage() {
               {bounty.status === BountyStatus.OPEN && (
                 <Button
                   onClick={() => cancelBounty(bounty.id)}
-                  variant="danger"
+                  variant="secondary"
                 >
                   Cancel Bounty
                 </Button>

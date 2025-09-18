@@ -8,6 +8,9 @@ import {
   PerformerProfile,
 } from "@/services/api/performerService";
 import QRScanner from "./QRScanner";
+import Button from "@/components/shared/Button";
+import { BaseCard } from "@/components/shared/BaseCard";
+import { LoadingSpinner } from "@/components/shared/LoadingStates";
 import styles from "./QuickDiscovery.module.css";
 
 // Use PerformerProfile from the service
@@ -249,15 +252,21 @@ const QuickActions = ({
   return (
     <>
       <div className={styles.quickActions}>
-        <button className={styles.qrButton} onClick={handleQRScan}>
-          <span className={styles.qrIcon}>📷</span>
+        <Button
+          variant="primary"
+          size="lg"
+          className={styles.qrButton}
+          onClick={handleQRScan}
+          leftIcon="📷"
+          fullWidth
+        >
           <div className={styles.qrText}>
             <span className={styles.qrTitle}>Scan QR Code</span>
             <span className={styles.qrSubtitle}>
               Quick connect to performer
             </span>
           </div>
-        </button>
+        </Button>
 
         <div className={styles.searchContainer}>
           <span className={styles.searchIcon}>🔍</span>
@@ -408,25 +417,31 @@ const PerformerQuickCard = ({
       </div>
 
       <div className={styles.quickActions}>
-        <button
+        <Button
+          variant="tip"
+          size="sm"
           className={styles.tipButton}
           onClick={onQuickTip}
           disabled={
             performer.status === "offline" || !performer.preferences.acceptsTips
           }
+          leftIcon="💰"
         >
-          💰 TIP
-        </button>
-        <button
+          TIP
+        </Button>
+        <Button
+          variant="bounty"
+          size="sm"
           className={styles.requestButton}
           onClick={onQuickRequest}
           disabled={
             performer.status === "offline" ||
             !performer.preferences.acceptsRequests
           }
+          leftIcon="🎯"
         >
-          🎯 REQUEST
-        </button>
+          REQUEST
+        </Button>
       </div>
     </div>
   );
@@ -454,9 +469,15 @@ const EmptyState = ({
     ) : (
       <p>No performers are currently active in your area</p>
     )}
-    <button className={styles.refreshButton} onClick={onRefresh}>
-      🔄 Refresh
-    </button>
+    <Button 
+      variant="secondary" 
+      size="sm"
+      className={styles.refreshButton} 
+      onClick={onRefresh}
+      leftIcon="🔄"
+    >
+      Refresh
+    </Button>
   </div>
 );
 
@@ -471,8 +492,14 @@ const ErrorState = ({
     <div className={styles.errorIcon}>⚠️</div>
     <h3>Unable to load performers</h3>
     <p>{error}</p>
-    <button className={styles.retryButton} onClick={onRetry}>
-      🔄 Try Again
-    </button>
+    <Button 
+      variant="primary" 
+      size="md"
+      className={styles.retryButton} 
+      onClick={onRetry}
+      leftIcon="🔄"
+    >
+      Try Again
+    </Button>
   </div>
 );

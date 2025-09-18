@@ -3,14 +3,40 @@ import React from "react";
 interface LoadingSpinnerProps {
   size?: "sm" | "md" | "lg";
   className?: string;
+  message?: string;
+  type?: "general" | "tip" | "bounty" | "discovery" | "upload";
 }
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = "md",
   className = "",
+  message,
+  type = "general",
 }) => {
   const sizeClass = size !== "md" ? `loading-spinner-${size}` : "";
-  return <div className={`loading-spinner ${sizeClass} ${className}`} />;
+  
+  const getContextualMessage = () => {
+    if (message) return message;
+    
+    switch (type) {
+      case "tip": return "Sending your tip with love... 💝";
+      case "bounty": return "Creating your bounty... 🎯";
+      case "discovery": return "Finding amazing performers... 🎭";
+      case "upload": return "Uploading your content... 📤";
+      default: return "Working on it... 🔧";
+    }
+  };
+  
+  return (
+    <div className={`flex-center flex-col gap-md ${className}`}>
+      <div className={`loading-spinner ${sizeClass}`} />
+      {(message || type !== "general") && (
+        <p className="text-secondary text-sm animate-pulse">
+          {getContextualMessage()}
+        </p>
+      )}
+    </div>
+  );
 };
 
 interface LoadingDotsProps {

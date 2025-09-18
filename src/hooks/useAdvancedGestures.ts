@@ -197,7 +197,7 @@ export function useAdvancedGestures(options: AdvancedGestureOptions = {}) {
       
       setGestureState(prev => ({ ...prev, isPinching: true }));
     }
-  }, [onDoubleTap, onLongPress, enableHaptics, enableRotation, doubleTapDelay, longPressDelay]);
+  }, [doubleTapDelay, longPressDelay, onDoubleTap, onLongPress, enableHaptics, enableRotation]);
 
   const handleTouchMove = useCallback(throttle((e: unknown) => {
     const touchEvent = e as TouchEvent;

@@ -4,15 +4,28 @@
 }
 
 .title {
+  font-family: var(--font-display);
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
   text-align: center;
+  color: var(--text-primary);
 }
 
 .subtitle {
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
   text-align: center;
+  font-size: 1.125rem;
+}
+
+.errorMessage {
+  text-align: center;
+  margin: 2rem 0;
+  padding: 1rem;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--border-radius-md);
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
 }
 
 .galleryGrid {
@@ -43,25 +56,31 @@
 }
 
 .noItemsTitle {
+  font-family: var(--font-display);
   font-size: 1.5rem;
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 1rem;
 }
 
 .noItemsText {
-  color: #888;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
 }
 
 .card {
+  background: var(--background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
   height: 100%;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .cardMedia {
@@ -69,38 +88,56 @@
   width: 100%;
   height: 0;
   padding-top: 75%;
+  overflow: hidden;
 }
 
 .cardContent {
   flex-grow: 1;
+  padding: var(--space-lg);
 }
 
-.imageTitle {
+.cardTitle {
+  font-family: var(--font-display);
   font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.cardCreator {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-sm) 0;
   font-weight: 500;
-  margin-bottom: 0.5rem;
 }
 
-.imageDescription {
-  color: #666;
-  margin-bottom: 0.5rem;
+.cardDescription {
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-md) 0;
+  line-height: 1.5;
 }
 
-.imageStyle {
+.cardMeta {
+  margin-top: var(--space-md);
+}
+
+.stylePreset {
   display: inline-block;
   font-size: 0.75rem;
-  background-color: #f0f0f0;
+  background: var(--primary);
+  color: white;
   border-radius: 12px;
-  padding: 3px 8px;
-  margin-right: 6px;
-  margin-top: 6px;
+  padding: 4px 8px;
+  margin-bottom: var(--space-sm);
+  font-weight: 500;
 }
 
-.imageCreator {
-  font-size: 0.75rem;
-  color: #888;
-  display: block;
-  margin-top: 6px;
+.prompt {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin: 0;
+  line-height: 1.4;
 }
 
 /* Loading skeleton animation */

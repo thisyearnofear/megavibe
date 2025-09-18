@@ -140,7 +140,7 @@ export const useDataFetching = <T>(
   // Auto-fetch on mount and dependency changes
   React.useEffect(() => {
     fetchData();
-  }, dependencies);
+  }, [fetchData, ...dependencies]);
 
   return {
     data,

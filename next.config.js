@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
+
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
@@ -7,7 +11,7 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
-  
+
   // Ignore ESLint errors during build for production
   eslint: {
     ignoreDuringBuilds: true,
@@ -40,7 +44,16 @@ const nextConfig = {
 
   experimental: {
     // Performance optimizations
-    optimizePackageImports: ["react-icons", "ethers"],
+    optimizePackageImports: [
+      "react-icons",
+      "ethers",
+      "@web3modal/wagmi",
+      "@wagmi/core",
+    ],
+    // Enable modern module federation
+    esmExternals: true,
+    // Server components improvements
+    serverComponentsExternalPackages: ["pino"],
   },
 
   webpack: (config, { dev, isServer }) => {
@@ -73,6 +86,16 @@ const nextConfig = {
               name: "ethers",
               chunks: "all",
             },
+            web3: {
+              test: /[\\/]node_modules[\\/](@web3modal|@wagmi|wagmi)[\\/]/,
+              name: "web3",
+              chunks: "all",
+            },
+            icons: {
+              test: /[\\/]node_modules[\\/]react-icons[\\/]/,
+              name: "icons",
+              chunks: "all",
+            },
           },
         },
       };
@@ -82,4 +105,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);

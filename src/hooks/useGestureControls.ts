@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 interface GestureState {
   isSwipeLeft: boolean;
@@ -47,7 +47,7 @@ export function useGestureControls(options: UseGestureControlsOptions = {}) {
     return Math.sqrt(dx * dx + dy * dy);
   };
 
-  const handleTouchStart = (e: TouchEvent) => {
+  const handleTouchStart = useCallback((e: TouchEvent) => {
     if (e.touches.length === 1) {
       // Single touch - track for swipe
       const touch = e.touches[0];
@@ -63,9 +63,9 @@ export function useGestureControls(options: UseGestureControlsOptions = {}) {
       setGestureState(prev => ({ ...prev, isPinching: true }));
       onPinchStart?.();
     }
-  };
+  }, [onPinchStart]);
 
-  const handleTouchMove = (e: TouchEvent) => {
+  const handleTouchMove = useCallback((e: TouchEvent) => {
     if (e.touches.length === 2 && touchesRef.current && initialPinchDistanceRef.current > 0) {
       // Handle pinch gesture
       const currentDistance = getDistance(e.touches[0], e.touches[1]);
@@ -81,9 +81,9 @@ export function useGestureControls(options: UseGestureControlsOptions = {}) {
         setGestureState(prev => ({ ...prev, isPullToRefresh: true }));
       }
     }
-  };
+  }, [pullThreshold]);
 
-  const handleTouchEnd = (e: TouchEvent) => {
+  const handleTouchEnd = useCallback((e: TouchEvent) => {
     if (gestureState.isPinching) {
       // End pinch gesture
       setGestureState(prev => ({ 
@@ -133,7 +133,7 @@ export function useGestureControls(options: UseGestureControlsOptions = {}) {
     }
     
     touchStartRef.current = null;
-  };
+  }, [gestureState.isPinching, gestureState.isPullToRefresh, onSwipeLeft, onSwipeRight, onPullToRefresh, onPinchEnd, swipeThreshold]);
 
   useEffect(() => {
     const element = document.body;
@@ -147,7 +147,7 @@ export function useGestureControls(options: UseGestureControlsOptions = {}) {
       element.removeEventListener('touchmove', handleTouchMove);
       element.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [gestureState.isPinching, gestureState.isPullToRefresh]);
+  }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
 
   return {
     gestureState,

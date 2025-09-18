@@ -7,6 +7,7 @@ import QuickTip from "@/components/mobile/QuickTip";
 import QuickRequest from "@/components/mobile/QuickRequest";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Container from "@/components/layout/Container";
+import Button from "@/components/shared/Button";
 import styles from "./page.module.css";
 
 // Feature section component
@@ -192,7 +193,13 @@ export default function Home() {
           <p className={styles.ctaDescription}>
             Experience the future of the live performance economy today.
           </p>
-          <button className={styles.ctaButton}>Get Started</button>
+          <Button 
+            variant="primary" 
+            size="lg"
+            className={styles.ctaButton}
+          >
+            Get Started
+          </Button>
         </Container>
       </section>
     </main>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Button from "@/components/shared/Button";
 import styles from "./FloatingActionButton.module.css";
 
 interface FABProps {
@@ -32,41 +33,47 @@ export default function FloatingActionButton({ onTipPress, onBountyPress, onScan
       
       {/* Action buttons */}
       <div className={`${styles.actionButtons} ${isExpanded ? styles.expanded : ''}`}>
-        <button 
+        <Button 
+          variant="tip"
+          size="sm"
           className={`${styles.actionButton} ${styles.tipButton}`}
           onClick={() => {
             onTipPress();
             setIsExpanded(false);
           }}
           aria-label="Quick Tip"
+          leftIcon="💰"
         >
-          <span className={styles.icon}>💰</span>
-          <span className={styles.label}>Tip</span>
-        </button>
+          Tip
+        </Button>
         
-        <button 
+        <Button 
+          variant="bounty"
+          size="sm"
           className={`${styles.actionButton} ${styles.bountyButton}`}
           onClick={() => {
             onBountyPress();
             setIsExpanded(false);
           }}
           aria-label="Create Bounty"
+          leftIcon="🎯"
         >
-          <span className={styles.icon}>🎯</span>
-          <span className={styles.label}>Bounty</span>
-        </button>
+          Bounty
+        </Button>
         
-        <button 
+        <Button 
+          variant="secondary"
+          size="sm"
           className={`${styles.actionButton} ${styles.scanButton}`}
           onClick={() => {
             onScanPress();
             setIsExpanded(false);
           }}
           aria-label="Scan QR"
+          leftIcon="📱"
         >
-          <span className={styles.icon}>📱</span>
-          <span className={styles.label}>Scan</span>
-        </button>
+          Scan
+        </Button>
       </div>
       
       {/* Main FAB */}

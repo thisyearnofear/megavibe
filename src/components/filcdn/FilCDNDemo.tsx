@@ -2,7 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { useFilCDNStorage } from "@/hooks/useFilCDNStorage";
-import { useFilCDN } from "@/contexts/FilCDNContext";
+import { useIntegrationState } from "@/hooks/useIntegrationState";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { IntegrationStatus } from "@/components/integration/IntegrationStatus";
+import { Button } from "@/components/design-system/Button";
+import { Card, CardHeader, CardContent } from "@/components/design-system/Card";
+import { LoadingState } from "@/components/shared/LoadingStates";
 import styles from "./FilCDNDemo.module.css";
 
 interface StoredFile {
@@ -21,19 +26,15 @@ export default function FilCDNDemo() {
   const [activeCid, setActiveCid] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
 
-  const {
-    storeData,
-    retrieveData,
-    loading,
-    error,
-    lastCid,
-    isReady,
-  } = useFilCDNStorage({
-    enableAutoRetry: true,
-    maxRetries: 3,
-  });
+  // ENHANCEMENT FIRST: Use unified integration state instead of fragmented hooks
+  const integrationState = useIntegrationState();
+  const { handleFilCDNError, handleError } = useErrorHandler();
 
-  const { isInitialized, isInitializing, reInitialize } = useFilCDN();
+  const { storeData, retrieveData, loading, error, lastCid, isReady } =
+    useFilCDNStorage({
+      enableAutoRetry: true,
+      maxRetries: 3,
+    });
 
   // Load stored files from local storage on component mount
   useEffect(() => {
@@ -54,24 +55,26 @@ export default function FilCDNDemo() {
     }
   }, [storedFiles]);
 
-  // Update message when status changes
+  // ENHANCEMENT FIRST: Unified error handling instead of scattered patterns
   useEffect(() => {
     if (error) {
+      handleFilCDNError(error, "filcdn_operation");
       setMessage(`Error: ${error}`);
     } else if (loading) {
       setMessage("Processing...");
     } else if (lastCid) {
       setMessage(`Success! File uploaded successfully.`);
-    } else if (!isReady) {
+    } else if (!integrationState.overall.isReady) {
+      const blockers = integrationState.overall.blockers;
       setMessage(
-        isInitializing
-          ? "Initializing storage system..."
-          : "Storage system not ready"
+        blockers.length > 0
+          ? `System not ready: ${blockers.join(", ")}`
+          : "Initializing system..."
       );
     } else {
       setMessage("");
     }
-  }, [error, loading, lastCid, isReady, isInitializing]);
+  }, [error, loading, lastCid, integrationState.overall, handleFilCDNError]);
 
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,9 +158,16 @@ export default function FilCDNDemo() {
     });
   };
 
-  // Retrieve file
+  // Retrieve file with unified error handling
   const handleRetrieveFile = async (cid: string, fileType: string) => {
-    if (!isReady) return;
+    if (!integrationState.overall.isReady) {
+      handleError("System not ready for file retrieval", {
+        operation: "retrieve_file",
+        userMessage:
+          "Please ensure systems are connected before retrieving files.",
+      });
+      return;
+    }
 
     try {
       setMessage(`Retrieving file...`);
@@ -173,9 +183,8 @@ export default function FilCDNDemo() {
       } else {
         setMessage(`Failed to retrieve file`);
       }
-    } catch (err: any) {
-      setMessage(`Error retrieving file: ${err.message}`);
-      console.error("Error retrieving file:", err);
+    } catch (err) {
+      handleFilCDNError(err, "retrieve_file");
     }
   };
 
@@ -237,23 +246,29 @@ export default function FilCDNDemo() {
 
   return (
     <div className={styles.container}>
+      {/* ENHANCEMENT FIRST: Use unified integration status component */}
+      <IntegrationStatus variant="compact" className="mb-lg" />
+
       <div className={styles.header}>
         <h2 className={styles.title}>File Manager</h2>
         <div className={styles.status}>
           Status:{" "}
-          {isInitialized ? (
+          {integrationState.filcdn.isInitialized ? (
             <span className={styles.statusActive}>Ready</span>
           ) : (
             <span className={styles.statusInactive}>Initializing</span>
           )}
-          {!isInitialized && (
-            <button
-              onClick={reInitialize}
-              className={styles.reinitButton}
-              disabled={isInitializing}
+          {!integrationState.filcdn.isInitialized && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={integrationState.reinitializeFilCDN}
+              disabled={integrationState.filcdn.isInitializing}
             >
-              {isInitializing ? "Connecting..." : "Reconnect"}
-            </button>
+              {integrationState.filcdn.isInitializing
+                ? "Connecting..."
+                : "Reconnect"}
+            </Button>
           )}
         </div>
       </div>
@@ -264,16 +279,17 @@ export default function FilCDNDemo() {
           id="file-input"
           type="file"
           onChange={handleFileChange}
-          disabled={loading || !isReady}
+          disabled={loading || !integrationState.overall.isReady}
           className={styles.fileInput}
         />
-        <button
+        <Button
           onClick={handleStoreFile}
-          disabled={!file || loading || !isReady}
-          className={styles.uploadButton}
+          disabled={!file || loading || !integrationState.overall.isReady}
+          variant="primary"
+          isLoading={loading}
         >
-          {loading ? "Uploading..." : "Upload File"}
-        </button>
+          Upload File
+        </Button>
         {message && <div className={styles.message}>{message}</div>}
       </div>
 

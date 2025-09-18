@@ -106,30 +106,28 @@ function AIImageGeneratorInner() {
 
   // Auto-cycle through images
   useEffect(() => {
-    if (images.length > 1 && !currentGeneratedImage) {
-      // Clear any existing interval
-      if (sliderInterval) {
-        clearInterval(sliderInterval);
-      }
+    // Clear any existing interval first
+    if (sliderInterval) {
+      clearInterval(sliderInterval);
+      setSliderInterval(null);
+    }
 
-      // Set new interval to change image every 3 seconds
+    // Only start interval if we have multiple images and not showing newly generated
+    if (images.length > 1 && !currentGeneratedImage) {
       const interval = setInterval(() => {
         setActiveImageIndex((prev) => (prev + 1) % images.length);
       }, 3000);
 
       setSliderInterval(interval);
-    } else if (sliderInterval) {
-      // Stop the slider if we're showing a newly generated image
-      clearInterval(sliderInterval);
-      setSliderInterval(null);
     }
 
+    // Cleanup function
     return () => {
       if (sliderInterval) {
         clearInterval(sliderInterval);
       }
     };
-  }, [images.length, currentGeneratedImage]);
+  }, [images.length, currentGeneratedImage]); // Remove sliderInterval from dependencies
 
   // Clean up blob URLs when component unmounts
   useEffect(() => {

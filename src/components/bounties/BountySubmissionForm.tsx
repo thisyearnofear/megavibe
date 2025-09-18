@@ -12,7 +12,7 @@ import { BsPinAngleFill } from "react-icons/bs";
 import { format } from "date-fns";
 
 import styles from "./BountySubmissionForm.module.css";
-import Button from "../ui/Button";
+import Button from "../shared/Button";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import WalletConnect from "../wallet/WalletConnect";
 import { bountyService } from "@/services/blockchain/bountyService";

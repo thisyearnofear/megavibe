@@ -12,14 +12,20 @@ const queryClient = new QueryClient();
 // Get projectId from environment
 const projectId = process.env.NEXT_PUBLIC_WC_PROJECT_ID || '';
 
-// Create modal
-if (projectId) {
-  createWeb3Modal({
-    wagmiConfig: config,
-    projectId,
-    enableAnalytics: true,
-    enableOnramp: true
-  });
+// Create modal only if projectId is available
+let modalCreated = false;
+if (projectId && typeof window !== 'undefined') {
+  try {
+    createWeb3Modal({
+      wagmiConfig: config,
+      projectId,
+      enableAnalytics: true,
+      enableOnramp: true
+    });
+    modalCreated = true;
+  } catch (error) {
+    console.warn('Failed to create Web3Modal:', error);
+  }
 }
 
 export function Web3ModalProvider({ children }: { children: React.ReactNode }) {

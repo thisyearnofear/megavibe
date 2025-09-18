@@ -136,17 +136,32 @@ export default function SwipeablePerformerCard({
               </div>
             )}
 
-            <button
-              className={`${styles.favoriteButton} ${
-                isFavorited ? styles.favorited : ""
-              }`}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSwipeLeft();
-              }}
-            >
-              {isFavorited ? "❤️" : "🤍"}
-            </button>
+            {/* Action buttons for discoverability */}
+            <div className={styles.actionButtons}>
+              <button
+                className={styles.actionButton}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSwipeRight();
+                }}
+                title="Quick Tip (or swipe right)"
+              >
+                💰 Tip
+              </button>
+
+              <button
+                className={`${styles.actionButton} ${
+                  isFavorited ? styles.favorited : ""
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSwipeLeft();
+                }}
+                title="Favorite (or swipe left)"
+              >
+                {isFavorited ? "❤️" : "🤍"}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -160,16 +175,9 @@ export default function SwipeablePerformerCard({
           </div>
         )}
 
-        {/* Gesture Hints */}
-        <div className={styles.gestureHints}>
-          <div className={styles.gestureHint}>
-            <span className={styles.gestureIcon}>👆</span>
-            <span className={styles.gestureText}>Double tap for profile</span>
-          </div>
-          <div className={styles.gestureHint}>
-            <span className={styles.gestureIcon}>👈</span>
-            <span className={styles.gestureText}>Swipe for actions</span>
-          </div>
+        {/* Subtle gesture tutorial for first-time users */}
+        <div className={styles.gestureHint}>
+          <span className={styles.hintText}>Swipe for quick actions</span>
         </div>
       </GestureEnhancedCard>
     </div>
