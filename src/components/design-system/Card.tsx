@@ -34,16 +34,18 @@ export const Card: React.FC<CardProps> = ({
     .filter(Boolean)
     .join(" ");
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (onClick && !props.role) {
-      onClick();
+      onClick(e);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (onClick && (e.key === "Enter" || e.key === " ")) {
       e.preventDefault();
-      onClick();
+      // Create a synthetic mouse event for keyboard activation
+      const syntheticEvent = new MouseEvent('click', { bubbles: true }) as any;
+      onClick(syntheticEvent);
     }
   };
 

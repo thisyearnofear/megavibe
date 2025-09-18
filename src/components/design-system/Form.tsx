@@ -86,7 +86,10 @@ Input.displayName = "Input";
 
 export const TextArea = forwardRef<
   HTMLTextAreaElement,
-  Omit<InputProps, "leftIcon" | "rightIcon"> & { rows?: number }
+  Omit<InputProps, "leftIcon" | "rightIcon" | "onChange"> & {
+    rows?: number;
+    onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
+  } & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'>
 >(
   (
     {

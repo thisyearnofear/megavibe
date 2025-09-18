@@ -198,13 +198,13 @@ export function useErrorHandler() {
 
   const logError = (errorContext: ErrorContext) => {
     const logLevel = {
-      [ErrorSeverity.LOW]: 'info',
-      [ErrorSeverity.MEDIUM]: 'warn',
-      [ErrorSeverity.HIGH]: 'error',
-      [ErrorSeverity.CRITICAL]: 'error',
+      [ErrorSeverity.LOW]: 'info' as const,
+      [ErrorSeverity.MEDIUM]: 'warn' as const,
+      [ErrorSeverity.HIGH]: 'error' as const,
+      [ErrorSeverity.CRITICAL]: 'error' as const,
     }[errorContext.severity];
 
-    console[logLevel](`[${errorContext.category.toUpperCase()}] ${errorContext.operation}:`, {
+    (console[logLevel] as typeof console.log)(`[${errorContext.category.toUpperCase()}] ${errorContext.operation}:`, {
       message: errorContext.technicalMessage,
       userMessage: errorContext.userMessage,
       metadata: errorContext.metadata,
