@@ -3,15 +3,15 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(26, 26, 46, 0.95);
-  backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.98) 100%);
+  backdrop-filter: blur(24px);
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+  padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
   z-index: 1000;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .tab {
@@ -20,24 +20,34 @@
   justify-content: center;
   align-items: center;
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.6);
+  color: #d1d5db;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 0.5rem;
-  border-radius: 1rem;
+  padding: 0.75rem;
+  border-radius: 1.25rem;
   position: relative;
-  min-height: 60px;
-  max-width: 80px;
+  min-height: 64px;
+  max-width: 88px;
+  border: 2px solid transparent;
 }
 
 .tab:hover {
-  color: rgba(255, 255, 255, 0.8);
-  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.tab:focus {
+  outline: 3px solid #4ecdc4;
+  outline-offset: 2px;
 }
 
 .tab.active {
-  color: #4ecdc4;
-  background-color: rgba(78, 205, 196, 0.1);
-  transform: translateY(-2px);
+  color: #ffffff;
+  background: linear-gradient(135deg, rgba(78, 205, 196, 0.2) 0%, rgba(102, 126, 234, 0.2) 100%);
+  border-color: rgba(78, 205, 196, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(78, 205, 196, 0.3);
 }
 
 .tab.disabled {
@@ -46,7 +56,8 @@
 }
 
 .tab.disabled:hover {
-  background-color: transparent;
+  background: transparent;
+  border-color: transparent;
   transform: none;
 }
 
@@ -54,7 +65,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
   position: relative;
   width: 100%;
 }
@@ -64,37 +75,43 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
 }
 
 .icon {
-  font-size: 1.5rem;
-  transition: transform 0.3s ease;
+  font-size: 1.6rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: block;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 .tab.active .icon {
-  transform: scale(1.1);
-  filter: drop-shadow(0 0 8px rgba(78, 205, 196, 0.4));
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 12px rgba(78, 205, 196, 0.6));
+}
+
+.tab:hover .icon {
+  transform: scale(1.05);
 }
 
 .badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-  color: white;
-  font-size: 0.6rem;
-  font-weight: 600;
-  padding: 0.15rem 0.3rem;
-  border-radius: 0.5rem;
-  min-width: 16px;
-  height: 16px;
+  top: -6px;
+  right: -6px;
+  background: linear-gradient(45deg, #ef4444, #f87171);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.75rem;
+  min-width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  border: 2px solid rgba(15, 23, 42, 0.8);
   animation: badgePulse 2s infinite;
 }
 
@@ -105,45 +122,49 @@
 
 .lockIcon {
   position: absolute;
-  top: -2px;
-  right: -2px;
-  font-size: 0.8rem;
-  background: rgba(0, 0, 0, 0.7);
+  top: -4px;
+  right: -4px;
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #ffffff;
 }
 
 .label {
-  font-size: 0.7rem;
-  font-weight: 500;
+  font-size: 0.8rem;
+  font-weight: 600;
   text-align: center;
-  line-height: 1;
-  transition: all 0.3s ease;
+  line-height: 1.2;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  letter-spacing: 0.25px;
 }
 
 .tab.active .label {
-  font-weight: 600;
-  text-shadow: 0 0 8px rgba(78, 205, 196, 0.4);
+  font-weight: 700;
+  text-shadow: 0 0 12px rgba(78, 205, 196, 0.6);
+  transform: scale(1.05);
 }
 
 .activeIndicator {
   position: absolute;
-  bottom: -8px;
+  bottom: -12px;
   left: 50%;
   transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   background: #4ecdc4;
   border-radius: 50%;
-  box-shadow: 0 0 8px rgba(78, 205, 196, 0.6);
+  box-shadow: 0 0 12px rgba(78, 205, 196, 0.8);
   animation: indicatorGlow 2s infinite;
 }
 
@@ -152,23 +173,41 @@
   50% { opacity: 0.6; }
 }
 
-/* Responsive adjustments */
+/* Small mobile devices */
 @media (max-width: 375px) {
   .bottomTabs {
-    padding: 0.25rem 0 calc(0.25rem + env(safe-area-inset-bottom));
+    padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
   }
   
   .tab {
-    min-height: 50px;
-    padding: 0.25rem;
+    min-height: 56px;
+    padding: 0.5rem;
+    max-width: 72px;
   }
   
   .icon {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
   }
   
   .label {
+    font-size: 0.7rem;
+  }
+  
+  .iconContainer {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .badge {
+    min-width: 18px;
+    height: 18px;
     font-size: 0.65rem;
+  }
+  
+  .lockIcon {
+    width: 18px;
+    height: 18px;
+    font-size: 0.8rem;
   }
 }
 
@@ -178,20 +217,58 @@
   }
 }
 
+/* Large mobile devices */
+@media (min-width: 414px) and (max-width: 767px) {
+  .bottomTabs {
+    padding: 1rem 0 calc(1rem + env(safe-area-inset-bottom));
+  }
+  
+  .tab {
+    min-height: 72px;
+    padding: 1rem;
+    max-width: 96px;
+  }
+  
+  .icon {
+    font-size: 1.8rem;
+  }
+  
+  .label {
+    font-size: 0.85rem;
+  }
+  
+  .iconContainer {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .badge {
+    min-width: 22px;
+    height: 22px;
+    font-size: 0.75rem;
+  }
+}
+
 /* High contrast mode */
 @media (prefers-contrast: high) {
   .bottomTabs {
     background: #000000;
-    border-top: 2px solid #ffffff;
+    border-top: 3px solid #ffffff;
   }
   
   .tab {
     color: #ffffff;
+    border: 2px solid #ffffff;
   }
   
   .tab.active {
     color: #00ffff;
-    background-color: rgba(0, 255, 255, 0.2);
+    background: #333333;
+    border-color: #00ffff;
+  }
+  
+  .tab:hover {
+    background: #333333;
   }
 }
 
@@ -214,43 +291,58 @@
   }
 }
 
-/* Focus styles for accessibility */
-.tab:focus {
-  outline: 2px solid #4ecdc4;
-  outline-offset: 2px;
-}
 
-.tab:focus-visible {
-  outline: 2px solid #4ecdc4;
-  outline-offset: 2px;
-}
 
 /* Touch target optimization */
 @media (pointer: coarse) {
   .tab {
-    min-height: 64px; /* Larger touch targets on touch devices */
+    min-height: 68px;
+    padding: 0.875rem;
+  }
+  
+  .icon {
+    font-size: 1.7rem;
+  }
+  
+  .label {
+    font-size: 0.85rem;
   }
 }
 
 /* Landscape phone adjustments */
 @media (max-height: 500px) and (orientation: landscape) {
   .bottomTabs {
-    padding: 0.25rem 0 calc(0.25rem + env(safe-area-inset-bottom));
+    padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
   }
   
   .tab {
-    min-height: 45px;
+    min-height: 48px;
+    padding: 0.5rem;
+  }
+  
+  .icon {
+    font-size: 1.3rem;
   }
   
   .label {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
+  }
+  
+  .tabContent {
+    gap: 0.25rem;
   }
 }
 
 /* Support for notched devices */
 @supports (padding: max(0px)) {
   .bottomTabs {
-    padding-left: max(0.5rem, env(safe-area-inset-left));
-    padding-right: max(0.5rem, env(safe-area-inset-right));
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
   }
+}
+
+/* Focus management for accessibility */
+.bottomTabs *:focus {
+  outline: 3px solid #4ecdc4;
+  outline-offset: 2px;
 }

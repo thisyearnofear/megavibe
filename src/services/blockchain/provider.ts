@@ -6,13 +6,13 @@ import { ethers } from 'ethers';
 import { getNetworkConfig, isNetworkSupported } from '@/contracts/config';
 import { DEFAULT_CHAIN_ID } from '@/contracts/addresses';
 import { BlockchainError, BlockchainErrorType, ProviderType, WalletInfo } from './types';
-
-// TypeScript declarations for Ethereum in window object
-declare global {
-  interface Window {
-    ethereum?: any;
-  }
-}
+import { 
+  isEthereumAvailable, 
+  getEthereumProvider, 
+  addEthereumEventListener,
+  requestFromEthereum,
+  safeEthereum
+} from '@/utils/ethereum';
 
 // Get fallback RPC URL from environment variables
 const FALLBACK_RPC_URL = getNetworkConfig(DEFAULT_CHAIN_ID)?.rpcUrl || 'https://rpc.sepolia.mantle.xyz';
@@ -33,16 +33,19 @@ class ProviderService {
    * This should be called when the app starts
    */
   public async initialize(): Promise<void> {
-    // Check if ethereum is available in window
-    if (typeof window !== 'undefined' && window.ethereum) {
+    // Check if ethereum is available in window with defensive programming
+    if (typeof window !== 'undefined' && isEthereumAvailable()) {
       try {
         // Create ethers provider from window.ethereum
-        this.provider = new ethers.BrowserProvider(window.ethereum);
+        const ethereumProvider = getEthereumProvider();
+        if (ethereumProvider) {
+          this.provider = new ethers.BrowserProvider(ethereumProvider as any);
+        } else {
+          throw new Error('Failed to get Ethereum provider');
+        }
         
-        // Add event listeners for wallet events
-        window.ethereum.on('accountsChanged', this.handleAccountsChanged);
-        window.ethereum.on('chainChanged', this.handleChainChanged);
-        window.ethereum.on('disconnect', this.handleDisconnect);
+        // Add event listeners for wallet events with error handling
+        this.addEthereumEventListeners();
         
         // Check if already connected
         const accounts = await this.provider.listAccounts();
@@ -50,14 +53,34 @@ class ProviderService {
           this.signer = await this.provider.getSigner();
           await this.updateWalletInfo();
         }
+        
+        console.log('✅ Ethereum provider initialized successfully');
       } catch (error) {
-        console.error('Failed to initialize provider from window.ethereum:', error);
+        console.error('❌ Failed to initialize provider from window.ethereum:', error);
         this.createFallbackProvider();
       }
     } else {
       // No injected provider available, create read-only provider
-      console.warn('No injected Ethereum provider found. Using read-only mode.');
+      console.warn('⚠️ No injected Ethereum provider found. Using read-only mode.');
       this.createFallbackProvider();
+    }
+  }
+  
+  /**
+   * Safely add event listeners to window.ethereum
+   * Uses the safe Ethereum utilities to handle read-only providers
+   */
+  private addEthereumEventListeners(): void {
+    const success = [
+      addEthereumEventListener('accountsChanged', this.handleAccountsChanged),
+      addEthereumEventListener('chainChanged', this.handleChainChanged),
+      addEthereumEventListener('disconnect', this.handleDisconnect)
+    ];
+    
+    if (success.every(Boolean)) {
+      console.log('✅ Ethereum event listeners added successfully');
+    } else {
+      console.warn('⚠️ Some Ethereum event listeners failed to add');
     }
   }
   
@@ -87,14 +110,22 @@ class ProviderService {
       // Get provider based on type
       switch (providerType) {
         case ProviderType.METAMASK:
-          if (!window.ethereum) {
+          if (!isEthereumAvailable()) {
             throw this.createError(
               BlockchainErrorType.CONNECTION_ERROR,
               'MetaMask not found',
               'Please install MetaMask extension to connect your wallet'
             );
           }
-          this.provider = new ethers.BrowserProvider(window.ethereum);
+          const ethereumProvider = getEthereumProvider();
+          if (!ethereumProvider) {
+            throw this.createError(
+              BlockchainErrorType.CONNECTION_ERROR,
+              'Failed to access Ethereum provider',
+              'Unable to access your wallet. Please try refreshing the page.'
+            );
+          }
+          this.provider = new ethers.BrowserProvider(ethereumProvider as any);
           break;
           
         case ProviderType.WALLET_CONNECT:
@@ -209,21 +240,23 @@ class ProviderService {
     }
 
     // Check if we have an injected provider (MetaMask)
-    if (typeof window !== 'undefined' && window.ethereum) {
+    if (typeof window !== 'undefined' && isEthereumAvailable()) {
       try {
         // Get network config
         const networkConfig = getNetworkConfig(chainId);
         
         // Try to switch to the network
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: `0x${chainId.toString(16)}` }],
-        });
+        await requestFromEthereum('wallet_switchEthereumChain', [
+          { chainId: `0x${chainId.toString(16)}` }
+        ]);
         
         // Update provider and signer after network change
-        this.provider = new ethers.BrowserProvider(window.ethereum);
-        this.signer = await this.provider.getSigner();
-        await this.updateWalletInfo();
+        const ethereumProvider = getEthereumProvider();
+        if (ethereumProvider) {
+          this.provider = new ethers.BrowserProvider(ethereumProvider as any);
+          this.signer = await this.provider.getSigner();
+          await this.updateWalletInfo();
+        }
       } catch (error: unknown) {
         // This error code means the chain has not been added to MetaMask
         if (
@@ -243,23 +276,23 @@ class ProviderService {
 
           // Add the network to the wallet
           try {
-            await window.ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [
-                {
-                  chainId: `0x${chainId.toString(16)}`,
-                  chainName: networkConfig.name,
-                  nativeCurrency: networkConfig.nativeCurrency,
-                  rpcUrls: [networkConfig.rpcUrl],
-                  blockExplorerUrls: [networkConfig.blockExplorerUrl],
-                },
-              ],
-            });
+            await requestFromEthereum('wallet_addEthereumChain', [
+              {
+                chainId: `0x${chainId.toString(16)}`,
+                chainName: networkConfig.name,
+                nativeCurrency: networkConfig.nativeCurrency,
+                rpcUrls: [networkConfig.rpcUrl],
+                blockExplorerUrls: [networkConfig.blockExplorerUrl],
+              },
+            ]);
 
             // Update provider and signer after network added
-            this.provider = new ethers.BrowserProvider(window.ethereum);
-            this.signer = await this.provider.getSigner();
-            await this.updateWalletInfo();
+            const ethereumProvider = getEthereumProvider();
+            if (ethereumProvider) {
+              this.provider = new ethers.BrowserProvider(ethereumProvider as any);
+              this.signer = await this.provider.getSigner();
+              await this.updateWalletInfo();
+            }
           } catch (addError) {
             throw this.createError(
               BlockchainErrorType.NETWORK_ERROR,
@@ -420,8 +453,11 @@ class ProviderService {
   private handleChainChanged = async (chainIdHex: string): Promise<void> => {
     try {
       // Reload provider on chain change
-      if (typeof window !== 'undefined' && window.ethereum) {
-        this.provider = new ethers.BrowserProvider(window.ethereum);
+      if (typeof window !== 'undefined' && isEthereumAvailable()) {
+        const ethereumProvider = getEthereumProvider();
+        if (ethereumProvider) {
+          this.provider = new ethers.BrowserProvider(ethereumProvider as any);
+        }
         if (this.walletInfo?.isConnected) {
           this.signer = await this.provider.getSigner();
           await this.updateWalletInfo();

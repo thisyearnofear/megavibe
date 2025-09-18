@@ -9,6 +9,11 @@ const privateKey = process.env.FILCDN_PRIVATE_KEY ||
 const rpcURL = process.env.NEXT_PUBLIC_FILECOIN_RPC_URL || 
               "https://api.calibration.node.glif.io/rpc/v1";
 
+// Validate environment variables
+if (!privateKey) {
+  console.warn("⚠️ No FilCDN private key found in environment variables");
+}
+
 const filcdnService = createRealFilCDNService({
   privateKey,
   rpcURL,
@@ -19,22 +24,43 @@ const filcdnService = createRealFilCDNService({
 let isInitialized = false;
 let initError: string | null = null;
 let initializationPromise: Promise<void> | null = null;
+let initializationAttempts = 0;
+const MAX_INIT_ATTEMPTS = 3;
 
-// Initialize the service
+// Initialize the service with retry logic
 async function ensureInitialized() {
   if (isInitialized) return;
   
   if (!initializationPromise) {
     initializationPromise = (async () => {
-      try {
-        await filcdnService.initialize();
-        isInitialized = true;
-        initError = null;
-        console.log("✅ FilCDN service initialized successfully on server");
-      } catch (err: any) {
-        console.error("❌ Failed to initialize FilCDN service:", err);
-        initError = err.message;
-        throw err;
+      while (initializationAttempts < MAX_INIT_ATTEMPTS && !isInitialized) {
+        try {
+          initializationAttempts++;
+          console.log(`🔄 Attempting to initialize FilCDN service (attempt ${initializationAttempts}/${MAX_INIT_ATTEMPTS})`);
+          
+          // Check if we have required configuration
+          if (!privateKey) {
+            throw new Error("Missing required environment variable: FILCDN_PRIVATE_KEY, FILECOIN_PRIVATE_KEY, or PRIVATE_KEY");
+          }
+          
+          await filcdnService.initialize();
+          isInitialized = true;
+          initError = null;
+          console.log("✅ FilCDN service initialized successfully on server");
+          return;
+        } catch (err: any) {
+          const errorMessage = err.message || 'Unknown error';
+          console.error(`❌ Failed to initialize FilCDN service (attempt ${initializationAttempts}):`, errorMessage);
+          initError = errorMessage;
+          
+          // If this is the last attempt, throw the error
+          if (initializationAttempts >= MAX_INIT_ATTEMPTS) {
+            throw new Error(`Failed to initialize FilCDN service after ${MAX_INIT_ATTEMPTS} attempts: ${errorMessage}`);
+          }
+          
+          // Wait before retrying
+          await new Promise(resolve => setTimeout(resolve, 1000 * initializationAttempts));
+        }
       }
     })();
   }
@@ -44,8 +70,24 @@ async function ensureInitialized() {
 
 export async function POST(req: NextRequest) {
   try {
+    console.log('📝 FilCDN API POST request received');
+    
     // Ensure FilCDN service is initialized
-    await ensureInitialized();
+    try {
+      await ensureInitialized();
+    } catch (initErr: any) {
+      console.error('❌ FilCDN initialization failed:', initErr);
+      return NextResponse.json(
+        {
+          status: "error",
+          message: "FilCDN service initialization failed",
+          details: initErr.message,
+          initialized: false,
+          attempts: initializationAttempts
+        },
+        { status: 503 } // Service Unavailable
+      );
+    }
     
     // Parse request body
     const body = await req.json();
@@ -173,13 +215,21 @@ export async function POST(req: NextRequest) {
         );
     }
   } catch (err: any) {
-    console.error("FilCDN API error:", err);
+    const errorMessage = err.message || 'Unknown error';
+    console.error("❌ FilCDN API error:", {
+      message: errorMessage,
+      stack: err.stack,
+      initialized: isInitialized,
+      attempts: initializationAttempts
+    });
     
     return NextResponse.json(
       {
         status: "error",
-        message: err.message,
-        initialized: isInitialized
+        message: errorMessage,
+        initialized: isInitialized,
+        attempts: initializationAttempts,
+        timestamp: new Date().toISOString()
       },
       { status: 500 }
     );
@@ -188,15 +238,42 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    // Return service status
-    return NextResponse.json({
-      status: "operational",
+    console.log('🔍 FilCDN API health check requested');
+    
+    // Get detailed service status
+    const status = {
+      status: isInitialized ? "operational" : "initializing",
       initialized: isInitialized,
-      error: initError
-    });
+      error: initError,
+      attempts: initializationAttempts,
+      maxAttempts: MAX_INIT_ATTEMPTS,
+      timestamp: new Date().toISOString(),
+      environment: {
+        hasPrivateKey: !!privateKey,
+        rpcURL: rpcURL,
+        nodeEnv: process.env.NODE_ENV
+      }
+    };
+    
+    // If not initialized, try to get more details
+    if (!isInitialized && filcdnService) {
+      try {
+        const stats = await filcdnService.getStats();
+        status.stats = stats;
+      } catch (statsErr: any) {
+        status.statsError = statsErr.message;
+      }
+    }
+    
+    return NextResponse.json(status);
   } catch (err: any) {
+    console.error('❌ FilCDN health check error:', err);
     return NextResponse.json(
-      { status: "error", message: err.message },
+      { 
+        status: "error", 
+        message: err.message,
+        timestamp: new Date().toISOString()
+      },
       { status: 500 }
     );
   }

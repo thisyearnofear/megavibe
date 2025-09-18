@@ -1,67 +1,144 @@
-"use client";
+'use client';
 
-import React, { Component, ErrorInfo, ReactNode } from "react";
+import React from 'react';
 
-interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-}
-
-interface State {
+interface ErrorBoundaryState {
   hasError: boolean;
+  error?: Error;
+  errorInfo?: React.ErrorInfo;
 }
 
-class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+  fallback?: React.ComponentType<{ error: Error; reset: () => void }>;
+}
+
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(): State {
-    // Update state so the next render will show the fallback UI
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return {
+      hasError: true,
+      error,
+    };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // You can log the error to an error reporting service
-    console.error("Error caught by ErrorBoundary:", error, errorInfo);
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('🚨 Error caught by boundary:', {
+      error: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+    });
+
+    this.setState({
+      error,
+      errorInfo,
+    });
   }
 
-  render(): ReactNode {
+  handleReset = () => {
+    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+  };
+
+  render() {
     if (this.state.hasError) {
-      // You can render any custom fallback UI
+      const { fallback: Fallback } = this.props;
+      
+      if (Fallback && this.state.error) {
+        return <Fallback error={this.state.error} reset={this.handleReset} />;
+      }
+
       return (
-        this.props.fallback || (
-          <div
-            style={{
-              padding: "20px",
-              margin: "20px",
-              border: "1px solid #f5c6cb",
-              borderRadius: "4px",
-              backgroundColor: "#f8d7da",
-              color: "#721c24",
-            }}
-          >
-            <h3>Something went wrong</h3>
-            <p>
-              Please try refreshing the page or contact support if the issue
-              persists.
-            </p>
-            <button
-              style={{
-                padding: "8px 16px",
-                backgroundColor: "#721c24",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
+        <div className="error-boundary">
+          <div className="error-boundary-content">
+            <h2>🚨 Something went wrong</h2>
+            <p>An unexpected error occurred. Please try refreshing the page.</p>
+            
+            <details className="error-details">
+              <summary>Error Details</summary>
+              <pre>{this.state.error?.message}</pre>
+              {process.env.NODE_ENV === 'development' && (
+                <pre>{this.state.error?.stack}</pre>
+              )}
+            </details>
+            
+            <button 
+              onClick={this.handleReset}
+              className="error-boundary-button"
+            >
+              Try Again
+            </button>
+            
+            <button 
               onClick={() => window.location.reload()}
+              className="error-boundary-button"
             >
               Refresh Page
             </button>
           </div>
-        )
+          
+          <style jsx>{`
+            .error-boundary {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              min-height: 400px;
+              padding: 2rem;
+              background: #f8f9fa;
+              border: 1px solid #dee2e6;
+              border-radius: 8px;
+              margin: 1rem;
+            }
+            
+            .error-boundary-content {
+              text-align: center;
+              max-width: 500px;
+            }
+            
+            .error-boundary-content h2 {
+              color: #dc3545;
+              margin-bottom: 1rem;
+            }
+            
+            .error-boundary-content p {
+              color: #6c757d;
+              margin-bottom: 1.5rem;
+            }
+            
+            .error-details {
+              text-align: left;
+              margin: 1rem 0;
+              padding: 1rem;
+              background: #f1f3f4;
+              border-radius: 4px;
+            }
+            
+            .error-details pre {
+              font-size: 0.875rem;
+              color: #495057;
+              white-space: pre-wrap;
+              word-break: break-word;
+            }
+            
+            .error-boundary-button {
+              background: #007bff;
+              color: white;
+              border: none;
+              padding: 0.5rem 1rem;
+              border-radius: 4px;
+              cursor: pointer;
+              margin: 0 0.5rem;
+              font-size: 0.875rem;
+            }
+            
+            .error-boundary-button:hover {
+              background: #0056b3;
+            }
+          `}</style>
+        </div>
       );
     }
 

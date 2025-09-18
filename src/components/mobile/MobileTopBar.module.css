@@ -2,20 +2,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
-  background: rgba(18, 18, 18, 0.95);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 12px 20px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(2, 6, 23, 0.98) 100%);
+  backdrop-filter: blur(24px);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
-  z-index: 40;
-  min-height: 60px;
+  z-index: 50;
+  min-height: 64px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .leftSection {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   flex: 1;
   min-width: 0;
 }
@@ -24,175 +25,451 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: var(--text-primary);
+  width: 44px;
+  height: 44px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: #ffffff;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+.backButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateX(-2px);
 }
 
 .backButton:active {
   transform: scale(0.95);
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.backButton:focus {
+  outline: 3px solid #4ecdc4;
+  outline-offset: 2px;
 }
 
 .backIcon {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
 }
 
 .logoIcon {
-  font-size: 20px;
+  font-size: 1.4rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .contextInfo {
   flex: 1;
   min-width: 0;
+  margin-left: 4px;
 }
 
 .contextTitle {
   font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
   margin: 0;
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .contextSubtitle {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin: 0;
+  font-size: 0.9rem;
+  color: #e5e7eb;
+  margin: 2px 0 0 0;
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 500;
 }
 
 .rightSection {
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  margin-left: 12px;
 }
 
 .walletInfo {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 2px;
+  gap: 4px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  min-width: 100px;
 }
 
 .walletBalance {
   display: flex;
   align-items: baseline;
-  gap: 2px;
+  gap: 4px;
 }
 
 .balanceAmount {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .balanceUnit {
-  font-size: 10px;
-  color: var(--text-secondary);
+  font-size: 0.8rem;
+  color: #d1d5db;
   text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .walletAddress {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .connectedDot {
-  width: 6px;
-  height: 6px;
-  background: #00ff88;
+  width: 8px;
+  height: 8px;
+  background: #10b981;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+  animation: connectedPulse 2s infinite;
+}
+
+@keyframes connectedPulse {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.7; 
+    transform: scale(1.1);
+  }
 }
 
 .addressText {
-  font-size: 10px;
-  color: var(--text-secondary);
-  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: #e5e7eb;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 .connectButton {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  border: none;
-  border-radius: 20px;
-  color: white;
-  font-size: 12px;
-  font-weight: 500;
+  gap: 8px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 2px solid transparent;
+  border-radius: 24px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 44px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.connectButton:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .connectButton:active {
   transform: scale(0.95);
 }
 
+.connectButton:focus {
+  outline: 3px solid #4ecdc4;
+  outline-offset: 2px;
+}
+
 .connectIcon {
-  font-size: 14px;
+  font-size: 1.1rem;
 }
 
 .connectText {
   white-space: nowrap;
+  font-weight: 600;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments for different screen sizes */
+@media (max-width: 414px) {
+  .topBar {
+    padding: 10px 16px;
+    min-height: 60px;
+  }
+  
+  .leftSection {
+    gap: 12px;
+  }
+  
+  .backButton,
+  .logo {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .contextTitle {
+    font-size: 1.1rem;
+  }
+  
+  .contextSubtitle {
+    font-size: 0.85rem;
+  }
+  
+  .connectButton {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    min-height: 40px;
+  }
+  
+  .balanceAmount {
+    font-size: 0.95rem;
+  }
+  
+  .addressText {
+    font-size: 0.75rem;
+  }
+}
+
+/* Very small screens */
 @media (max-width: 320px) {
   .topBar {
     padding: 8px 12px;
   }
   
+  .leftSection {
+    gap: 10px;
+  }
+  
   .contextTitle {
-    font-size: 16px;
+    font-size: 1rem;
   }
   
   .contextSubtitle {
-    font-size: 11px;
+    font-size: 0.8rem;
   }
   
   .connectText {
     display: none;
   }
+  
+  .connectButton {
+    padding: 10px 12px;
+    border-radius: 20px;
+  }
+  
+  .walletInfo {
+    min-width: 80px;
+    padding: 6px 10px;
+  }
+  
+  .balanceAmount {
+    font-size: 0.9rem;
+  }
+  
+  .balanceUnit {
+    font-size: 0.7rem;
+  }
+  
+  .addressText {
+    font-size: 0.7rem;
+  }
 }
 
-@media (min-width: 414px) {
+/* Large mobile screens */
+@media (min-width: 415px) and (max-width: 768px) {
   .topBar {
-    padding: 12px 20px;
-    min-height: 64px;
+    padding: 14px 24px;
+    min-height: 68px;
+  }
+  
+  .leftSection {
+    gap: 18px;
+  }
+  
+  .backButton,
+  .logo {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .logoIcon {
+    font-size: 1.5rem;
+  }
+  
+  .backIcon {
+    font-size: 1.3rem;
   }
   
   .contextTitle {
-    font-size: 20px;
+    font-size: 1.3rem;
   }
   
   .contextSubtitle {
-    font-size: 13px;
+    font-size: 0.95rem;
+  }
+  
+  .connectButton {
+    padding: 14px 20px;
+    font-size: 1rem;
+    min-height: 48px;
+  }
+  
+  .walletInfo {
+    padding: 10px 14px;
+    min-width: 110px;
+  }
+  
+  .balanceAmount {
+    font-size: 1.1rem;
+  }
+  
+  .addressText {
+    font-size: 0.85rem;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .topBar {
+    padding: 8px 16px;
+    min-height: 56px;
+  }
+  
+  .backButton,
+  .logo {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .contextTitle {
+    font-size: 1.1rem;
+  }
+  
+  .contextSubtitle {
+    font-size: 0.8rem;
+  }
+  
+  .connectButton {
+    padding: 8px 14px;
+    min-height: 40px;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .topBar {
+    background: #000000;
+    border-bottom: 3px solid #ffffff;
+  }
+  
+  .backButton {
+    background: #333333;
+    border: 3px solid #ffffff;
+    color: #ffffff;
+  }
+  
+  .logo {
+    background: #0066cc;
+    border: 3px solid #ffffff;
+  }
+  
+  .connectButton {
+    background: #0066cc;
+    border: 3px solid #ffffff;
+  }
+  
+  .walletInfo {
+    background: #333333;
+    border: 3px solid #ffffff;
+  }
+  
+  .contextTitle,
+  .contextSubtitle,
+  .balanceAmount,
+  .balanceUnit,
+  .addressText {
+    color: #ffffff;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .backButton,
+  .connectButton,
+  .connectedDot {
+    transition: none;
+    animation: none;
+  }
+  
+  .backButton:hover,
+  .connectButton:hover {
+    transform: none;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .topBar {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.98) 0%, rgba(10, 10, 10, 0.98) 100%);
+  }
+  
+  .walletInfo {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .backButton {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Focus management for accessibility */
+.topBar *:focus {
+  outline: 3px solid #4ecdc4;
+  outline-offset: 2px;
+}
+
+/* Support for safe areas on notched devices */
+@supports (padding: max(0px)) {
+  .topBar {
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+    padding-top: max(12px, env(safe-area-inset-top));
   }
 }
