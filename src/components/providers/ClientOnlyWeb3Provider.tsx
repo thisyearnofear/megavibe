@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Web3ModalProvider } from "@/config/web3modal";
+import dynamic from 'next/dynamic';
+
+// Dynamically import the Web3ModalProvider to prevent SSR issues
+const Web3ModalProvider = dynamic(
+  () => import('@/config/web3modal').then(mod => ({ default: mod.Web3ModalProvider })),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
 
 interface ClientOnlyWeb3ProviderProps {
   children: React.ReactNode;

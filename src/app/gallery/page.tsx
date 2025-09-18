@@ -1,5 +1,8 @@
 "use client";
 
+// Force dynamic rendering to prevent SSR issues with Wagmi hooks
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";

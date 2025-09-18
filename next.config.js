@@ -56,6 +56,7 @@ const nextConfig = {
     serverComponentsExternalPackages: ["pino"],
   },
 
+
   webpack: (config, { dev, isServer }) => {
     // Enable WebAssembly support
     config.experiments = {

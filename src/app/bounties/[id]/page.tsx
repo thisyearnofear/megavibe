@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+// Force dynamic rendering to prevent SSR issues with Wagmi hooks
+export const dynamic = 'force-dynamic';
+
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "framer-motion";

@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
+
+// Force dynamic rendering to prevent SSR issues with Wagmi hooks
+export const dynamic = 'force-dynamic';
 import Hero from "@/components/hero/Hero";
 import QuickDiscovery from "@/components/mobile/QuickDiscovery";
 import QuickTip from "@/components/mobile/QuickTip";

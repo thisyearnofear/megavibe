@@ -1,5 +1,8 @@
 "use client";
 
+// Force dynamic rendering to prevent SSR issues with Wagmi hooks
+export const dynamic = 'force-dynamic';
+
 import React, { useState } from "react";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
