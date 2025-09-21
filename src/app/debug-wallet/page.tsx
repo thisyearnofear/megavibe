@@ -1,6 +1,7 @@
 'use client';
 
 import { useWalletConnection } from '@/hooks/useWalletConnection';
+import { ProviderType } from '@/services/blockchain/providerService';
 import { useEffect, useState } from 'react';
 
 export default function DebugWalletPage() {
@@ -38,7 +39,7 @@ export default function DebugWalletPage() {
       <div style={{ marginBottom: '20px' }}>
         <h2>Actions</h2>
         <button 
-          onClick={() => connect('MetaMask')}
+          onClick={() => connect(ProviderType.MetaMask)}
           style={{ 
             padding: '10px 20px', 
             marginRight: '10px',
