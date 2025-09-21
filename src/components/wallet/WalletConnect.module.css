@@ -162,15 +162,15 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 1000;
   backdrop-filter: blur(8px);
-  padding: 20px;
 }
 
 .modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
@@ -184,11 +184,11 @@
 @keyframes modalFadeIn {
   from {
     opacity: 0;
-    transform: translateY(30px) scale(0.95);
+    transform: translate(-50%, -45%) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
@@ -340,12 +340,8 @@
   .switchNetworkBtn {
     padding: 14px 24px;
     font-size: 1.1rem;
-    min-height: 48px;
-  }
-
   .modal {
-    margin: 20px;
-    max-width: calc(100vw - 40px);
+    max-width: 90%;
   }
 
   .modalHeader {
@@ -393,8 +389,7 @@
   }
 
   .modal {
-    margin: 16px;
-    max-width: calc(100vw - 32px);
+    max-width: 90%;
   }
 
   .walletOption {
