@@ -164,6 +164,11 @@
   background-color: rgba(0, 0, 0, 0.8);
   z-index: 1000;
   backdrop-filter: blur(8px);
+  /* Ensure overlay covers entire viewport */
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 .modal {
@@ -177,8 +182,12 @@
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   width: 100%;
   max-width: 420px;
-  overflow: hidden;
+  max-height: 90vh;
+  overflow-y: auto;
   animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Ensure modal is always positioned relative to viewport */
+  margin: 0;
+  z-index: 1001;
 }
 
 @keyframes modalFadeIn {
@@ -340,6 +349,9 @@
   .switchNetworkBtn {
     padding: 14px 24px;
     font-size: 1.1rem;
+    min-height: 48px;
+  }
+
   .modal {
     max-width: 90%;
   }

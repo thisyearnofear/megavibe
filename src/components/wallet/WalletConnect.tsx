@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import styles from "./WalletConnect.module.css";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { ProviderType } from "@/services/blockchain";
@@ -28,6 +29,11 @@ export default function WalletConnect() {
   const closeWalletModal = () => setIsWalletModalOpen(false);
 
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Wallet options
   const walletOptions: WalletOption[] = [
@@ -103,6 +109,95 @@ export default function WalletConnect() {
     }
   };
 
+  // Modal component to be rendered in portal
+  const Modal = () => (
+    <div 
+      className={styles.modalOverlay}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="wallet-modal-title"
+      aria-describedby="wallet-modal-desc"
+      onKeyDown={handleModalKeyDown}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          closeWalletModal();
+        }
+      }}
+    >
+      <div className={styles.modal}>
+        <div className={styles.modalHeader}>
+          <h3 
+            id="wallet-modal-title" 
+            className={styles.modalTitle}
+          >
+            Connect Your Wallet
+          </h3>
+          <button
+            onClick={closeWalletModal}
+            className={styles.modalCloseBtn}
+            aria-label="Close wallet connection modal"
+            autoFocus
+          >
+            ✕
+          </button>
+        </div>
+
+        <div id="wallet-modal-desc" style={{ position: 'absolute', left: '-10000px' }}>
+          Choose a wallet provider to connect to MegaVibe. Use arrow keys to navigate options and Enter to select.
+        </div>
+
+        <div 
+          className={styles.walletOptions}
+          role="list"
+          aria-label="Available wallet options"
+        >
+          {walletOptions.map((wallet, index) => (
+            <button
+              key={wallet.id}
+              className={styles.walletOption}
+              onClick={() => handleConnectWallet(wallet.id)}
+              disabled={isConnecting}
+              role="listitem"
+              aria-describedby={`wallet-desc-${wallet.id}`}
+              tabIndex={0}
+            >
+              <div className={styles.walletIconWrapper} aria-hidden="true">
+                <Image
+                  src={wallet.icon}
+                  alt=""
+                  width={32}
+                  height={32}
+                  className={styles.walletIcon}
+                />
+              </div>
+              <div className={styles.walletDetails}>
+                <h4 className={styles.walletName}>{wallet.name}</h4>
+                <p 
+                  id={`wallet-desc-${wallet.id}`}
+                  className={styles.walletDescription}
+                >
+                  {wallet.description}
+                </p>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {isConnecting && (
+          <div 
+            className={styles.connectingIndicator}
+            role="status"
+            aria-live="polite"
+            aria-label="Connecting to wallet"
+          >
+            <div className={styles.spinner} aria-hidden="true"></div>
+            <p>Connecting to wallet...</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className={styles.walletContainer}>
       {isConnected ? (
@@ -172,94 +267,10 @@ export default function WalletConnect() {
         </button>
       )}
 
-      {/* Wallet Selection Modal with improved accessibility */}
-      {isWalletModalOpen && !isConnected && (
-        <div 
-          className={styles.modalOverlay}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="wallet-modal-title"
-          aria-describedby="wallet-modal-desc"
-          onKeyDown={handleModalKeyDown}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              closeWalletModal();
-            }
-          }}
-        >
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <h3 
-                id="wallet-modal-title" 
-                className={styles.modalTitle}
-              >
-                Connect Your Wallet
-              </h3>
-              <button
-                onClick={closeWalletModal}
-                className={styles.modalCloseBtn}
-                aria-label="Close wallet connection modal"
-                autoFocus
-              >
-                ✕
-              </button>
-            </div>
-
-            <div id="wallet-modal-desc" style={{ position: 'absolute', left: '-10000px' }}>
-              Choose a wallet provider to connect to MegaVibe. Use arrow keys to navigate options and Enter to select.
-            </div>
-
-            <div 
-              className={styles.walletOptions}
-              role="list"
-              aria-label="Available wallet options"
-            >
-              {walletOptions.map((wallet, index) => (
-                <button
-                  key={wallet.id}
-                  className={styles.walletOption}
-                  onClick={() => handleConnectWallet(wallet.id)}
-                  disabled={isConnecting}
-                  role="listitem"
-                  aria-describedby={`wallet-desc-${wallet.id}`}
-                  tabIndex={0}
-                >
-                  <div className={styles.walletIconWrapper} aria-hidden="true">
-                    <Image
-                      src={wallet.icon}
-                      alt=""
-                      width={32}
-                      height={32}
-                      className={styles.walletIcon}
-                    />
-                  </div>
-                  <div className={styles.walletDetails}>
-                    <h4 className={styles.walletName}>{wallet.name}</h4>
-                    <p 
-                      id={`wallet-desc-${wallet.id}`}
-                      className={styles.walletDescription}
-                    >
-                      {wallet.description}
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {isConnecting && (
-              <div 
-                className={styles.connectingIndicator}
-                role="status"
-                aria-live="polite"
-                aria-label="Connecting to wallet"
-              >
-                <div className={styles.spinner} aria-hidden="true"></div>
-                <p>Connecting to wallet...</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Wallet Selection Modal with improved accessibility - rendered in portal */}
+      {isWalletModalOpen && !isConnected && isClient && 
+        createPortal(<Modal />, document.body)
+      }
     </div>
   );
 }
