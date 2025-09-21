@@ -5,6 +5,7 @@ import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { useEffect, useState } from 'react';
 import { ProviderType } from '@/services/blockchain/providerService';
+import { mantleSepolia } from '@/config/wagmi';
 
 export interface WalletInfo {
   isConnected: boolean;
@@ -62,7 +63,7 @@ export function useWalletConnection() {
     isConnected: account?.isConnected || false,
     address: account?.address || "",
     chainId: chainId || 0,
-    isSupported: chainId ? [mainnet.id, sepolia.id].includes(chainId as any) : false,
+    isSupported: chainId ? [mainnet.id, sepolia.id, mantleSepolia.id].includes(chainId as any) : false,
     balance: {
       mnt: balanceData?.data?.value.toString() || "0",
       formatted: balanceData?.data?.formatted || "0",
@@ -70,8 +71,14 @@ export function useWalletConnection() {
   } : defaultWalletInfo;
 
   const connect = async (_walletType: ProviderType) => {
+    console.log('Connect wallet requested, mounted:', isMounted, 'web3Modal available:', !!web3Modal?.open);
     if (isMounted && web3Modal?.open) {
-      web3Modal.open();
+      try {
+        await web3Modal.open();
+        console.log('Web3Modal opened successfully');
+      } catch (error) {
+        console.error('Error opening Web3Modal:', error);
+      }
     } else {
       console.warn("Web3Modal not available - component not mounted or provider missing");
     }

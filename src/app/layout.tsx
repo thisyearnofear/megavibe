@@ -18,7 +18,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL || "https://megavibe.app"
+    process.env.NEXT_PUBLIC_BASE_URL || "https://megavibe.vercel.app"
   ),
   title: "MegaVibe - The Stage",
   description:
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     title: "MegaVibe - The Stage",
     description:
       "The Stage for Live Performance Economy - Connect with performers, create bounties, and tip your favorite artists.",
-    url: "https://megavibe.app",
+    url: process.env.NEXT_PUBLIC_BASE_URL || "https://megavibe.vercel.app",
     siteName: "MegaVibe",
     images: [
       {

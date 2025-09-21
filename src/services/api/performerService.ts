@@ -232,7 +232,8 @@ class PerformerService {
   private async generateQRCode(performerId: string): Promise<string> {
     // In production, this would generate a real QR code
     // For now, return a placeholder URL
-    return `https://megavibe.app/performer/${performerId}`;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://megavibe.vercel.app';
+    return `${baseUrl}/performer/${performerId}`;
   }
 
   private generateDeepLink(performerId: string): string {

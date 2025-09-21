@@ -28,7 +28,7 @@ export interface QRGenerationOptions {
 }
 
 class RealQRService {
-  private readonly baseUrl = 'https://megavibe.app';
+  private readonly baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://megavibe.vercel.app';
   private readonly deepLinkScheme = 'megavibe';
 
   async generatePerformerQR(
@@ -167,7 +167,7 @@ class RealQRService {
       }
       
       // If not our format, check if it's a direct URL
-      if (qrText.includes('megavibe.app/performer/')) {
+      if (qrText.includes('/performer/')) {
         const performerId = this.extractPerformerIdFromUrl(qrText);
         if (performerId) {
           return {
@@ -195,7 +195,7 @@ class RealQRService {
       };
     } catch (error) {
       // If JSON parsing fails, try direct URL parsing
-      if (qrText.includes('megavibe.app/performer/')) {
+      if (qrText.includes('/performer/')) {
         const performerId = this.extractPerformerIdFromUrl(qrText);
         if (performerId) {
           return {

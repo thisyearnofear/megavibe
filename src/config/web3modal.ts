@@ -20,12 +20,20 @@ if (projectId && typeof window !== 'undefined') {
       wagmiConfig: config,
       projectId,
       enableAnalytics: true,
-      enableOnramp: true
+      enableOnramp: true,
+      themeMode: 'dark',
+      themeVariables: {
+        '--w3m-accent': '#6366f1',
+        '--w3m-border-radius-master': '8px'
+      }
     });
     modalCreated = true;
+    console.log('✅ Web3Modal created successfully with projectId:', projectId.substring(0, 8) + '...');
   } catch (error) {
-    console.warn('Failed to create Web3Modal:', error);
+    console.warn('❌ Failed to create Web3Modal:', error);
   }
+} else {
+  console.warn('⚠️ Web3Modal not created - missing projectId or not in browser environment');
 }
 
 export function Web3ModalProvider({ children }: { children: React.ReactNode }) {
