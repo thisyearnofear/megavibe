@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import dynamic from 'next/dynamic';
+// Import wallet conflict handler
+import '@/utils/walletProviderConflicts';
 
 // Dynamically import the Web3ModalProvider to prevent SSR issues
 const Web3ModalProvider = dynamic(

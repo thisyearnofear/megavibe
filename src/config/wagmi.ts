@@ -4,11 +4,11 @@ import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
 import { mainnet, sepolia, optimism, optimismSepolia } from 'wagmi/chains';
 import { defineChain } from 'viem';
 
-// Get projectId from environment
-const projectId = process.env.NEXT_PUBLIC_WC_PROJECT_ID || '';
+// Get projectId from environment - support both variable names for compatibility
+const projectId = process.env.NEXT_PUBLIC_WC_PROJECT_ID || process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '';
 
 if (!projectId) {
-  console.warn('NEXT_PUBLIC_WC_PROJECT_ID is not set');
+  console.warn('WalletConnect Project ID is not set. Please set NEXT_PUBLIC_WC_PROJECT_ID or NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID');
 } else {
   console.log('WalletConnect Project ID configured:', projectId.substring(0, 8) + '...');
 }
@@ -56,12 +56,14 @@ export const config = defaultWagmiConfig({
     name: 'MegaVibe',
     description: 'The Stage for Live Performance Economy',
     url: getAppUrl(),
-    icons: [`${getAppUrl()}/favicon.ico`]
+    icons: [`${getAppUrl()}/favicon.ico`],
+    verifyUrl: getAppUrl()
   },
   enableWalletConnect: true,
   enableInjected: true,
   enableEIP6963: true,
-  enableCoinbase: true
+  enableCoinbase: true,
+  ssr: false
 });
 
 export { chains, mantleSepolia };
